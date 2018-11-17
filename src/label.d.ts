@@ -1,0 +1,1 @@
+../plugin/label.d.ts

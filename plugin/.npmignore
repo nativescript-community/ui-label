@@ -1,0 +1,9 @@
+node_modules/
+bin/
+hooks/
+src/
+*.ts
+*.map
+*.old
+tsconfig.json
+!*.d.ts

@@ -1,0 +1,30 @@
+{
+    "name": "nativescript-htmllabel",
+    "version": "1.0.2",
+    "description": "Your awesome NativeScript plugin.",
+    "main": "./label",
+    "typings": "./label.d.ts",
+    "nativescript": {
+        "platforms": {
+            "android": "3.0.0",
+            "ios": "3.0.0"
+        }
+    },
+    "keywords": [
+        "NativeScript",
+        "JavaScript",
+        "Android",
+        "iOS"
+    ],
+    "author": {
+        "name": "Martin Guillon",
+        "email": "martin@akylas.fr"
+    },
+    "bugs": {
+        "url": "https://github.com/Akylas/nativescript-label/issues"
+    },
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/Akylas/nativescript-label",
+    "readmeFilename": "README.md",
+    "dependencies": {}
+}
