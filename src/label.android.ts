@@ -1,6 +1,15 @@
-﻿import { htmlProperty, LabelBase, maxLinesProperty } from './label-common';
+﻿import {
+    htmlProperty,
+    LabelBase,
+    lineBreakProperty,
+    maxLinesProperty
+} from './label-common';
 // import { backgroundColorProperty } from 'tns-core-modules/ui/page/page';
-import { TextTransform } from 'tns-core-modules/ui/text-base/text-base';
+import {
+    TextTransform,
+    WhiteSpace,
+    whiteSpaceProperty
+} from 'tns-core-modules/ui/text-base/text-base';
 import { Font } from 'tns-core-modules/ui/styling/font';
 // import { Span } from 'tns-core-modules/text/span';
 
@@ -19,7 +28,9 @@ export class Label extends LabelBase {
 
         // This makes the html <a href...> work
         nativeView.setLinksClickable(false);
-        nativeView.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
+        nativeView.setMovementMethod(
+            android.text.method.LinkMovementMethod.getInstance()
+        );
     }
 
     public resetNativeView(): void {
@@ -40,7 +51,9 @@ export class Label extends LabelBase {
         }
         const nativeView = this.nativeViewProtected;
         nativeView.setAutoLinkMask(mask);
-        const spannableStringBuilder = createSpannableStringBuilder(android.text.Html.fromHtml(value));
+        const spannableStringBuilder = createSpannableStringBuilder(
+            android.text.Html.fromHtml(value)
+        );
         nativeView.setText(spannableStringBuilder as any);
 
         // textProperty.nativeValueChange(this, value === null || value === undefined ? '' : value.toString());
@@ -54,6 +67,37 @@ export class Label extends LabelBase {
             this.nativeViewProtected.setMaxLines(-1);
         } else {
             this.nativeViewProtected.setMaxLines(value as number);
+        }
+    }
+    [lineBreakProperty.setNative](value: string) {
+        const nativeView = this.nativeTextViewProtected;
+        switch (value) {
+            case 'end':
+                nativeView.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                break;
+            case 'start':
+                nativeView.setEllipsize(android.text.TextUtils.TruncateAt.START);
+                break;
+            case 'middle':
+                nativeView.setEllipsize(
+                    android.text.TextUtils.TruncateAt.MIDDLE
+                );
+                break;
+            case 'none':
+                nativeView.setEllipsize(null);
+                break;
+        }
+    }
+    [whiteSpaceProperty.setNative](value: WhiteSpace) {
+        const nativeView = this.nativeTextViewProtected;
+        switch (value) {
+            case 'initial':
+            case 'normal':
+                nativeView.setEllipsize(null);
+                break;
+            case 'nowrap':
+                nativeView.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                break;
         }
     }
 }
@@ -73,7 +117,10 @@ function getCapitalizedString(str: string): string {
     return newWords.join(' ');
 }
 
-export function getTransformedText(text: string, textTransform: TextTransform): string {
+export function getTransformedText(
+    text: string,
+    textTransform: TextTransform
+): string {
     switch (textTransform) {
         case 'uppercase':
             return text.toUpperCase();
@@ -87,22 +134,47 @@ export function getTransformedText(text: string, textTransform: TextTransform): 
     }
 }
 
-function createSpannableStringBuilder(spannedString: android.text.Spanned): android.text.SpannableStringBuilder {
+function createSpannableStringBuilder(
+    spannedString: android.text.Spanned
+): android.text.SpannableStringBuilder {
     if (!spannedString) {
         return null;
     }
-    const builder = new android.text.SpannableStringBuilder(spannedString as any);
-    const spans: native.Array<android.text.style.TypefaceSpan> = builder.getSpans(0, builder.length(), android.text.style.TypefaceSpan.class);
+    const builder = new android.text.SpannableStringBuilder(
+        spannedString as any
+    );
+    const spans: native.Array<
+        android.text.style.TypefaceSpan
+    > = builder.getSpans(
+        0,
+        builder.length(),
+        android.text.style.TypefaceSpan.class
+    );
     for (let index = 0; index < spans.length; index++) {
         const span = spans[index];
         const start = builder.getSpanStart(span);
         const end = builder.getSpanEnd(span);
         const fontFamily = span.getFamily();
         const style = fontFamily.split('-')[1] || builder.removeSpan(span);
-        const font = new Font(fontFamily, 0, style === 'italic' ? 'italic' : 'normal', style === 'bold' ? 'bold' : 'normal');
-        const typeface = font.getAndroidTypeface() || android.graphics.Typeface.create(fontFamily, 0);
-        const typefaceSpan: android.text.style.TypefaceSpan = new org.nativescript.widgets.CustomTypefaceSpan(fontFamily, typeface);
-        builder.setSpan(typefaceSpan, start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        const font = new Font(
+            fontFamily,
+            0,
+            style === 'italic' ? 'italic' : 'normal',
+            style === 'bold' ? 'bold' : 'normal'
+        );
+        const typeface =
+            font.getAndroidTypeface() ||
+            android.graphics.Typeface.create(fontFamily, 0);
+        const typefaceSpan: android.text.style.TypefaceSpan = new org.nativescript.widgets.CustomTypefaceSpan(
+            fontFamily,
+            typeface
+        );
+        builder.setSpan(
+            typefaceSpan,
+            start,
+            end,
+            android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
     }
 
     // const ssb = new android.text.SpannableStringBuilder();

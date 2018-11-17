@@ -1,7 +1,8 @@
-import { htmlProperty, LabelBase, maxLinesProperty } from './label-common';
+import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty } from './label-common';
 import { layout } from 'tns-core-modules/utils/utils';
 import { fontInternalProperty, Length, paddingBottomProperty, paddingLeftProperty, paddingRightProperty, paddingTopProperty, View } from 'tns-core-modules/ui/page/page';
 import { Font } from 'tns-core-modules/ui/styling/font';
+import { WhiteSpace, whiteSpaceProperty } from 'tns-core-modules/ui/text-base/text-base';
 
 export * from './label-common';
 enum FixedSize {
@@ -37,8 +38,15 @@ export class Label extends LabelBase {
         view.scrollEnabled = false;
         view.editable = false;
         view.selectable = false;
+        view.backgroundColor = UIColor.clearColor;
         view.userInteractionEnabled = true;
         view.dataDetectorTypes = UIDataDetectorTypes.All;
+        view.textContainerInset = {
+            top:0,
+            left:0,
+            bottom:0,
+            right:0
+        };
         return view;
     }
 
@@ -212,7 +220,12 @@ export class Label extends LabelBase {
     [paddingTopProperty.setNative](value: Length) {
         const inset = this.nativeViewProtected.textContainerInset;
         const top = layout.toDeviceIndependentPixels(this.effectivePaddingTop + this.effectiveBorderTopWidth);
-        this.nativeViewProtected.textContainerInset = { top, left: inset.left, bottom: inset.bottom, right: inset.right };
+        this.nativeViewProtected.textContainerInset = {
+            top,
+            left: inset.left,
+            bottom: inset.bottom,
+            right: inset.right
+        };
     }
 
     [paddingRightProperty.getDefault](): Length {
@@ -224,7 +237,12 @@ export class Label extends LabelBase {
     [paddingRightProperty.setNative](value: Length) {
         const inset = this.nativeViewProtected.textContainerInset;
         const right = layout.toDeviceIndependentPixels(this.effectivePaddingRight + this.effectiveBorderRightWidth);
-        this.nativeViewProtected.textContainerInset = { top: inset.top, left: inset.left, bottom: inset.bottom, right };
+        this.nativeViewProtected.textContainerInset = {
+            top: inset.top,
+            left: inset.left,
+            bottom: inset.bottom,
+            right
+        };
     }
 
     [paddingBottomProperty.getDefault](): Length {
@@ -236,7 +254,12 @@ export class Label extends LabelBase {
     [paddingBottomProperty.setNative](value: Length) {
         const inset = this.nativeViewProtected.textContainerInset;
         const bottom = layout.toDeviceIndependentPixels(this.effectivePaddingBottom + this.effectiveBorderBottomWidth);
-        this.nativeViewProtected.textContainerInset = { top: inset.top, left: inset.left, bottom, right: inset.right };
+        this.nativeViewProtected.textContainerInset = {
+            top: inset.top,
+            left: inset.left,
+            bottom,
+            right: inset.right
+        };
     }
     [paddingLeftProperty.getDefault](): Length {
         return {
@@ -247,7 +270,12 @@ export class Label extends LabelBase {
     [paddingLeftProperty.setNative](value: Length) {
         const inset = this.nativeViewProtected.textContainerInset;
         const left = layout.toDeviceIndependentPixels(this.effectivePaddingLeft + this.effectiveBorderLeftWidth);
-        this.nativeViewProtected.textContainerInset = { top: inset.top, left, bottom: inset.bottom, right: inset.right };
+        this.nativeViewProtected.textContainerInset = {
+            top: inset.top,
+            left,
+            bottom: inset.bottom,
+            right: inset.right
+        };
     }
     [maxLinesProperty.getDefault](): number | string {
         return 'none';
@@ -259,4 +287,44 @@ export class Label extends LabelBase {
             this.nativeViewProtected.textContainer.maximumNumberOfLines = value as number;
         }
     }
+    [lineBreakProperty.setNative](value: string) {
+        const nativeView = this.nativeTextViewProtected;
+        switch (value) {
+            case 'end':
+                nativeView.lineBreakMode = NSLineBreakMode.ByTruncatingTail;
+                break;
+            case 'start':
+                nativeView.lineBreakMode = NSLineBreakMode.ByTruncatingHead;
+                break;
+            case 'middle':
+                nativeView.lineBreakMode = NSLineBreakMode.ByTruncatingMiddle;
+                break;
+            case 'none':
+                nativeView.lineBreakMode = NSLineBreakMode.ByWordWrapping;
+                break;
+        }
+    }
+    [whiteSpaceProperty.setNative](value: WhiteSpace) {
+        const nativeView = this.nativeTextViewProtected;
+        console.log('whiteSpaceProperty', value);
+        switch (value) {
+            case 'initial':
+            case 'normal':
+                nativeView.lineBreakMode = NSLineBreakMode.ByWordWrapping;
+                break;
+            case 'nowrap':
+                nativeView.lineBreakMode = NSLineBreakMode.ByTruncatingTail;
+                break;
+        }
+    }
+    // [autoFontSizeProperty.getDefault](): boolean {
+    //     return this.nativeViewProtected.adjustsFontSizeToFitWidth;
+    // }
+    // [maxLinesProperty.setNative](value: number | string) {
+    //     if (value === 'none') {
+    //         this.nativeViewProtected.textContainer.maximumNumberOfLines = 0;
+    //     } else {
+    //         this.nativeViewProtected.textContainer.maximumNumberOfLines = value as number;
+    //     }
+    // }
 }

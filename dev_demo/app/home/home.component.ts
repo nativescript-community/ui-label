@@ -225,15 +225,14 @@ export class HomeComponent {
         }
     ]);
 
-
     public onItemTap(event, index) {
         console.log('onItemTap', index);
-        this.items.splice(index+1, 0, this.items.getItem(Math.floor(Math.random()*this.items.length)));
+        this.items.splice(index + 1, 0, this.items.getItem(Math.floor(Math.random() * this.items.length)));
     }
     public onItemLongPress(event, index, item) {
         console.log('onItemLongPress', index);
         if (!event.ios || event.ios.state === 1) {
             this.items.splice(index, 1);
         }
-    } 
+    }
 }

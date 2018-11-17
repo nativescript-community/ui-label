@@ -1,5 +1,5 @@
 {
-    "name": "fake-label-ios",
+    "name": "nativescript-htmllabel",
     "version": "1.0.0",
     "description": "Your awesome NativeScript plugin.",
     "nativescript": {
