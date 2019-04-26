@@ -61,3 +61,4 @@ demo-ng/**/*.css
 report
 *.log
 platforms
+/package-lock.json
