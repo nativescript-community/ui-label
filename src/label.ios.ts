@@ -42,10 +42,10 @@ export class Label extends LabelBase {
         view.userInteractionEnabled = true;
         view.dataDetectorTypes = UIDataDetectorTypes.All;
         view.textContainerInset = {
-            top:0,
-            left:0,
-            bottom:0,
-            right:0
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0
         };
         return view;
     }
@@ -145,18 +145,18 @@ export class Label extends LabelBase {
                 // [DTDefaultLineBreakMode]: kCTLineBreakByWordWrapping
             } as any;
             this.htmlText = NSMutableAttributedString.alloc().initWithHTMLDataOptionsDocumentAttributes(nsData, options, null);
-            this.htmlText.enumerateAttributesInRangeOptionsUsingBlock({ location: 0, length: this.htmlText.length }, NSAttributedStringEnumerationReverse, (
-                attributes: NSDictionary<any, any>,
-                range,
-                stop
-            ) => {
-                if (!!attributes.valueForKey('DTGUID')) {
-                    // We need to remove this attribute or links are not colored right
-                    //
-                    // @see https://github.com/Cocoanetics/DTCoreText/issues/792
-                    this.htmlText.removeAttributeRange('CTForegroundColorFromContext', range);
+            this.htmlText.enumerateAttributesInRangeOptionsUsingBlock(
+                { location: 0, length: this.htmlText.length },
+                NSAttributedStringEnumerationReverse,
+                (attributes: NSDictionary<any, any>, range, stop) => {
+                    if (!!attributes.valueForKey('DTGUID')) {
+                        // We need to remove this attribute or links are not colored right
+                        //
+                        // @see https://github.com/Cocoanetics/DTCoreText/issues/792
+                        this.htmlText.removeAttributeRange('CTForegroundColorFromContext', range);
+                    }
                 }
-            });
+            );
             // console.log('updateHTMLString', this, this.html);
             // const nsString = NSString.stringWithString(htmlString);
             // // console.log('updateHTMLString1');
