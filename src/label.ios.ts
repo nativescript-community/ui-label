@@ -145,11 +145,11 @@ export class Label extends LabelBase {
                 // [DTDefaultLineBreakMode]: kCTLineBreakByWordWrapping
             } as any;
             this.htmlText = NSMutableAttributedString.alloc().initWithHTMLDataOptionsDocumentAttributes(nsData, options, null);
-            this.htmlText.enumerateAttributesInRangeOptionsUsingBlock({ location: 0, length: this.htmlText.length }, NSAttributedStringEnumerationReverse, function(
+            this.htmlText.enumerateAttributesInRangeOptionsUsingBlock({ location: 0, length: this.htmlText.length }, NSAttributedStringEnumerationReverse, (
                 attributes: NSDictionary<any, any>,
                 range,
                 stop
-            ) {
+            ) => {
                 if (!!attributes.valueForKey('DTGUID')) {
                     // We need to remove this attribute or links are not colored right
                     //
