@@ -62,3 +62,4 @@ report
 *.log
 platforms
 /package-lock.json
+plugin/*.d.ts
