@@ -137,17 +137,17 @@ export class Label extends LabelBase {
                     fontSize = this.style.fontInternal.fontSize;
                 }
             }
-            console.log('span', fontFamily, fontSize);
+            // console.log('span', fontFamily, fontSize);
 
-            htmlString = `<span style="font-family: ${fontFamily}}; font-size:${fontSize};">${htmlString}</span>`;
+            htmlString = `<span style="font-family: ${fontFamily}; font-size:${fontSize};">${htmlString}</span>`;
             const nsString = NSString.stringWithString(htmlString);
-            console.log('updateHTMLString1', htmlString);
+            // console.log('updateHTMLString1', htmlString);
             const nsData = nsString.dataUsingEncoding(NSUTF8StringEncoding);
             const options = {
                 [DTDefaultTextAlignment]: kCTLeftTextAlignment,
                 // [NSTextSizeMultiplierDocumentOption]: 1,
                 // [DTIgnoreLinkStyleOption]: false,
-                [DTDefaultFontFamily]: fontFamily,
+                // [DTDefaultFontFamily]: fontFamily,
                 // [NSFontAttributeName]: fontFamily,
                 [NSTextSizeMultiplierDocumentOption]: 17 / 12.0,
                 [DTUseiOS6Attributes]: true,
