@@ -124,21 +124,31 @@ export class Label extends LabelBase {
             this.htmlText = null;
         } else {
             let htmlString = this.html;
+
+            let fontFamily,
+                fontSize = UIFont.labelFontSize;
             if (!!this.style.fontInternal) {
-                // console.log('fontInternal', this.style.fontInternal.fontFamily, this.style.fontInternal.fontSize);
-                htmlString = `<span style="font-family: ${
-                    this.style.fontInternal.fontFamily[0] === "'" ? this.style.fontInternal.fontFamily.replace(/'/g, '') : this.style.fontInternal.fontFamily
-                }}; font-size:${this.style.fontInternal.fontSize};">${htmlString}</span>`;
+                if (!!this.style.fontInternal.fontFamily) {
+                    fontFamily = this.style.fontInternal.fontFamily[0] === "'" ? this.style.fontInternal.fontFamily.replace(/'/g, '') : this.style.fontInternal.fontFamily;
+                } else {
+                    fontFamily = UIFont.systemFontOfSize(10).familyName;
+                }
+                if (this.style.fontInternal.fontSize) {
+                    fontSize = this.style.fontInternal.fontSize;
+                }
             }
+            console.log('span', fontFamily, fontSize);
+
+            htmlString = `<span style="font-family: ${fontFamily}}; font-size:${fontSize};">${htmlString}</span>`;
             const nsString = NSString.stringWithString(htmlString);
-            // console.log('updateHTMLString1', htmlString);
+            console.log('updateHTMLString1', htmlString);
             const nsData = nsString.dataUsingEncoding(NSUTF8StringEncoding);
             const options = {
                 [DTDefaultTextAlignment]: kCTLeftTextAlignment,
                 // [NSTextSizeMultiplierDocumentOption]: 1,
                 // [DTIgnoreLinkStyleOption]: false,
-                // [DTDefaultFontFamily] : [self defaultSystemFontFamily],
-                // [NSFontAttributeName] : [self defaultSystemFontFamily],
+                [DTDefaultFontFamily]: fontFamily,
+                // [NSFontAttributeName]: fontFamily,
                 [NSTextSizeMultiplierDocumentOption]: 17 / 12.0,
                 [DTUseiOS6Attributes]: true,
                 [DTDocumentPreserveTrailingSpaces]: true
@@ -304,19 +314,18 @@ export class Label extends LabelBase {
                 break;
         }
     }
-    [whiteSpaceProperty.setNative](value: WhiteSpace) {
-        const nativeView = this.nativeTextViewProtected;
-        console.log('whiteSpaceProperty', value);
-        switch (value) {
-            case 'initial':
-            case 'normal':
-                nativeView.lineBreakMode = NSLineBreakMode.ByWordWrapping;
-                break;
-            case 'nowrap':
-                nativeView.lineBreakMode = NSLineBreakMode.ByTruncatingTail;
-                break;
-        }
-    }
+    // [whiteSpaceProperty.setNative](value: WhiteSpace) {
+    //     const nativeView = this.nativeTextViewProtected;
+    //     switch (value) {
+    //         case 'initial':
+    //         case 'normal':
+    //             nativeView.lineBreakMode = NSLineBreakMode.ByWordWrapping;
+    //             break;
+    //         case 'nowrap':
+    //             nativeView.lineBreakMode = NSLineBreakMode.ByTruncatingTail;
+    //             break;
+    //     }
+    // }
     // [autoFontSizeProperty.getDefault](): boolean {
     //     return this.nativeViewProtected.adjustsFontSizeToFitWidth;
     // }

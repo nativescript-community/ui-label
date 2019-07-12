@@ -1,19 +1,162 @@
-﻿import {
-    htmlProperty,
-    LabelBase,
-    lineBreakProperty,
-    maxLinesProperty
-} from './label-common';
+﻿import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty } from './label-common';
 // import { backgroundColorProperty } from 'tns-core-modules/ui/page/page';
-import {
-    TextTransform,
-    WhiteSpace,
-    whiteSpaceProperty
-} from 'tns-core-modules/ui/text-base/text-base';
+import { TextTransform, WhiteSpace, whiteSpaceProperty } from 'tns-core-modules/ui/text-base/text-base';
 import { Font } from 'tns-core-modules/ui/styling/font';
+Font.prototype.getAndroidTypeface = function() {
+    if (!this._typeface) {
+        this._typeface = createTypeface(this);
+    }
+    return this._typeface;
+};
 // import { Span } from 'tns-core-modules/text/span';
 
 export * from './label-common';
+
+let _useAndroidX;
+function useAndroidX() {
+    if (_useAndroidX === undefined) {
+        _useAndroidX = !!(global as any).androidx && !!(global as any).androidx.appcompat;
+    }
+    return _useAndroidX;
+}
+let _ContentPackageName: typeof android.support.v4.content;
+function ContentPackageName() {
+    if (_ContentPackageName === undefined) {
+        _ContentPackageName = useAndroidX() ? (global as any).androidx.core.content : android.support.v4.content;
+    }
+    return _ContentPackageName;
+}
+import * as application from 'tns-core-modules/application';
+import * as fs from 'tns-core-modules/file-system';
+import { categories as traceCategories, isEnabled as traceEnabled, messageType as traceMessageType, write as traceWrite } from 'tns-core-modules/trace';
+import { Font as FontBase, FontWeight, genericFontFamilies, parseFontFamily } from 'tns-core-modules/ui/styling/font-common';
+let appAssets: android.content.res.AssetManager;
+const typefaceCache = new Map<string, android.graphics.Typeface>();
+const FONTS_BASE_PATH = '/fonts/';
+function loadFontFromFile(fontFamily: string): android.graphics.Typeface {
+    if (fontFamily.startsWith('res/')) {
+        let result = typefaceCache.get(fontFamily);
+        if (!result) {
+            const context = application.android.context;
+            const fontID = context.getResources().getIdentifier(fontFamily.slice(4), 'font', context.getPackageName());
+            result = ContentPackageName().res.ResourcesCompat.getFont(context, fontID);
+            if (result) {
+                typefaceCache.set(fontFamily, result);
+            }
+            return result;
+        }
+    }
+    appAssets = appAssets || application.android.context.getAssets();
+    if (!appAssets) {
+        return null;
+    }
+
+    let result = typefaceCache.get(fontFamily);
+    // Check for undefined explicitly as null mean we tried to load the font, but failed.
+    if (result === undefined) {
+        result = null;
+
+        let fontAssetPath: string;
+        const basePath = fs.path.join(fs.knownFolders.currentApp().path, 'fonts', fontFamily);
+        if (fs.File.exists(basePath + '.ttf')) {
+            fontAssetPath = FONTS_BASE_PATH + fontFamily + '.ttf';
+        } else if (fs.File.exists(basePath + '.otf')) {
+            fontAssetPath = FONTS_BASE_PATH + fontFamily + '.otf';
+        } else {
+            if (traceEnabled()) {
+                traceWrite('Could not find font file for ' + fontFamily, traceCategories.Error, traceMessageType.error);
+            }
+        }
+
+        if (fontAssetPath) {
+            try {
+                fontAssetPath = fs.path.join(fs.knownFolders.currentApp().path, fontAssetPath);
+                result = android.graphics.Typeface.createFromFile(fontAssetPath);
+            } catch (e) {
+                if (traceEnabled()) {
+                    traceWrite('Error loading font asset: ' + fontAssetPath, traceCategories.Error, traceMessageType.error);
+                }
+            }
+        }
+        typefaceCache.set(fontFamily, result);
+    }
+
+    return result;
+}
+
+function createTypeface(font: Font): android.graphics.Typeface {
+    let fontStyle = 0;
+    if (font.isBold) {
+        fontStyle |= android.graphics.Typeface.BOLD;
+    }
+    if (font.isItalic) {
+        fontStyle |= android.graphics.Typeface.ITALIC;
+    }
+
+    // http://stackoverflow.com/questions/19691530/valid-values-for-androidfontfamily-and-what-they-map-to
+    const fonts = parseFontFamily(font.fontFamily);
+    let result = null;
+    for (let i = 0; i < fonts.length; i++) {
+        switch (fonts[i].toLowerCase()) {
+            case genericFontFamilies.serif:
+                result = android.graphics.Typeface.create('serif' + getFontWeightSuffix(font.fontWeight), fontStyle);
+                break;
+
+            case genericFontFamilies.sansSerif:
+            case genericFontFamilies.system:
+                result = android.graphics.Typeface.create('sans-serif' + getFontWeightSuffix(font.fontWeight), fontStyle);
+                break;
+
+            case genericFontFamilies.monospace:
+                result = android.graphics.Typeface.create('monospace' + getFontWeightSuffix(font.fontWeight), fontStyle);
+                break;
+
+            default:
+                result = loadFontFromFile(fonts[i]);
+                if (result && fontStyle) {
+                    result = android.graphics.Typeface.create(result, fontStyle);
+                }
+                break;
+        }
+
+        if (result) {
+            // Found the font!
+            break;
+        }
+    }
+
+    if (!result) {
+        result = android.graphics.Typeface.create('sans-serif' + getFontWeightSuffix(font.fontWeight), fontStyle);
+    }
+
+    return result;
+}
+
+function getFontWeightSuffix(fontWeight: FontWeight): string {
+    switch (fontWeight) {
+        case FontWeight.THIN:
+            return android.os.Build.VERSION.SDK_INT >= 16 ? '-thin' : '';
+        case FontWeight.EXTRA_LIGHT:
+        case FontWeight.LIGHT:
+            return android.os.Build.VERSION.SDK_INT >= 16 ? '-light' : '';
+        case FontWeight.NORMAL:
+        case '400':
+        case undefined:
+        case null:
+            return '';
+        case FontWeight.MEDIUM:
+        case FontWeight.SEMI_BOLD:
+            return android.os.Build.VERSION.SDK_INT >= 21 ? '-medium' : '';
+        case FontWeight.BOLD:
+        case '700':
+        case FontWeight.EXTRA_BOLD:
+            return '';
+        case FontWeight.BLACK:
+            return android.os.Build.VERSION.SDK_INT >= 21 ? '-black' : '';
+        default:
+            throw new Error(`Invalid font weight: "${fontWeight}"`);
+    }
+}
 
 export class Label extends LabelBase {
     nativeViewProtected: android.widget.TextView;
@@ -28,9 +171,7 @@ export class Label extends LabelBase {
 
         // This makes the html <a href...> work
         nativeView.setLinksClickable(false);
-        nativeView.setMovementMethod(
-            android.text.method.LinkMovementMethod.getInstance()
-        );
+        nativeView.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
     }
 
     public resetNativeView(): void {
@@ -51,9 +192,7 @@ export class Label extends LabelBase {
         }
         const nativeView = this.nativeViewProtected;
         nativeView.setAutoLinkMask(mask);
-        const spannableStringBuilder = createSpannableStringBuilder(
-            android.text.Html.fromHtml(value)
-        );
+        const spannableStringBuilder = createSpannableStringBuilder(android.text.Html.fromHtml(value));
         nativeView.setText(spannableStringBuilder as any);
 
         // textProperty.nativeValueChange(this, value === null || value === undefined ? '' : value.toString());
@@ -79,24 +218,10 @@ export class Label extends LabelBase {
                 nativeView.setEllipsize(android.text.TextUtils.TruncateAt.START);
                 break;
             case 'middle':
-                nativeView.setEllipsize(
-                    android.text.TextUtils.TruncateAt.MIDDLE
-                );
+                nativeView.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);
                 break;
             case 'none':
                 nativeView.setEllipsize(null);
-                break;
-        }
-    }
-    [whiteSpaceProperty.setNative](value: WhiteSpace) {
-        const nativeView = this.nativeTextViewProtected;
-        switch (value) {
-            case 'initial':
-            case 'normal':
-                nativeView.setEllipsize(null);
-                break;
-            case 'nowrap':
-                nativeView.setEllipsize(android.text.TextUtils.TruncateAt.END);
                 break;
         }
     }
@@ -117,10 +242,7 @@ function getCapitalizedString(str: string): string {
     return newWords.join(' ');
 }
 
-export function getTransformedText(
-    text: string,
-    textTransform: TextTransform
-): string {
+export function getTransformedText(text: string, textTransform: TextTransform): string {
     switch (textTransform) {
         case 'uppercase':
             return text.toUpperCase();
@@ -134,47 +256,22 @@ export function getTransformedText(
     }
 }
 
-function createSpannableStringBuilder(
-    spannedString: android.text.Spanned
-): android.text.SpannableStringBuilder {
+function createSpannableStringBuilder(spannedString: android.text.Spanned): android.text.SpannableStringBuilder {
     if (!spannedString) {
         return null;
     }
-    const builder = new android.text.SpannableStringBuilder(
-        spannedString as any
-    );
-    const spans: native.Array<
-        android.text.style.TypefaceSpan
-    > = builder.getSpans(
-        0,
-        builder.length(),
-        android.text.style.TypefaceSpan.class
-    );
+    const builder = new android.text.SpannableStringBuilder(spannedString as any);
+    const spans: native.Array<android.text.style.TypefaceSpan> = builder.getSpans(0, builder.length(), android.text.style.TypefaceSpan.class);
     for (let index = 0; index < spans.length; index++) {
         const span = spans[index];
         const start = builder.getSpanStart(span);
         const end = builder.getSpanEnd(span);
         const fontFamily = span.getFamily();
         const style = fontFamily.split('-')[1] || builder.removeSpan(span);
-        const font = new Font(
-            fontFamily,
-            0,
-            style === 'italic' ? 'italic' : 'normal',
-            style === 'bold' ? 'bold' : 'normal'
-        );
-        const typeface =
-            font.getAndroidTypeface() ||
-            android.graphics.Typeface.create(fontFamily, 0);
-        const typefaceSpan: android.text.style.TypefaceSpan = new org.nativescript.widgets.CustomTypefaceSpan(
-            fontFamily,
-            typeface
-        );
-        builder.setSpan(
-            typefaceSpan,
-            start,
-            end,
-            android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-        );
+        const font = new Font(fontFamily, 0, style === 'italic' ? 'italic' : 'normal', style === 'bold' ? 'bold' : 'normal');
+        const typeface = font.getAndroidTypeface() || android.graphics.Typeface.create(fontFamily, 0);
+        const typefaceSpan: android.text.style.TypefaceSpan = new org.nativescript.widgets.CustomTypefaceSpan(fontFamily, typeface);
+        builder.setSpan(typefaceSpan, start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
     // const ssb = new android.text.SpannableStringBuilder();
