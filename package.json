@@ -63,5 +63,10 @@
         "typescript": "~3.5.1"
     },
     "dependencies": {},
-    "bootstrapper": "nativescript-plugin-seed"
+    "bootstrapper": "nativescript-plugin-seed",
+    "commitlint": {
+        "extends": [
+            "@commitlint/config-conventional"
+        ]
+    }
 }
