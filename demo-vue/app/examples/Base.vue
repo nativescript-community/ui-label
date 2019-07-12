@@ -6,7 +6,7 @@
         <ListView :items="items">
             <v-template>
                 <StackLayout>
-                    <HTMLLabel fontSize="50" fontFamily="Cabin Sketch,res/cabinsketch" width="100%" paddingTop="5" color="black" textWrap="true" :html="item.text" verticalAlignment="top" />
+                    <HTMLLabel fontSize="50" fontFamily="Cabin Sketch,res/cabinsketch" width="100%" paddingTop="5" color="black" textWrap="true" :html="item.text" verticalAlignment="top" :color="getRandomColor()" />
                 </StackLayout>
             </v-template>
         </ListView>
@@ -247,6 +247,14 @@ export default Vue.extend({
     methods: {
         onNavigationButtonTap() {
             frameModule.topmost().goBack();
+        },
+        getRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
         }
     },
     created() {
