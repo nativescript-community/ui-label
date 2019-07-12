@@ -1,0 +1,40 @@
+{
+  "description": "NativeScript HTML Label Demo for Vue",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "readme": "README.md",
+  "nativescript": {
+    "id": "org.nativescript.demovuehtmllabel",
+    "tns-android": {
+      "version": "6.0.0"
+    },
+    "tns-ios": {
+      "version": "6.0.0"
+    }
+  },
+  "dependencies": {
+    "nativescript-htmllabel": "../plugin",
+    "nativescript-theme-core": "~1.0.6",
+    "nativescript-akylas-vue": "~2.3.0",
+    "tns-core-modules": "6.0.1",
+    "tslib": "^1.10.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.4",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/preset-env": "~7.5.4",
+    "nativescript-vue-template-compiler": "~2.3.0",
+    "babel-loader": "^8.0.6",
+    "clean-webpack-plugin": "^3.0.0",
+    "nativescript-dev-webpack": "^1.0.0",
+    "node-sass": "^4.12.0",
+    "shelljs": "^0.8.3",
+    "tns-platform-declarations": "6.0.1",
+    "vue": "~2.6.10",
+    "vue-loader": "~15.7.0",
+    "vue-property-decorator": "~8.2.1",
+    "typescript": "3.4.1"
+  },
+  "scripts": {
+    "tslint": "npm i && tslint --config '../tslint.json' 'app/**/*.ts' --exclude '**/node_modules/**'"
+  }
+}
