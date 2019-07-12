@@ -63,3 +63,5 @@ report
 platforms
 /package-lock.json
 plugin/*.d.ts
+/plugin/typings
+/plugin/README.md
