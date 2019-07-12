@@ -17,7 +17,7 @@
         "build.android": "bash src-native/android/build.sh",
         "build.ios": "bash src-native/ios/build.sh",
         "build.native": "npm run build.android && npm run build.ios",
-        "build": "npm run build.native && npm run build.plugin && lerna publish",
+        "build": "npm run build.plugin && lerna publish",
         "demo.ios": "npm i && npm run tsc && cd demo && tns run ios",
         "demo.android": "npm i && npm run tsc && cd demo && tns run android",
         "clean.demo": "rimraf demo/hooks demo/node_modules demo/platforms",
