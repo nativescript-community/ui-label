@@ -1,8 +1,9 @@
-import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty } from './label-common';
+import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty, textShadowProperty } from './label-common';
 import { layout } from 'tns-core-modules/utils/utils';
 import { fontInternalProperty, Length, paddingBottomProperty, paddingLeftProperty, paddingRightProperty, paddingTopProperty, View } from 'tns-core-modules/ui/page/page';
 import { Font } from 'tns-core-modules/ui/styling/font';
 import { WhiteSpace, whiteSpaceProperty } from 'tns-core-modules/ui/text-base/text-base';
+import { TextShadow } from './label';
 
 export * from './label-common';
 enum FixedSize {
@@ -18,8 +19,86 @@ declare module 'tns-core-modules/ui/text-base/text-base' {
     }
 }
 
+function lineBreakToLineBreakMode(value: string) {
+    switch (value) {
+        case 'end':
+            return NSLineBreakMode.ByTruncatingTail;
+        case 'start':
+            return NSLineBreakMode.ByTruncatingHead;
+        case 'middle':
+            return NSLineBreakMode.ByTruncatingMiddle;
+        case 'none':
+            return NSLineBreakMode.ByWordWrapping;
+    }
+}
+function whiteSpaceToLineBreakMode(value: WhiteSpace) {
+    switch (value) {
+        case 'initial':
+        case 'normal':
+            return NSLineBreakMode.ByWordWrapping;
+        case 'nowrap':
+            return NSLineBreakMode.ByTruncatingTail;
+    }
+}
+
+class ObserverClass extends NSObject {
+    _owner: WeakRef<Label>;
+    // NOTE: Refactor this - use Typescript property instead of strings....
+    observeValueForKeyPathOfObjectChangeContext(path: string, tv: UITextView) {
+        if (path === 'contentSize') {
+            const owner = this._owner && this._owner.get();
+            if (owner) {
+                const inset = owner.nativeViewProtected.textContainerInset;
+                const top = layout.toDeviceIndependentPixels(owner.effectivePaddingTop + owner.effectiveBorderTopWidth);
+
+                switch (owner.verticalAlignment) {
+                    case 'stretch': // not supported
+                    case 'top':
+                        owner.nativeViewProtected.textContainerInset = {
+                            top,
+                            left: inset.left,
+                            bottom: inset.bottom,
+                            right: inset.right
+                        };
+                        break;
+
+                    case 'middle': {
+                        const height = tv.sizeThatFits(CGSizeMake(tv.bounds.size.width, 10000)).height;
+                        let topCorrect = (tv.bounds.size.height - height * tv.zoomScale) / 2.0;
+                        topCorrect = topCorrect < 0.0 ? 0.0 : topCorrect;
+                        // tv.contentOffset = CGPointMake(0, -topCorrect);
+                        owner.nativeViewProtected.textContainerInset = {
+                            top: top + topCorrect,
+                            left: inset.left,
+                            bottom: inset.bottom,
+                            right: inset.right
+                        };
+                        break;
+                    }
+
+                    case 'bottom': {
+                        const height = tv.sizeThatFits(CGSizeMake(tv.bounds.size.width, 10000)).height;
+                        let bottomCorrect = tv.bounds.size.height - height * tv.zoomScale;
+                        bottomCorrect = bottomCorrect < 0.0 ? 0.0 : bottomCorrect;
+                        // tv.contentOffset = CGPointMake(0, -bottomCorrect);
+                        owner.nativeViewProtected.textContainerInset = {
+                            top: top + bottomCorrect,
+                            left: inset.left,
+                            bottom: inset.bottom,
+                            right: inset.right
+                        };
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+
 export class Label extends LabelBase {
+    private _observer: NSObject;
     nativeViewProtected: UITextView;
+    nativeTextViewProtected: UITextView;
     static DTCORETEXT_INIT = false;
     constructor() {
         super();
@@ -30,7 +109,7 @@ export class Label extends LabelBase {
     }
 
     public createNativeView() {
-        // console.log('createNativeView', this);
+        console.log('createNativeView', this);
         const view = UITextView.new();
         if (!view.font) {
             view.font = UIFont.systemFontOfSize(12);
@@ -52,7 +131,10 @@ export class Label extends LabelBase {
 
     public initNativeView() {
         super.initNativeView();
-        // console.log('initNativeView', this);
+        this._observer = ObserverClass.alloc();
+        this._observer['_owner'] = new WeakRef(this);
+        this.nativeViewProtected.addObserverForKeyPathOptionsContext(this._observer, 'contentSize', NSKeyValueObservingOptions.New, null);
+        console.log('initNativeView', this);
         this.nativeViewProtected.attributedText = this.htmlText;
         // this.htmlText = null;
         // this.needsHTMLUpdate = false;
@@ -61,20 +143,102 @@ export class Label extends LabelBase {
         // this.updateHTMLString();
         // }
     }
-    // public disposeNativeView() {
-    // super.disposeNativeView();
-    // this.htmlText = null;
-    // this.needsHTMLUpdate = false;
-    // this.updatingHTML = false;
-    // if (this.htmlText && this.needsHTMLUpdate) {
-    //     this.updateHTMLString();
-    // }
-    // }
+    public disposeNativeView() {
+        super.disposeNativeView();
+        if (this._observer) {
+            this.nativeViewProtected.removeObserverForKeyPath(this._observer, 'contentSize');
+            this._observer = null;
+        }
+    }
 
     get ios(): UITextView {
         return this.nativeViewProtected;
     }
     private _fixedSize: FixedSize;
+
+    setTextDecorationAndTransform() {
+        const style = this.style;
+        const dict = new Map<string, any>();
+        switch (style.textDecoration) {
+            case 'none':
+                break;
+            case 'underline':
+                // TODO: Replace deprecated `StyleSingle` with `Single` after the next typings update
+                dict.set(NSUnderlineStyleAttributeName, NSUnderlineStyle.Single);
+                break;
+            case 'line-through':
+                // TODO: Replace deprecated `StyleSingle` with `Single` after the next typings update
+                dict.set(NSStrikethroughStyleAttributeName, NSUnderlineStyle.Single);
+                break;
+            case 'underline line-through':
+                // TODO: Replace deprecated `StyleSingle` with `Single` after the next typings update
+                dict.set(NSUnderlineStyleAttributeName, NSUnderlineStyle.Single);
+                dict.set(NSStrikethroughStyleAttributeName, NSUnderlineStyle.Single);
+                break;
+            default:
+                throw new Error(`Invalid text decoration value: ${style.textDecoration}. Valid values are: 'none', 'underline', 'line-through', 'underline line-through'.`);
+        }
+
+        if (style.letterSpacing !== 0) {
+            dict.set(NSKernAttributeName, style.letterSpacing * this.nativeTextViewProtected.font.pointSize);
+        }
+
+        const isTextView = this.nativeTextViewProtected instanceof UITextView;
+        console.log('lineHeight', style.lineHeight, style.whiteSpace);
+        if (style.lineHeight || style.whiteSpace || style['lineBreak']) {
+            const paragraphStyle = NSMutableParagraphStyle.alloc().init();
+            paragraphStyle.minimumLineHeight = style.lineHeight;
+            // make sure a possible previously set text alignment setting is not lost when line height is specified
+            paragraphStyle.alignment = (this.nativeTextViewProtected as UITextField | UITextView | UILabel).textAlignment;
+
+            // make sure a possible previously set line break mode is not lost when line height is specified
+
+            console.log('lineBreakMode', this.nativeTextViewProtected.textContainer.lineBreakMode);
+            if (style['lineBreak']) {
+                paragraphStyle.lineBreakMode = lineBreakToLineBreakMode(style['lineBreak']);
+            } else if (style.whiteSpace) {
+                paragraphStyle.lineBreakMode = whiteSpaceToLineBreakMode(style.whiteSpace);
+            }
+            dict.set(NSParagraphStyleAttributeName, paragraphStyle);
+        } else if (isTextView) {
+            const paragraphStyle = NSMutableParagraphStyle.alloc().init();
+            paragraphStyle.alignment = this.nativeTextViewProtected.textAlignment;
+            dict.set(NSParagraphStyleAttributeName, paragraphStyle);
+        }
+
+        if (style.color && (dict.size > 0 || isTextView)) {
+            dict.set(NSForegroundColorAttributeName, style.color.ios);
+        }
+
+        const text = this.text;
+        const string = text === undefined || text === null ? '' : text.toString();
+        const source = string;
+        console.log('setTextDecorationAndTransform', dict.size, isTextView);
+        if (dict.size > 0 || isTextView) {
+            if (isTextView) {
+                // UITextView's font seems to change inside.
+                dict.set(NSFontAttributeName, this.nativeTextViewProtected.font);
+            }
+
+            const result = NSMutableAttributedString.alloc().initWithString(source);
+            result.setAttributesRange(dict as any, { location: 0, length: source.length });
+            if (this.nativeTextViewProtected instanceof UIButton) {
+                this.nativeTextViewProtected.setAttributedTitleForState(result, UIControlState.Normal);
+            } else {
+                this.nativeTextViewProtected.attributedText = result;
+            }
+        } else {
+            if (this.nativeTextViewProtected instanceof UIButton) {
+                // Clear attributedText or title won't be affected.
+                this.nativeTextViewProtected.setAttributedTitleForState(null, UIControlState.Normal);
+                this.nativeTextViewProtected.setTitleForState(source, UIControlState.Normal);
+            } else {
+                // Clear attributedText or text won't be affected.
+                this.nativeTextViewProtected.attributedText = undefined;
+                this.nativeTextViewProtected.text = source;
+            }
+        }
+    }
 
     _requestLayoutOnTextChanged(): void {
         if (this._fixedSize === FixedSize.BOTH) {
@@ -297,35 +461,26 @@ export class Label extends LabelBase {
             this.nativeViewProtected.textContainer.maximumNumberOfLines = value as number;
         }
     }
+
     [lineBreakProperty.setNative](value: string) {
         const nativeView = this.nativeTextViewProtected;
-        switch (value) {
-            case 'end':
-                nativeView.lineBreakMode = NSLineBreakMode.ByTruncatingTail;
-                break;
-            case 'start':
-                nativeView.lineBreakMode = NSLineBreakMode.ByTruncatingHead;
-                break;
-            case 'middle':
-                nativeView.lineBreakMode = NSLineBreakMode.ByTruncatingMiddle;
-                break;
-            case 'none':
-                nativeView.lineBreakMode = NSLineBreakMode.ByWordWrapping;
-                break;
-        }
+        console.log('lineBreakProperty', value);
+        nativeView.textContainer.lineBreakMode = lineBreakToLineBreakMode(value);
     }
-    // [whiteSpaceProperty.setNative](value: WhiteSpace) {
-    //     const nativeView = this.nativeTextViewProtected;
-    //     switch (value) {
-    //         case 'initial':
-    //         case 'normal':
-    //             nativeView.lineBreakMode = NSLineBreakMode.ByWordWrapping;
-    //             break;
-    //         case 'nowrap':
-    //             nativeView.lineBreakMode = NSLineBreakMode.ByTruncatingTail;
-    //             break;
-    //     }
-    // }
+    [textShadowProperty.setNative](value: TextShadow) {
+        this.nativeTextViewProtected.layer.shadowOpacity = 1;
+        this.nativeTextViewProtected.layer.shadowRadius = value.blurRadius;
+        this.nativeTextViewProtected.layer.shadowColor = value.color.ios.CGColor;
+        this.nativeTextViewProtected.layer.shadowOffset = CGSizeMake(value.offsetX, value.offsetY);
+        this.nativeTextViewProtected.layer.shouldRasterize = true;
+        this.nativeTextViewProtected.layer.masksToBounds = false;
+    }
+    [whiteSpaceProperty.setNative](value: WhiteSpace) {
+        const nativeView = this.nativeTextViewProtected;
+        console.log('whiteSpaceProperty', value);
+
+        nativeView.textContainer.lineBreakMode = whiteSpaceToLineBreakMode(value);
+    }
     // [autoFontSizeProperty.getDefault](): boolean {
     //     return this.nativeViewProtected.adjustsFontSizeToFitWidth;
     // }

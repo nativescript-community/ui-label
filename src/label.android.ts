@@ -1,7 +1,9 @@
-﻿import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty } from './label-common';
+﻿import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty, textShadowProperty } from './label-common';
 // import { backgroundColorProperty } from 'tns-core-modules/ui/page/page';
-import { TextTransform, WhiteSpace, whiteSpaceProperty } from 'tns-core-modules/ui/text-base/text-base';
+import { TextTransform, VerticalAlignment, verticalAlignmentProperty, WhiteSpace, whiteSpaceProperty } from 'tns-core-modules/ui/text-base/text-base';
 import { Font } from 'tns-core-modules/ui/styling/font';
+import { layout } from 'tns-core-modules/utils/utils';
+
 Font.prototype.getAndroidTypeface = function() {
     if (!this._typeface) {
         this._typeface = createTypeface(this);
@@ -19,10 +21,17 @@ function useAndroidX() {
     }
     return _useAndroidX;
 }
-let _ContentPackageName: typeof android.support.v4.content;
+let _HtmlCompat: typeof androidx.core.text.HtmlCompat;
+function HtmlCompat() {
+    if (_HtmlCompat === undefined) {
+        _HtmlCompat = useAndroidX() ? (global as any).androidx.core.text.HtmlCompat : android.text.Html;
+    }
+    return _HtmlCompat;
+}
+let _ContentPackageName: typeof androidx.core.content;
 function ContentPackageName() {
     if (_ContentPackageName === undefined) {
-        _ContentPackageName = useAndroidX() ? (global as any).androidx.core.content : android.support.v4.content;
+        _ContentPackageName = useAndroidX() ? (global as any).androidx.core.content : (android as any).support.v4.content;
     }
     return _ContentPackageName;
 }
@@ -30,6 +39,7 @@ import * as application from 'tns-core-modules/application';
 import * as fs from 'tns-core-modules/file-system';
 import { categories as traceCategories, isEnabled as traceEnabled, messageType as traceMessageType, write as traceWrite } from 'tns-core-modules/trace';
 import { Font as FontBase, FontWeight, genericFontFamilies, parseFontFamily } from 'tns-core-modules/ui/styling/font-common';
+import { TextShadow } from './label';
 let appAssets: android.content.res.AssetManager;
 const typefaceCache = new Map<string, android.graphics.Typeface>();
 const FONTS_BASE_PATH = '/fonts/';
@@ -171,7 +181,8 @@ export class Label extends LabelBase {
 
         // This makes the html <a href...> work
         nativeView.setLinksClickable(false);
-        nativeView.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
+        nativeView.setMovementMethod(null);
+        // nativeView.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
     }
 
     public resetNativeView(): void {
@@ -182,6 +193,7 @@ export class Label extends LabelBase {
     [htmlProperty.getDefault](): string {
         return '';
     }
+
     [htmlProperty.setNative](value: string) {
         // If the data.newValue actually has a <a...> in it; we need to disable autolink mask
         // it internally disables the coloring, but then the <a> links won't work..  So to support both
@@ -192,7 +204,12 @@ export class Label extends LabelBase {
         }
         const nativeView = this.nativeViewProtected;
         nativeView.setAutoLinkMask(mask);
-        const spannableStringBuilder = createSpannableStringBuilder(android.text.Html.fromHtml(value));
+        let spannableStringBuilder: android.text.SpannableStringBuilder;
+        if (useAndroidX()) {
+            spannableStringBuilder = createSpannableStringBuilder(HtmlCompat().fromHtml(value, HtmlCompat().FROM_HTML_MODE_COMPACT));
+        } else {
+            spannableStringBuilder = createSpannableStringBuilder(android.text.Html.fromHtml(value));
+        }
         nativeView.setText(spannableStringBuilder as any);
 
         // textProperty.nativeValueChange(this, value === null || value === undefined ? '' : value.toString());
@@ -212,16 +229,55 @@ export class Label extends LabelBase {
         const nativeView = this.nativeTextViewProtected;
         switch (value) {
             case 'end':
+                nativeView.setSingleLine(true);
                 nativeView.setEllipsize(android.text.TextUtils.TruncateAt.END);
                 break;
             case 'start':
+                nativeView.setSingleLine(true);
                 nativeView.setEllipsize(android.text.TextUtils.TruncateAt.START);
                 break;
             case 'middle':
+                nativeView.setSingleLine(true);
                 nativeView.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);
                 break;
             case 'none':
+                nativeView.setSingleLine(false);
                 nativeView.setEllipsize(null);
+                break;
+        }
+    }
+
+    [whiteSpaceProperty.setNative](value: WhiteSpace) {
+        const nativeView = this.nativeTextViewProtected;
+        switch (value) {
+            case 'initial':
+            case 'normal':
+                nativeView.setSingleLine(false);
+                nativeView.setEllipsize(null);
+                break;
+            case 'nowrap':
+                nativeView.setSingleLine(true);
+                nativeView.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                break;
+        }
+    }
+    [textShadowProperty.setNative](value: TextShadow) {
+        this.nativeViewProtected.setShadowLayer(layout.toDevicePixels(value.blurRadius), layout.toDevicePixels(value.offsetX), layout.toDevicePixels(value.offsetY), value.color.android);
+    }
+
+    [verticalAlignmentProperty.setNative](value: VerticalAlignment) {
+        const horizontalGravity = this.nativeTextViewProtected.getGravity() & android.view.Gravity.HORIZONTAL_GRAVITY_MASK;
+        switch (value) {
+            case 'stretch':
+            case 'top':
+                this.nativeTextViewProtected.setGravity(android.view.Gravity.TOP | horizontalGravity);
+                break;
+            case 'middle':
+                this.nativeTextViewProtected.setGravity(android.view.Gravity.CENTER_VERTICAL | horizontalGravity);
+                break;
+
+            case 'bottom':
+                this.nativeTextViewProtected.setGravity(android.view.Gravity.BOTTOM | horizontalGravity);
                 break;
         }
     }

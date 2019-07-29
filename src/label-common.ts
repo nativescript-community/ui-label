@@ -1,8 +1,10 @@
-import { Label as HtmlViewDefinition } from './label';
-import { booleanConverter, CSSType } from 'tns-core-modules/ui/core/view';
+import { Label as HtmlViewDefinition, TextShadow } from './label';
+import { booleanConverter, Color, CSSType, dip } from 'tns-core-modules/ui/core/view';
 import { Label as TNLabel } from 'tns-core-modules/ui/label/label';
 import { Style } from 'tns-core-modules/ui/styling/style';
 import { CssProperty, Property } from 'tns-core-modules/ui/core/properties';
+import { isIOS } from 'tns-core-modules/platform';
+import { layout } from 'tns-core-modules/utils/utils';
 
 export const cssProperty = (target: Object, key: string | symbol) => {
     // property getter
@@ -51,3 +53,27 @@ export const autoFontSizeProperty = new CssProperty<Style, boolean>({
     valueConverter: booleanConverter
 });
 autoFontSizeProperty.register(Style);
+
+function parseDIPs(value: string): dip {
+    if (value.indexOf('px') !== -1) {
+        return layout.toDeviceIndependentPixels(parseFloat(value.replace('px', '').trim()));
+    } else {
+        return parseFloat(value.replace('dip', '').trim());
+    }
+}
+
+export const textShadowProperty = new CssProperty<Style, string | TextShadow>({
+    name: 'textShadow',
+    cssName: 'text-shadow',
+    affectsLayout: isIOS,
+    valueConverter: value => {
+        const params = value.split(' ');
+        return {
+            offsetX: parseDIPs(params[0]),
+            offsetY: parseDIPs(params[1]),
+            blurRadius: parseDIPs(params[2]),
+            color: new Color(params.slice(3).join(''))
+        };
+    }
+});
+textShadowProperty.register(Style);
