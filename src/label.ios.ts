@@ -2,8 +2,9 @@ import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty, textShado
 import { layout } from 'tns-core-modules/utils/utils';
 import { fontInternalProperty, Length, paddingBottomProperty, paddingLeftProperty, paddingRightProperty, paddingTopProperty, View } from 'tns-core-modules/ui/page/page';
 import { Font } from 'tns-core-modules/ui/styling/font';
-import { WhiteSpace, whiteSpaceProperty } from 'tns-core-modules/ui/text-base/text-base';
+import { TextTransform, WhiteSpace, whiteSpaceProperty } from 'tns-core-modules/ui/text-base/text-base';
 import { TextShadow } from './label';
+import { isString } from 'tns-core-modules/utils/types';
 
 export * from './label-common';
 enum FixedSize {
@@ -16,6 +17,26 @@ enum FixedSize {
 declare module 'tns-core-modules/ui/text-base/text-base' {
     interface TextBase {
         _requestLayoutOnTextChanged();
+    }
+}
+
+function NSStringFromNSAttributedString(source: NSAttributedString | string): NSString {
+    return NSString.stringWithString((source instanceof NSAttributedString && source.string) || (source as string));
+}
+export function getTransformedText(text: string, textTransform: TextTransform): string {
+    if (!text || !isString(text)) {
+        return '';
+    }
+
+    switch (textTransform) {
+        case 'uppercase':
+            return NSStringFromNSAttributedString(text).uppercaseString;
+        case 'lowercase':
+            return NSStringFromNSAttributedString(text).lowercaseString;
+        case 'capitalize':
+            return NSStringFromNSAttributedString(text).capitalizedString;
+        default:
+            return text;
     }
 }
 
@@ -111,7 +132,6 @@ export class Label extends LabelBase {
     }
 
     public createNativeView() {
-        console.log('createNativeView', this);
         const view = UITextView.new();
         if (!view.font) {
             view.font = UIFont.systemFontOfSize(12);
@@ -136,7 +156,6 @@ export class Label extends LabelBase {
         this._observer = ObserverClass.alloc();
         this._observer['_owner'] = new WeakRef(this);
         this.nativeViewProtected.addObserverForKeyPathOptionsContext(this._observer, 'contentSize', NSKeyValueObservingOptions.New, null);
-        console.log('initNativeView', this);
         this.nativeViewProtected.attributedText = this.htmlText;
         // this.htmlText = null;
         // this.needsHTMLUpdate = false;
@@ -186,8 +205,7 @@ export class Label extends LabelBase {
         }
 
         const isTextView = this.nativeTextViewProtected instanceof UITextView;
-        console.log('lineHeight', style.lineHeight, style.whiteSpace);
-        if (style.lineHeight || style.whiteSpace || style['lineBreak']) {
+        if (style.lineHeight || style.whiteSpace === 'nowrap' || (style['lineBreak'] && style['lineBreak'] !== 'none')) {
             const paragraphStyle = NSMutableParagraphStyle.alloc().init();
             paragraphStyle.minimumLineHeight = style.lineHeight;
             // make sure a possible previously set text alignment setting is not lost when line height is specified
@@ -195,28 +213,26 @@ export class Label extends LabelBase {
 
             // make sure a possible previously set line break mode is not lost when line height is specified
 
-            console.log('lineBreakMode', this.nativeTextViewProtected.textContainer.lineBreakMode);
             if (style['lineBreak']) {
                 paragraphStyle.lineBreakMode = lineBreakToLineBreakMode(style['lineBreak']);
             } else if (style.whiteSpace) {
                 paragraphStyle.lineBreakMode = whiteSpaceToLineBreakMode(style.whiteSpace);
             }
             dict.set(NSParagraphStyleAttributeName, paragraphStyle);
-        } else if (isTextView) {
+        } else if (isTextView && this.style.textAlignment !== 'initial') {
             const paragraphStyle = NSMutableParagraphStyle.alloc().init();
             paragraphStyle.alignment = this.nativeTextViewProtected.textAlignment;
             dict.set(NSParagraphStyleAttributeName, paragraphStyle);
         }
 
-        if (style.color && (dict.size > 0 || isTextView)) {
+        if (style.color && dict.size > 0) {
             dict.set(NSForegroundColorAttributeName, style.color.ios);
         }
 
         const text = this.text;
-        const string = text === undefined || text === null ? '' : text.toString();
-        const source = string;
-        console.log('setTextDecorationAndTransform', dict.size, isTextView);
-        if (dict.size > 0 || isTextView) {
+        const str = text === undefined || text === null ? '' : text.toString();
+        const source = getTransformedText(str, this.textTransform);
+        if (dict.size > 0) {
             if (isTextView) {
                 // UITextView's font seems to change inside.
                 dict.set(NSFontAttributeName, this.nativeTextViewProtected.font);
@@ -303,11 +319,9 @@ export class Label extends LabelBase {
                     fontSize = this.style.fontInternal.fontSize;
                 }
             }
-            // console.log('span', fontFamily, fontSize);
 
             htmlString = `<span style="font-family: ${fontFamily}; font-size:${fontSize};">${htmlString}</span>`;
             const nsString = NSString.stringWithString(htmlString);
-            // console.log('updateHTMLString1', htmlString);
             const nsData = nsString.dataUsingEncoding(NSUTF8StringEncoding);
             const options = {
                 [DTDefaultTextAlignment]: kCTLeftTextAlignment,
@@ -333,11 +347,8 @@ export class Label extends LabelBase {
                     }
                 }
             );
-            // console.log('updateHTMLString', this, this.html);
             // const nsString = NSString.stringWithString(htmlString);
-            // // console.log('updateHTMLString1');
             // const nsData = nsString.dataUsingEncoding(NSUnicodeStringEncoding);
-            // // console.log('creating NSAttributedString', htmlString, nsData.length, new Error().stack);
             // this.htmlText = NSAttributedString.alloc().initWithDataOptionsDocumentAttributesError(
             //     nsData,
             //     <any>{
@@ -346,7 +357,6 @@ export class Label extends LabelBase {
             //     },
             //     null
             // );
-            // console.log('updateHTMLString', 'done');
 
             // this.needsHTMLUpdate = false;
             this._requestLayoutOnTextChanged();
@@ -365,7 +375,6 @@ export class Label extends LabelBase {
     }
     [htmlProperty.setNative](value: string) {
         // this.htmlText = value;
-        // console.log('htmlProperty', this, value !== this.html, !! this.htmlText);
         // if (this.needsHTMLUpdate || !this.style.fontInternal) {
         // this.needsHTMLUpdate = true;
         if (!this.style.fontInternal || !this.applyingNativeSetters) {
@@ -378,7 +387,6 @@ export class Label extends LabelBase {
         return nativeView.font;
     }
     [fontInternalProperty.setNative](value: Font | UIFont) {
-        // console.log('fontInternalProperty', this, !!this.html, new Error().stack);
         super[fontInternalProperty.setNative](value);
         // this.needsHTMLUpdate = true;
         // font setter always called after html
@@ -466,7 +474,6 @@ export class Label extends LabelBase {
 
     [lineBreakProperty.setNative](value: string) {
         const nativeView = this.nativeTextViewProtected;
-        console.log('lineBreakProperty', value);
         nativeView.textContainer.lineBreakMode = lineBreakToLineBreakMode(value);
     }
     [textShadowProperty.setNative](value: TextShadow) {
@@ -479,7 +486,6 @@ export class Label extends LabelBase {
     }
     [whiteSpaceProperty.setNative](value: WhiteSpace) {
         const nativeView = this.nativeTextViewProtected;
-        console.log('whiteSpaceProperty', value);
 
         nativeView.textContainer.lineBreakMode = whiteSpaceToLineBreakMode(value);
     }
