@@ -27,6 +27,7 @@ function lineBreakToLineBreakMode(value: string) {
             return NSLineBreakMode.ByTruncatingHead;
         case 'middle':
             return NSLineBreakMode.ByTruncatingMiddle;
+        default:
         case 'none':
             return NSLineBreakMode.ByWordWrapping;
     }
@@ -36,6 +37,7 @@ function whiteSpaceToLineBreakMode(value: WhiteSpace) {
         case 'initial':
         case 'normal':
             return NSLineBreakMode.ByWordWrapping;
+        default:
         case 'nowrap':
             return NSLineBreakMode.ByTruncatingTail;
     }
