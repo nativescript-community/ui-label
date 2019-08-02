@@ -26,9 +26,13 @@ export declare class Label extends TNLabel {
      * Gets or sets html string for the HtmlView.
      */
     html: string;
+
+    verticalTextAlignment: VerticalTextAlignment;
 }
+export type VerticalTextAlignment = 'initial' | 'top' | 'middle' | 'bottom';
 
 export declare const htmlProperty: Property<Label, string>;
+export declare const verticalTextAlignmentProperty: Property<Label, VerticalTextAlignment>;
 
 export interface TextShadow {
     offsetX: dip;
