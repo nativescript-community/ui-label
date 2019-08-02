@@ -5,7 +5,6 @@ import { Style } from 'tns-core-modules/ui/styling/style';
 import { CssProperty, InheritedCssProperty, makeParser, makeValidator, Property } from 'tns-core-modules/ui/core/properties';
 import { isIOS } from 'tns-core-modules/platform';
 import { layout } from 'tns-core-modules/utils/utils';
-// import { CssProperty, InheritedCssProperty, makeParser, makeValidator, Property } from "../core/properties";
 
 export const cssProperty = (target: Object, key: string | symbol) => {
     // property getter
@@ -30,6 +29,7 @@ export const cssProperty = (target: Object, key: string | symbol) => {
 export class LabelBase extends TNLabel implements HtmlViewDefinition {
     @cssProperty maxLines: string | number;
     @cssProperty autoFontSize: boolean;
+    @cssProperty verticalTextAlignmentgnment: VerticalTextAlignment;
     public html: string;
 }
 
@@ -82,10 +82,10 @@ textShadowProperty.register(Style);
 export type VerticalTextAlignment = 'initial' | 'top' | 'middle' | 'bottom';
 
 const textAlignmentConverter = makeParser<VerticalTextAlignment>(makeValidator<VerticalTextAlignment>('initial', 'top', 'middle', 'bottom'));
-export const textAlignmentProperty = new InheritedCssProperty<Style, VerticalTextAlignment>({
+export const verticalTextAlignmentProperty = new InheritedCssProperty<Style, VerticalTextAlignment>({
     name: 'verticalTextAlignment',
     cssName: 'vertical-text-align',
     defaultValue: 'initial',
     valueConverter: textAlignmentConverter
 });
-textAlignmentProperty.register(Style);
+verticalTextAlignmentProperty.register(Style);
