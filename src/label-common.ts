@@ -29,7 +29,7 @@ export const cssProperty = (target: Object, key: string | symbol) => {
 export class LabelBase extends TNLabel implements HtmlViewDefinition {
     @cssProperty maxLines: string | number;
     @cssProperty autoFontSize: boolean;
-    @cssProperty verticalTextAlignmentgnment: VerticalTextAlignment;
+    @cssProperty verticalTextAlignment: VerticalTextAlignment;
     public html: string;
 }
 
