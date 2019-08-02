@@ -74,7 +74,7 @@ class ObserverClass extends NSObject {
                 const inset = owner.nativeViewProtected.textContainerInset;
                 const top = layout.toDeviceIndependentPixels(owner.effectivePaddingTop + owner.effectiveBorderTopWidth);
 
-                switch (owner.verticalTextAlignmentgnment) {
+                switch (owner.verticalTextAlignment) {
                     case 'initial': // not supported
                     case 'top':
                         owner.nativeViewProtected.textContainerInset = {
