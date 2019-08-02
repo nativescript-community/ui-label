@@ -2,9 +2,10 @@ import { Label as HtmlViewDefinition, TextShadow } from './label';
 import { booleanConverter, Color, CSSType, dip } from 'tns-core-modules/ui/core/view';
 import { Label as TNLabel } from 'tns-core-modules/ui/label/label';
 import { Style } from 'tns-core-modules/ui/styling/style';
-import { CssProperty, Property } from 'tns-core-modules/ui/core/properties';
+import { CssProperty, InheritedCssProperty, makeParser, makeValidator, Property } from 'tns-core-modules/ui/core/properties';
 import { isIOS } from 'tns-core-modules/platform';
 import { layout } from 'tns-core-modules/utils/utils';
+// import { CssProperty, InheritedCssProperty, makeParser, makeValidator, Property } from "../core/properties";
 
 export const cssProperty = (target: Object, key: string | symbol) => {
     // property getter
@@ -77,3 +78,14 @@ export const textShadowProperty = new CssProperty<Style, string | TextShadow>({
     }
 });
 textShadowProperty.register(Style);
+
+export type VerticalTextAlignment = 'initial' | 'top' | 'middle' | 'bottom';
+
+const textAlignmentConverter = makeParser<VerticalTextAlignment>(makeValidator<VerticalTextAlignment>('initial', 'top', 'middle', 'bottom'));
+export const textAlignmentProperty = new InheritedCssProperty<Style, VerticalTextAlignment>({
+    name: 'verticalTextAlignment',
+    cssName: 'vertical-text-align',
+    defaultValue: 'initial',
+    valueConverter: textAlignmentConverter
+});
+textAlignmentProperty.register(Style);

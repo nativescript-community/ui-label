@@ -1,4 +1,4 @@
-﻿import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty, textShadowProperty } from './label-common';
+﻿import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty, textShadowProperty, VerticalTextAlignment, verticalTextAlignmentProperty } from './label-common';
 // import { backgroundColorProperty } from 'tns-core-modules/ui/page/page';
 import { TextTransform, VerticalAlignment, verticalAlignmentProperty, WhiteSpace, whiteSpaceProperty } from 'tns-core-modules/ui/text-base/text-base';
 import { Font } from 'tns-core-modules/ui/styling/font';
@@ -265,10 +265,10 @@ export class Label extends LabelBase {
         this.nativeViewProtected.setShadowLayer(layout.toDevicePixels(value.blurRadius), layout.toDevicePixels(value.offsetX), layout.toDevicePixels(value.offsetY), value.color.android);
     }
 
-    [verticalAlignmentProperty.setNative](value: VerticalAlignment) {
+    [verticalTextAlignmentProperty.setNative](value: VerticalTextAlignment) {
         const horizontalGravity = this.nativeTextViewProtected.getGravity() & android.view.Gravity.HORIZONTAL_GRAVITY_MASK;
         switch (value) {
-            case 'stretch':
+            case 'initial':
             case 'top':
                 this.nativeTextViewProtected.setGravity(android.view.Gravity.TOP | horizontalGravity);
                 break;
