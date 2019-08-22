@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.11](https://github.com/Akylas/nativescript-label/compare/v1.0.10...v1.0.11) (2019-08-22)
+
+
+### Bug Fixes
+
+* ios border fix ([3e13d95](https://github.com/Akylas/nativescript-label/commit/3e13d95))
+
+
+
+
+
 ## [1.0.10](https://github.com/Akylas/nativescript-label/compare/v1.0.9...v1.0.10) (2019-08-02)
 
 
