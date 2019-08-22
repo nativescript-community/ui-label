@@ -2,7 +2,15 @@ import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty, textShado
 import { layout } from 'tns-core-modules/utils/utils';
 import { fontInternalProperty, Length, paddingBottomProperty, paddingLeftProperty, paddingRightProperty, paddingTopProperty, View } from 'tns-core-modules/ui/page/page';
 import { Font } from 'tns-core-modules/ui/styling/font';
-import { TextTransform, WhiteSpace, whiteSpaceProperty } from 'tns-core-modules/ui/text-base/text-base';
+import {
+    borderBottomWidthProperty,
+    borderLeftWidthProperty,
+    borderRightWidthProperty,
+    borderTopWidthProperty,
+    TextTransform,
+    WhiteSpace,
+    whiteSpaceProperty
+} from 'tns-core-modules/ui/text-base/text-base';
 import { TextShadow } from './label';
 import { isString } from 'tns-core-modules/utils/types';
 
@@ -461,6 +469,55 @@ export class Label extends LabelBase {
             right: inset.right
         };
     }
+
+    [borderTopWidthProperty.getDefault](): Length {
+        return {
+            value: this.nativeTextViewProtected.textContainerInset.top,
+            unit: 'px'
+        };
+    }
+    [borderTopWidthProperty.setNative](value: Length) {
+        const inset = this.nativeTextViewProtected.textContainerInset;
+        const top = layout.toDeviceIndependentPixels(this.effectivePaddingTop + this.effectiveBorderTopWidth);
+        this.nativeTextViewProtected.textContainerInset = { top, left: inset.left, bottom: inset.bottom, right: inset.right };
+    }
+
+    [borderRightWidthProperty.getDefault](): Length {
+        return {
+            value: this.nativeTextViewProtected.textContainerInset.right,
+            unit: 'px'
+        };
+    }
+    [borderRightWidthProperty.setNative](value: Length) {
+        const inset = this.nativeTextViewProtected.textContainerInset;
+        const right = layout.toDeviceIndependentPixels(this.effectivePaddingRight + this.effectiveBorderRightWidth);
+        this.nativeTextViewProtected.textContainerInset = { top: inset.top, left: inset.left, bottom: inset.bottom, right };
+    }
+
+    [borderBottomWidthProperty.getDefault](): Length {
+        return {
+            value: this.nativeTextViewProtected.textContainerInset.bottom,
+            unit: 'px'
+        };
+    }
+    [borderBottomWidthProperty.setNative](value: Length) {
+        const inset = this.nativeTextViewProtected.textContainerInset;
+        const bottom = layout.toDeviceIndependentPixels(this.effectivePaddingBottom + this.effectiveBorderBottomWidth);
+        this.nativeTextViewProtected.textContainerInset = { top: inset.top, left: inset.left, bottom, right: inset.right };
+    }
+
+    [borderLeftWidthProperty.getDefault](): Length {
+        return {
+            value: this.nativeTextViewProtected.textContainerInset.left,
+            unit: 'px'
+        };
+    }
+    [borderLeftWidthProperty.setNative](value: Length) {
+        const inset = this.nativeTextViewProtected.textContainerInset;
+        const left = layout.toDeviceIndependentPixels(this.effectivePaddingLeft + this.effectiveBorderLeftWidth);
+        this.nativeTextViewProtected.textContainerInset = { top: inset.top, left, bottom: inset.bottom, right: inset.right };
+    }
+
     [maxLinesProperty.getDefault](): number | string {
         return 'none';
     }
