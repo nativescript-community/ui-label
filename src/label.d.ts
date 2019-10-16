@@ -15,12 +15,12 @@ export declare class Label extends TNLabel {
     /**
      * Gets the native [android widget](http://developer.android.com/reference/android/widget/TextView.html) that represents the user interface for this component. Valid only when running on Android OS.
      */
-    android?: any /* android.widget.TextView */;
+    android: any /* android.widget.TextView */;
 
     /**
      * Gets the native [UITextView](https://developer.apple.com/documentation/uikit/uitextview) that represents the user interface for this component. Valid only when running on iOS.
      */
-    ios?: any /* UITextView */;
+    ios: any /* UITextView */;
 
     /**
      * Gets or sets html string for the HtmlView.

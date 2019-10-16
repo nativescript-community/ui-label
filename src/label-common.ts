@@ -1,10 +1,10 @@
-import { Label as LabelViewDefinition, TextShadow } from './label';
+import { isIOS } from 'tns-core-modules/platform';
+import { CssProperty, InheritedCssProperty, makeParser, makeValidator, Property } from 'tns-core-modules/ui/core/properties';
 import { booleanConverter, Color, CSSType, dip } from 'tns-core-modules/ui/core/view';
 import { Label as TNLabel } from 'tns-core-modules/ui/label';
 import { Style } from 'tns-core-modules/ui/styling/style';
-import { CssProperty, InheritedCssProperty, makeParser, makeValidator, Property } from 'tns-core-modules/ui/core/properties';
-import { isIOS } from 'tns-core-modules/platform';
 import { layout } from 'tns-core-modules/utils/utils';
+import { Label as LabelViewDefinition, TextShadow } from './label';
 
 export const cssProperty = (target: Object, key: string | symbol) => {
     // property getter
