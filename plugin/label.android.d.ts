@@ -1,5 +1,5 @@
-import { LabelBase } from './label-common';
 import { TextTransform } from 'tns-core-modules/ui/text-base/text-base';
+import { LabelBase } from './label-common';
 export * from './label-common';
 export declare class Label extends LabelBase {
     nativeViewProtected: android.widget.TextView;
