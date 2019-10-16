@@ -1,6 +1,6 @@
-import { Label as HtmlViewDefinition, TextShadow } from './label';
+import { Label as LabelViewDefinition, TextShadow } from './label';
 import { booleanConverter, Color, CSSType, dip } from 'tns-core-modules/ui/core/view';
-import { Label as TNLabel } from 'tns-core-modules/ui/label/label';
+import { Label as TNLabel } from 'tns-core-modules/ui/label';
 import { Style } from 'tns-core-modules/ui/styling/style';
 import { CssProperty, InheritedCssProperty, makeParser, makeValidator, Property } from 'tns-core-modules/ui/core/properties';
 import { isIOS } from 'tns-core-modules/platform';
@@ -9,7 +9,7 @@ import { layout } from 'tns-core-modules/utils/utils';
 export const cssProperty = (target: Object, key: string | symbol) => {
     // property getter
     const getter = function() {
-        return this.style.key;
+        return this.style[key];
     };
 
     // property setter
@@ -26,7 +26,7 @@ export const cssProperty = (target: Object, key: string | symbol) => {
 };
 
 @CSSType('HTMLLabel')
-export class LabelBase extends TNLabel implements HtmlViewDefinition {
+export class LabelBase extends TNLabel implements LabelViewDefinition {
     @cssProperty maxLines: string | number;
     @cssProperty autoFontSize: boolean;
     @cssProperty verticalTextAlignment: VerticalTextAlignment;
@@ -79,9 +79,9 @@ export const textShadowProperty = new CssProperty<Style, string | TextShadow>({
 });
 textShadowProperty.register(Style);
 
-export type VerticalTextAlignment = 'initial' | 'top' | 'middle' | 'bottom';
+export type VerticalTextAlignment = 'initial' | 'top' | 'middle' | 'bottom' | 'center';
 
-const textAlignmentConverter = makeParser<VerticalTextAlignment>(makeValidator<VerticalTextAlignment>('initial', 'top', 'middle', 'bottom'));
+const textAlignmentConverter = makeParser<VerticalTextAlignment>(makeValidator<VerticalTextAlignment>('initial', 'top', 'middle', 'bottom', 'center'));
 export const verticalTextAlignmentProperty = new InheritedCssProperty<Style, VerticalTextAlignment>({
     name: 'verticalTextAlignment',
     cssName: 'vertical-text-align',

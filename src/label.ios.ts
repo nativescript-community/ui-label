@@ -11,7 +11,7 @@ import {
     WhiteSpace,
     whiteSpaceProperty
 } from 'tns-core-modules/ui/text-base/text-base';
-import { TextShadow } from './label';
+import { TextShadow, verticalTextAlignmentProperty, VerticalTextAlignment } from './label';
 import { isString } from 'tns-core-modules/utils/types';
 
 export * from './label-common';
@@ -79,48 +79,7 @@ class ObserverClass extends NSObject {
         if (path === 'contentSize') {
             const owner = this._owner && this._owner.get();
             if (owner) {
-                const inset = owner.nativeViewProtected.textContainerInset;
-                const top = layout.toDeviceIndependentPixels(owner.effectivePaddingTop + owner.effectiveBorderTopWidth);
-
-                switch (owner.verticalTextAlignment) {
-                    case 'initial': // not supported
-                    case 'top':
-                        owner.nativeViewProtected.textContainerInset = {
-                            top,
-                            left: inset.left,
-                            bottom: inset.bottom,
-                            right: inset.right
-                        };
-                        break;
-
-                    case 'middle': {
-                        const height = tv.sizeThatFits(CGSizeMake(tv.bounds.size.width, 10000)).height;
-                        let topCorrect = (tv.bounds.size.height - height * tv.zoomScale) / 2.0;
-                        topCorrect = topCorrect < 0.0 ? 0.0 : topCorrect;
-                        // tv.contentOffset = CGPointMake(0, -topCorrect);
-                        owner.nativeViewProtected.textContainerInset = {
-                            top: top + topCorrect,
-                            left: inset.left,
-                            bottom: inset.bottom,
-                            right: inset.right
-                        };
-                        break;
-                    }
-
-                    case 'bottom': {
-                        const height = tv.sizeThatFits(CGSizeMake(tv.bounds.size.width, 10000)).height;
-                        let bottomCorrect = tv.bounds.size.height - height * tv.zoomScale;
-                        bottomCorrect = bottomCorrect < 0.0 ? 0.0 : bottomCorrect;
-                        // tv.contentOffset = CGPointMake(0, -bottomCorrect);
-                        owner.nativeViewProtected.textContainerInset = {
-                            top: top + bottomCorrect,
-                            left: inset.left,
-                            bottom: inset.bottom,
-                            right: inset.right
-                        };
-                        break;
-                    }
-                }
+                owner.updateVerticalAlignment();
             }
         }
     }
@@ -161,7 +120,8 @@ export class Label extends LabelBase {
 
     public initNativeView() {
         super.initNativeView();
-        this._observer = ObserverClass.alloc();
+        console.log('initNativeView');
+        this._observer = ObserverClass.alloc().init();
         this._observer['_owner'] = new WeakRef(this);
         this.nativeViewProtected.addObserverForKeyPathOptionsContext(this._observer, 'contentSize', NSKeyValueObservingOptions.New, null);
         this.nativeViewProtected.attributedText = this.htmlText;
@@ -177,6 +137,52 @@ export class Label extends LabelBase {
         if (this._observer) {
             this.nativeViewProtected.removeObserverForKeyPath(this._observer, 'contentSize');
             this._observer = null;
+        }
+    }
+
+    updateVerticalAlignment() {
+        const tv = this.nativeTextViewProtected;
+        const inset = this.nativeViewProtected.textContainerInset;
+        const top = layout.toDeviceIndependentPixels(this.effectivePaddingTop + this.effectiveBorderTopWidth);
+        switch (this.verticalTextAlignment) {
+            case 'initial': // not supported
+            case 'top':
+                this.nativeViewProtected.textContainerInset = {
+                    top,
+                    left: inset.left,
+                    bottom: inset.bottom,
+                    right: inset.right
+                };
+                break;
+
+            case 'middle':
+            case 'center': {
+                const height = tv.sizeThatFits(CGSizeMake(tv.bounds.size.width, 10000)).height;
+                let topCorrect = (tv.bounds.size.height - height * tv.zoomScale) / 2.0;
+                topCorrect = topCorrect < 0.0 ? 0.0 : topCorrect;
+                // tv.contentOffset = CGPointMake(0, -topCorrect);
+                this.nativeViewProtected.textContainerInset = {
+                    top: top + topCorrect,
+                    left: inset.left,
+                    bottom: inset.bottom,
+                    right: inset.right
+                };
+                break;
+            }
+
+            case 'bottom': {
+                const height = tv.sizeThatFits(CGSizeMake(tv.bounds.size.width, 10000)).height;
+                let bottomCorrect = tv.bounds.size.height - height * tv.zoomScale;
+                bottomCorrect = bottomCorrect < 0.0 ? 0.0 : bottomCorrect;
+                // tv.contentOffset = CGPointMake(0, -bottomCorrect);
+                this.nativeViewProtected.textContainerInset = {
+                    top: top + bottomCorrect,
+                    left: inset.left,
+                    bottom: inset.bottom,
+                    right: inset.right
+                };
+                break;
+            }
         }
     }
 
@@ -556,4 +562,7 @@ export class Label extends LabelBase {
     //         this.nativeViewProtected.textContainer.maximumNumberOfLines = value as number;
     //     }
     // }
+    [verticalTextAlignmentProperty.setNative](value: VerticalTextAlignment) {
+        this.updateVerticalAlignment();
+    }
 }
