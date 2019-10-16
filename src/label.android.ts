@@ -1,8 +1,13 @@
-﻿import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty, textShadowProperty, VerticalTextAlignment, verticalTextAlignmentProperty } from './label-common';
-// import { backgroundColorProperty } from 'tns-core-modules/ui/page/page';
-import { TextTransform, VerticalAlignment, verticalAlignmentProperty, WhiteSpace, whiteSpaceProperty } from 'tns-core-modules/ui/text-base/text-base';
+﻿import * as application from 'tns-core-modules/application';
+import * as fs from 'tns-core-modules/file-system';
+import { categories as traceCategories, isEnabled as traceEnabled, messageType as traceMessageType, write as traceWrite } from 'tns-core-modules/trace';
 import { Font } from 'tns-core-modules/ui/styling/font';
+import { FontWeight, genericFontFamilies, parseFontFamily } from 'tns-core-modules/ui/styling/font-common';
+// import { backgroundColorProperty } from 'tns-core-modules/ui/page/page';
+import { TextTransform, WhiteSpace, whiteSpaceProperty } from 'tns-core-modules/ui/text-base/text-base';
 import { layout } from 'tns-core-modules/utils/utils';
+import { TextShadow } from './label';
+import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty, textShadowProperty, VerticalTextAlignment, verticalTextAlignmentProperty } from './label-common';
 
 Font.prototype.getAndroidTypeface = function() {
     if (!this._typeface) {
@@ -35,11 +40,6 @@ function ContentPackageName() {
     }
     return _ContentPackageName;
 }
-import * as application from 'tns-core-modules/application';
-import * as fs from 'tns-core-modules/file-system';
-import { categories as traceCategories, isEnabled as traceEnabled, messageType as traceMessageType, write as traceWrite } from 'tns-core-modules/trace';
-import { Font as FontBase, FontWeight, genericFontFamilies, parseFontFamily } from 'tns-core-modules/ui/styling/font-common';
-import { TextShadow } from './label';
 let appAssets: android.content.res.AssetManager;
 const typefaceCache = new Map<string, android.graphics.Typeface>();
 const FONTS_BASE_PATH = '/fonts/';

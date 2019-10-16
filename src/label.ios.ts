@@ -1,18 +1,10 @@
-import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty, textShadowProperty } from './label-common';
-import { layout } from 'tns-core-modules/utils/utils';
 import { fontInternalProperty, Length, paddingBottomProperty, paddingLeftProperty, paddingRightProperty, paddingTopProperty, View } from 'tns-core-modules/ui/page/page';
 import { Font } from 'tns-core-modules/ui/styling/font';
-import {
-    borderBottomWidthProperty,
-    borderLeftWidthProperty,
-    borderRightWidthProperty,
-    borderTopWidthProperty,
-    TextTransform,
-    WhiteSpace,
-    whiteSpaceProperty
-} from 'tns-core-modules/ui/text-base/text-base';
-import { TextShadow, verticalTextAlignmentProperty, VerticalTextAlignment } from './label';
+import { borderBottomWidthProperty, borderLeftWidthProperty, borderRightWidthProperty, borderTopWidthProperty, TextTransform, WhiteSpace, whiteSpaceProperty } from 'tns-core-modules/ui/text-base/text-base';
 import { isString } from 'tns-core-modules/utils/types';
+import { layout } from 'tns-core-modules/utils/utils';
+import { TextShadow, VerticalTextAlignment, verticalTextAlignmentProperty } from './label';
+import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty, textShadowProperty } from './label-common';
 
 export * from './label-common';
 enum FixedSize {
