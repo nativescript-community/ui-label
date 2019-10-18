@@ -112,7 +112,6 @@ export class Label extends LabelBase {
 
     public initNativeView() {
         super.initNativeView();
-        console.log('initNativeView');
         this._observer = ObserverClass.alloc().init();
         this._observer['_owner'] = new WeakRef(this);
         this.nativeViewProtected.addObserverForKeyPathOptionsContext(this._observer, 'contentSize', NSKeyValueObservingOptions.New, null);
