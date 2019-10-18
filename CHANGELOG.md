@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.14](https://github.com/Akylas/nativescript-label/compare/v1.0.13...v1.0.14) (2019-10-18)
+
+
+### Bug Fixes
+
+* remove log ([aea16e2](https://github.com/Akylas/nativescript-label/commit/aea16e297437804cce45008f08d60680af380870))
+
+
+
+
+
 ## [1.0.13](https://github.com/Akylas/nativescript-label/compare/v1.0.12...v1.0.13) (2019-10-16)
 
 
