@@ -4,8 +4,9 @@ import { categories as traceCategories, isEnabled as traceEnabled, messageType a
 import { Font } from 'tns-core-modules/ui/styling/font';
 import { FontWeight, genericFontFamilies, parseFontFamily } from 'tns-core-modules/ui/styling/font-common';
 // import { backgroundColorProperty } from 'tns-core-modules/ui/page/page';
-import { TextTransform, WhiteSpace, whiteSpaceProperty } from 'tns-core-modules/ui/text-base/text-base';
+import { TextTransform, WhiteSpace, whiteSpaceProperty, FormattedString, formattedTextProperty } from 'tns-core-modules/ui/text-base/text-base';
 import { layout } from 'tns-core-modules/utils/utils';
+import { profile } from 'tns-core-modules/profiling';
 import { TextShadow } from './label';
 import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty, textShadowProperty, VerticalTextAlignment, verticalTextAlignmentProperty } from './label-common';
 
@@ -168,11 +169,17 @@ function getFontWeightSuffix(fontWeight: FontWeight): string {
     }
 }
 
+let TextView: typeof android.widget.TextView;
+
 export class Label extends LabelBase {
     nativeViewProtected: android.widget.TextView;
 
+    @profile
     public createNativeView() {
-        return new android.widget.TextView(this._context);
+        if (!TextView) {
+            TextView = android.widget.TextView;
+        }
+        return new TextView(this._context);
     }
 
     public initNativeView(): void {
@@ -194,6 +201,11 @@ export class Label extends LabelBase {
         return '';
     }
 
+    @profile
+    [formattedTextProperty.setNative](value: FormattedString) {
+        super[formattedTextProperty.setNative](value);
+    }
+    @profile
     [htmlProperty.setNative](value: string) {
         // If the data.newValue actually has a <a...> in it; we need to disable autolink mask
         // it internally disables the coloring, but then the <a> links won't work..  So to support both
@@ -312,7 +324,7 @@ export function getTransformedText(text: string, textTransform: TextTransform): 
     }
 }
 
-function createSpannableStringBuilder(spannedString: android.text.Spanned): android.text.SpannableStringBuilder {
+const createSpannableStringBuilder = profile('createSpannableStringBuilder', function createSpannableStringBuilder(spannedString: android.text.Spanned): android.text.SpannableStringBuilder {
     if (!spannedString) {
         return null;
     }
@@ -349,7 +361,7 @@ function createSpannableStringBuilder(spannedString: android.text.Spanned): andr
     // }
 
     return builder;
-}
+})
 
 // function setSpanModifiers(ssb: android.text.SpannableStringBuilder, span: Span, start: number, end: number): void {
 //     const spanStyle = span.style;
