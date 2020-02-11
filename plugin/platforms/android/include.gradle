@@ -1,0 +1,9 @@
+
+
+
+dependencies {
+	def androidxVersion =  project.hasProperty("androidxVersion") ? project.androidxVersion : "1.1.0"
+
+	compile "androidx.core:core:$androidxVersion"
+    compile 'com.lsjwzh.widget:FastTextView:1.2.20'
+}

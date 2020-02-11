@@ -66,3 +66,4 @@ plugin/*.d.ts
 /plugin/typings
 /plugin/README.md
 /pnpm-lock.yaml
+*.aar
