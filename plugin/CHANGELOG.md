@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.16](https://github.com/Akylas/nativescript-label/compare/v1.0.15...v1.0.16) (2020-02-11)
+
+
+### Bug Fixes
+
+* **android:** starting android label rewrite ([36badf8](https://github.com/Akylas/nativescript-label/commit/36badf821b4d0f4cbde45c85e5d18ab5bc588d72))
+
+
+
+
+
 ## [1.0.15](https://github.com/Akylas/nativescript-label/compare/v1.0.14...v1.0.15) (2020-02-07)
 
 **Note:** Version bump only for package nativescript-htmllabel
