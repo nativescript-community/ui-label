@@ -6,6 +6,9 @@
         "id": "org.nativescript.demovuehtmllabel",
         "tns-ios": {
             "version": "6.2.0-rc-2019-10-16-131038-01"
+        },
+        "tns-android": {
+            "version": "6.3.1"
         }
     },
     "dependencies": {

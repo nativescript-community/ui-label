@@ -67,3 +67,4 @@ plugin/*.d.ts
 /plugin/README.md
 /pnpm-lock.yaml
 *.aar
+/demo-vue/platforms
