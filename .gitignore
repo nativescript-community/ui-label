@@ -60,7 +60,7 @@ demo-ng/**/*.css
 !webpack.*.js
 report
 *.log
-platforms
+/platforms
 /package-lock.json
 plugin/*.d.ts
 /plugin/typings
