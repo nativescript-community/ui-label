@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.17](https://github.com/Akylas/nativescript-label/compare/v1.0.16...v1.0.17) (2020-02-12)
+
+
+### Bug Fixes
+
+* **android:** full rewrite to improve perfs ([45663b8](https://github.com/Akylas/nativescript-label/commit/45663b81ea7f4e112d2ccddf2607e3cea04dd19b))
+
+
+
+
+
 ## [1.0.16](https://github.com/Akylas/nativescript-label/compare/v1.0.15...v1.0.16) (2020-02-11)
 
 
