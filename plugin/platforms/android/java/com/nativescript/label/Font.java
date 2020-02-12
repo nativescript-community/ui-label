@@ -4,21 +4,25 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.TypefaceSpan;
 import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 
 import androidx.core.text.HtmlCompat;
 
 public class Font {
     static AssetManager appAssets;
     static HashMap<String, Typeface> typefaceCache = new HashMap();
+    static HashMap<String, Typeface> typefaceCreatedCache = new HashMap();
 
     static final String TAG = "Font";
 
@@ -93,25 +97,25 @@ public class Font {
             return "";
         }
         switch (fontWeight) {
-        case FontWeight.THIN:
-            return Build.VERSION.SDK_INT >= 16 ? "-thin" : "";
-        case FontWeight.EXTRA_LIGHT:
-        case FontWeight.LIGHT:
-            return Build.VERSION.SDK_INT >= 16 ? "-light" : "";
-        case FontWeight.NORMAL:
-        case "400":
-            return "";
-        case FontWeight.MEDIUM:
-        case FontWeight.SEMI_BOLD:
-            return Build.VERSION.SDK_INT >= 21 ? "-medium" : "";
-        case FontWeight.BOLD:
-        case "700":
-        case FontWeight.EXTRA_BOLD:
-            return "";
-        case FontWeight.BLACK:
-            return Build.VERSION.SDK_INT >= 21 ? "-black" : "";
-        default:
-            throw new Error("Invalid font weight:" + fontWeight);
+            case FontWeight.THIN:
+                return Build.VERSION.SDK_INT >= 16 ? "-thin" : "";
+            case FontWeight.EXTRA_LIGHT:
+            case FontWeight.LIGHT:
+                return Build.VERSION.SDK_INT >= 16 ? "-light" : "";
+            case FontWeight.NORMAL:
+            case "400":
+                return "";
+            case FontWeight.MEDIUM:
+            case FontWeight.SEMI_BOLD:
+                return Build.VERSION.SDK_INT >= 21 ? "-medium" : "";
+            case FontWeight.BOLD:
+            case "700":
+            case FontWeight.EXTRA_BOLD:
+                return "";
+            case FontWeight.BLACK:
+                return Build.VERSION.SDK_INT >= 21 ? "-black" : "";
+            default:
+                throw new Error("Invalid font weight:" + fontWeight);
         }
     }
 
@@ -120,20 +124,26 @@ public class Font {
         if (value == null) {
             return result;
         }
-
-        String[] split = value.split(",");
-        for (int i = 0; i < split.length; i++) {
-            String str = split[i].trim().replaceAll("['\"]+", "");
-            if (str != null) {
-                result.add(str);
-            }
+        if (!value.contains(",")) {
+            result.add(value);
+            return result;
         }
 
+        // not removing the "['\"]+"  and not trimming make the parseFontFamily much faster!
+        // should be done in span/text properties
+        StringTokenizer st = new StringTokenizer(value, ",");
+        while(st.hasMoreTokens()) {
+            result.add(st.nextToken());
+        }
         return result;
     }
 
     public static Typeface createTypeface(Context context, String fontFolder, String fontFamily, String fontWeight,
-            boolean isBold, boolean isItalic) {
+                                          boolean isBold, boolean isItalic) {
+        final String cacheKey = fontFamily + fontWeight + isBold + isItalic;
+        if (typefaceCreatedCache.containsKey(cacheKey)) {
+            return typefaceCreatedCache.get(cacheKey);
+        }
         int fontStyle = 0;
         if (isBold) {
             fontStyle |= Typeface.BOLD;
@@ -147,25 +157,26 @@ public class Font {
         Typeface result = null;
         for (int i = 0; i < fonts.size(); i++) {
             switch (fonts.get(i).toLowerCase()) {
-            case genericFontFamilies.serif:
-                result = Typeface.create("serif" + getFontWeightSuffix(fontWeight), fontStyle);
-                break;
+                case genericFontFamilies.serif:
+                    result = Typeface.create("serif" + getFontWeightSuffix(fontWeight), fontStyle);
+                    break;
 
-            case genericFontFamilies.sansSerif:
-            case genericFontFamilies.system:
-                result = Typeface.create("sans-serif" + getFontWeightSuffix(fontWeight), fontStyle);
-                break;
+                case genericFontFamilies.sansSerif:
+                case genericFontFamilies.system:
+                    result = Typeface.create("sans-serif" + getFontWeightSuffix(fontWeight), fontStyle);
+                    break;
 
-            case genericFontFamilies.monospace:
-                result = Typeface.create("monospace" + getFontWeightSuffix(fontWeight), fontStyle);
-                break;
+                case genericFontFamilies.monospace:
+                    result = Typeface.create("monospace" + getFontWeightSuffix(fontWeight), fontStyle);
+                    break;
 
-            default:
-                result = loadFontFromFile(context, fontFolder, fonts.get(i));
-                if (result != null && fontStyle != 0) {
-                    result = Typeface.create(result, fontStyle);
-                }
-                break;
+                default:
+                    result = loadFontFromFile(context, fontFolder, fonts.get(i));
+
+                    if (result != null && fontStyle != 0) {
+                        result = Typeface.create(result, fontStyle);
+                    }
+                    break;
             }
 
             if (result != null) {
@@ -177,12 +188,12 @@ public class Font {
         if (result == null) {
             result = Typeface.create("sans-serif" + getFontWeightSuffix(fontWeight), fontStyle);
         }
-
+        typefaceCreatedCache.put(cacheKey, result);
         return result;
     }
 
     public static SpannableStringBuilder stringBuilderFromHtmlString(Context context, String fontFolder,
-            String htmlString) {
+                                                                     String htmlString) {
         if (htmlString == null) {
             return null;
         }
@@ -200,10 +211,6 @@ public class Font {
             if (split.length > 1) {
                 style = split[1];
             }
-            // String style = fontFamily.split("-")[1] || builder.removeSpan(span);
-            // const
-            // font = new Font(fontFamily, 0, style == = 'italic' ? 'italic' : 'normal',
-            // style == = 'bold' ? 'bold' : 'normal');
             Typeface typeface = createTypeface(context, fontFolder, fontFamily, style == "bold" ? "bold" : "normal",
                     style == "bold", style == "italic");
 
@@ -216,25 +223,113 @@ public class Font {
             }
         }
 
-        // const ssb = new android.text.SpannableStringBuilder();
-        // for (let i = 0, spanStart = 0, spanLength = 0, length =
-        // formattedString.spans.length; i < length; i++) {
-        // const span = formattedString.spans.getItem(i);
-        // const text = span.text;
-        // const textTransform = (<TextBase>formattedString.parent).textTransform;
-        // let spanText = (text === null || text === undefined) ? "" : text.toString();
-        // if (textTransform && textTransform !== "none") {
-        // spanText = getTransformedText(spanText, textTransform);
-        // }
-
-        // spanLength = spanText.length;
-        // if (spanLength > 0) {
-        // ssb.insert(spanStart, spanText);
-        // setSpanModifiers(ssb, span, spanStart, spanStart + spanLength);
-        // spanStart += spanLength;
-        // }
-        // }
-
         return builder;
+    }
+    static char SpanSeparator = (char)0x1F;
+    static char PropertySeparator = (char)0x1E;
+    static ArrayList<ArrayList<String>> parseFormattedString(String formattedString) {
+        ArrayList<ArrayList<String>> result = new ArrayList();
+
+        final int len = formattedString.length();
+        String buffer = "";
+        ArrayList<String> spanProps = new ArrayList();
+        for (int i = 0; i < len; i++) {
+            char c = formattedString.charAt(i);
+            if (c == PropertySeparator) {
+                spanProps.add(buffer);
+                buffer = "";
+            } else if (c == SpanSeparator) {
+                spanProps.add(buffer);
+                result.add(spanProps);
+                buffer = "";
+                spanProps  = new ArrayList();
+            } else {
+                buffer += c;
+            }
+        }
+        spanProps.add(buffer);
+        result.add(spanProps);
+
+        return result;
+    }
+
+
+    public static void setSpanModifiers(Context context, String fontFolder, SpannableStringBuilder ssb, ArrayList<String> span, int start, int end) {
+        boolean bold = span.get(2) == "1";
+        boolean italic = span.get(3) == "1";
+
+        if (bold && italic) {
+            ssb.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD_ITALIC), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        } else if (bold) {
+            ssb.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        } else if (italic) {
+            ssb.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.ITALIC), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        String fontFamily = span.get(0);
+        if (!fontFamily.equals("undefined") ) {
+            Typeface typeface = createTypeface(context, fontFolder, fontFamily, bold ? "bold" : "normal",
+                    bold, italic);
+//        const font = new Font(fontFamily, 0, (italic) ? "italic" : "normal", (bold) ? "bold" : "normal");
+//        const typeface = font.getAndroidTypeface() || android.graphics.Typeface.create(fontFamily, 0);
+            TypefaceSpan typefaceSpan = new CustomTypefaceSpan(fontFamily, typeface);
+            ssb.setSpan(typefaceSpan, start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        String fontSize = span.get(1);
+        if (!fontSize.equals("undefined") ) {
+            ssb.setSpan(new AbsoluteSizeSpan(Math.round(Float.parseFloat(fontSize) * context.getResources().getDisplayMetrics().density)), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        String color = span.get(5);
+        if (!color.equals("undefined") ) {
+            ssb.setSpan(new ForegroundColorSpan(Integer.parseInt(color)), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+
+        String backgroundColor = span.get(6);
+
+        if (!backgroundColor.equals("undefined") ) {
+            ssb.setSpan(new BackgroundColorSpan(Integer.parseInt(backgroundColor)), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+
+        String textDecoration = span.get(4);
+        if (textDecoration.contains("underline")) {
+            ssb.setSpan(new android.text.style.UnderlineSpan(), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        if (textDecoration.contains("line-through")) {
+            ssb.setSpan(new android.text.style.StrikethroughSpan(), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        long stopTime = System.nanoTime();
+        // TODO: Implement letterSpacing for Span here.
+        // const letterSpacing = formattedString.parent.style.letterSpacing;
+        // if (letterSpacing > 0) {
+        //     ssb.setSpan(new android.text.style.ScaleXSpan((letterSpacing + 1) / 10), start, end, android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        // }
+    }
+
+
+
+    public static SpannableStringBuilder stringBuilderFromFormattedString(Context context, String fontFolder,
+                                                                          String formattedString) {
+        if (formattedString == null) {
+            return null;
+        }
+        ArrayList<ArrayList<String>> parsedFormattedString = parseFormattedString(formattedString);
+        SpannableStringBuilder ssb = new SpannableStringBuilder();
+        for (int i = 0, spanStart = 0, spanLength = 0, length = parsedFormattedString.size(); i < length; i++) {
+            ArrayList<String> span = parsedFormattedString.get(i);
+            String text = span.get(7);
+            spanLength = text.length();
+            if (spanLength > 0) {
+                ssb.insert(spanStart, text);
+                setSpanModifiers(context, fontFolder, ssb, span, spanStart, spanStart + spanLength);
+                spanStart += spanLength;
+            }
+        }
+
+        return ssb;
     }
 }
