@@ -1,21 +1,21 @@
-import { isIOS } from 'tns-core-modules/platform';
-import { CssProperty, InheritedCssProperty, makeParser, makeValidator, Property } from 'tns-core-modules/ui/core/properties';
-import { booleanConverter, Color, CSSType, dip } from 'tns-core-modules/ui/core/view';
-import { Label as TNLabel } from 'tns-core-modules/ui/label';
-import { Style } from 'tns-core-modules/ui/styling/style';
-import { layout } from 'tns-core-modules/utils/utils';
+import { isIOS } from '@nativescript/core/platform';
+import { CssProperty, InheritedCssProperty, makeParser, makeValidator, Property } from '@nativescript/core/ui/core/properties';
+import { booleanConverter, Color, CSSType, dip } from '@nativescript/core/ui/core/view';
+import { Label as TNLabel } from '@nativescript/core/ui/label';
+import { Style } from '@nativescript/core/ui/styling/style';
+import { layout } from '@nativescript/core/utils/utils';
 import { Label as LabelViewDefinition, TextShadow } from './label';
-import { FormattedString } from 'tns-core-modules/text/formatted-string';
-import { Span } from 'tns-core-modules/text/span';
+import { FormattedString } from '@nativescript/core/ui/text-base/formatted-string';
+import { Span } from '@nativescript/core/ui/text-base/span';
 
 
-declare module 'tns-core-modules/text/formatted-string' {
+declare module '@nativescript/core/ui/text-base/formatted-string' {
     interface FormattedString {
         addPropertyChangeHandler(): void;
         removePropertyChangeHandler(): void;
     }
 }
-declare module 'tns-core-modules/text/span' {
+declare module '@nativescript/core/ui/text-base/span' {
     interface Span {
         addPropertyChangeHandler(): void;
         removePropertyChangeHandler(): void;

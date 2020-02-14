@@ -1,5 +1,5 @@
-import { fontInternalProperty, Length, paddingBottomProperty, paddingLeftProperty, paddingRightProperty, paddingTopProperty, View, colorProperty, Color } from 'tns-core-modules/ui/page/page';
-import { Font } from 'tns-core-modules/ui/styling/font';
+import { fontInternalProperty, Length, paddingBottomProperty, paddingLeftProperty, paddingRightProperty, paddingTopProperty, View, colorProperty, Color } from '@nativescript/core/ui/page/page';
+import { Font } from '@nativescript/core/ui/styling/font';
 import {
     borderBottomWidthProperty,
     borderLeftWidthProperty,
@@ -10,9 +10,9 @@ import {
     whiteSpaceProperty,
     formattedTextProperty,
     FormattedString
-} from 'tns-core-modules/ui/text-base/text-base';
-import { isString } from 'tns-core-modules/utils/types';
-import { layout } from 'tns-core-modules/utils/utils';
+} from '@nativescript/core/ui/text-base';
+import { isString } from '@nativescript/core/utils/types';
+import { layout } from '@nativescript/core/utils/utils';
 import { TextShadow, VerticalTextAlignment, verticalTextAlignmentProperty } from './label';
 import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty, textShadowProperty } from './label-common';
 
@@ -24,7 +24,7 @@ enum FixedSize {
     BOTH = 3
 }
 
-declare module 'tns-core-modules/ui/text-base/text-base' {
+declare module '@nativescript/core/ui/text-base' {
     interface TextBase {
         _requestLayoutOnTextChanged();
     }
