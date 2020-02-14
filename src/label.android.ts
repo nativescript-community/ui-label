@@ -59,13 +59,22 @@ Font.prototype.getAndroidTypeface = function() {
 declare module 'tns-core-modules/text/formatted-string' {
     interface FormattedString {
         toNativeString(): string;
+        addPropertyChangeHandler(): void;
+        removePropertyChangeHandler(): void;
     }
 }
 declare module 'tns-core-modules/text/span' {
     interface Span {
         toNativeString(): string;
+        addPropertyChangeHandler(): void;
+        removePropertyChangeHandler(): void;
     }
 }
+
+FormattedString.prototype.addPropertyChangeHandler = function() {}
+FormattedString.prototype.removePropertyChangeHandler = function() {}
+Span.prototype.addPropertyChangeHandler = function() {}
+Span.prototype.removePropertyChangeHandler = function() {}
 
 FormattedString.prototype.toNativeString = function() {
     let result = '';
@@ -117,158 +126,8 @@ Span.prototype.toNativeString = function() {
 
     return result;
 };
-// import { Span } from 'tns-core-modules/text/span';
 
 export * from './label-common';
-
-// let _useAndroidX;
-// function useAndroidX() {
-//     if (_useAndroidX === undefined) {
-//         _useAndroidX = !!(global as any).androidx && !!(global as any).androidx.appcompat;
-//     }
-//     return _useAndroidX;
-// }
-// let _HtmlCompat: typeof androidx.core.text.HtmlCompat;
-// function HtmlCompat() {
-//     if (_HtmlCompat === undefined) {
-//         _HtmlCompat = useAndroidX() ? (global as any).androidx.core.text.HtmlCompat : android.text.Html;
-//     }
-//     return _HtmlCompat;
-// }
-// let _ContentPackageName: typeof androidx.core.content;
-// function ContentPackageName() {
-//     if (_ContentPackageName === undefined) {
-//         _ContentPackageName = useAndroidX() ? (global as any).androidx.core.content : (android as any).support.v4.content;
-//     }
-//     return _ContentPackageName;
-// }
-// let appAssets: android.content.res.AssetManager;
-// const typefaceCache = new Map<string, android.graphics.Typeface>();
-// const FONTS_BASE_PATH = '/fonts/';
-// function loadFontFromFile(fontFamily: string): android.graphics.Typeface {
-//     if (fontFamily.startsWith('res/')) {
-//         let result = typefaceCache.get(fontFamily);
-//         if (!result) {
-//             const context = application.android.context;
-//             const fontID = context.getResources().getIdentifier(fontFamily.slice(4), 'font', context.getPackageName());
-//             result = ContentPackageName().res.ResourcesCompat.getFont(context, fontID);
-//             if (result) {
-//                 typefaceCache.set(fontFamily, result);
-//             }
-//             return result;
-//         }
-//     }
-//     appAssets = appAssets || application.android.context.getAssets();
-//     if (!appAssets) {
-//         return null;
-//     }
-
-//     let result = typefaceCache.get(fontFamily);
-//     // Check for undefined explicitly as null mean we tried to load the font, but failed.
-//     if (result === undefined) {
-//         result = null;
-
-//         let fontAssetPath: string;
-//         const basePath = fs.path.join(fs.knownFolders.currentApp().path, 'fonts', fontFamily);
-//         if (fs.File.exists(basePath + '.ttf')) {
-//             fontAssetPath = FONTS_BASE_PATH + fontFamily + '.ttf';
-//         } else if (fs.File.exists(basePath + '.otf')) {
-//             fontAssetPath = FONTS_BASE_PATH + fontFamily + '.otf';
-//         } else {
-//             if (traceEnabled()) {
-//                 traceWrite('Could not find font file for ' + fontFamily, traceCategories.Error, traceMessageType.error);
-//             }
-//         }
-
-//         if (fontAssetPath) {
-//             try {
-//                 fontAssetPath = fs.path.join(fs.knownFolders.currentApp().path, fontAssetPath);
-//                 result = android.graphics.Typeface.createFromFile(fontAssetPath);
-//             } catch (e) {
-//                 if (traceEnabled()) {
-//                     traceWrite('Error loading font asset: ' + fontAssetPath, traceCategories.Error, traceMessageType.error);
-//                 }
-//             }
-//         }
-//         typefaceCache.set(fontFamily, result);
-//     }
-
-//     return result;
-// }
-
-// function createTypeface(font: Font): android.graphics.Typeface {
-//     let fontStyle = 0;
-//     if (font.isBold) {
-//         fontStyle |= android.graphics.Typeface.BOLD;
-//     }
-//     if (font.isItalic) {
-//         fontStyle |= android.graphics.Typeface.ITALIC;
-//     }
-
-//     // http://stackoverflow.com/questions/19691530/valid-values-for-androidfontfamily-and-what-they-map-to
-//     const fonts = parseFontFamily(font.fontFamily);
-//     let result = null;
-//     for (let i = 0; i < fonts.length; i++) {
-//         switch (fonts[i].toLowerCase()) {
-//             case genericFontFamilies.serif:
-//                 result = android.graphics.Typeface.create('serif' + getFontWeightSuffix(font.fontWeight), fontStyle);
-//                 break;
-
-//             case genericFontFamilies.sansSerif:
-//             case genericFontFamilies.system:
-//                 result = android.graphics.Typeface.create('sans-serif' + getFontWeightSuffix(font.fontWeight), fontStyle);
-//                 break;
-
-//             case genericFontFamilies.monospace:
-//                 result = android.graphics.Typeface.create('monospace' + getFontWeightSuffix(font.fontWeight), fontStyle);
-//                 break;
-
-//             default:
-//                 result = loadFontFromFile(fonts[i]);
-//                 if (result && fontStyle) {
-//                     result = android.graphics.Typeface.create(result, fontStyle);
-//                 }
-//                 break;
-//         }
-
-//         if (result) {
-//             // Found the font!
-//             break;
-//         }
-//     }
-
-//     if (!result) {
-//         result = android.graphics.Typeface.create('sans-serif' + getFontWeightSuffix(font.fontWeight), fontStyle);
-//     }
-
-//     return result;
-// }
-
-// function getFontWeightSuffix(fontWeight: FontWeight): string {
-//     switch (fontWeight) {
-//         case FontWeight.THIN:
-//             return android.os.Build.VERSION.SDK_INT >= 16 ? '-thin' : '';
-//         case FontWeight.EXTRA_LIGHT:
-//         case FontWeight.LIGHT:
-//             return android.os.Build.VERSION.SDK_INT >= 16 ? '-light' : '';
-//         case FontWeight.NORMAL:
-//         case '400':
-//         case undefined:
-//         case null:
-//             return '';
-//         case FontWeight.MEDIUM:
-//         case FontWeight.SEMI_BOLD:
-//             return android.os.Build.VERSION.SDK_INT >= 21 ? '-medium' : '';
-//         case FontWeight.BOLD:
-//         case '700':
-//         case FontWeight.EXTRA_BOLD:
-//             return '';
-//         case FontWeight.BLACK:
-//             return android.os.Build.VERSION.SDK_INT >= 21 ? '-black' : '';
-//         default:
-//             throw new Error(`Invalid font weight: "${fontWeight}"`);
-//     }
-// }
 
 let TextView: typeof android.widget.TextView;
 
@@ -368,12 +227,12 @@ class LabelBase extends View implements LabelViewDefinition {
         this.requestLayout();
     }
 
-    eachChild(callback: (child: ViewBase) => boolean): void {
-        let text = this.formattedText;
-        if (text) {
-            callback(text);
-        }
-    }
+    // eachChild(callback: (child: ViewBase) => boolean): void {
+    //     let text = this.formattedText;
+    //     if (text) {
+    //         callback(text);
+    //     }
+    // }
 
     _setNativeText(reset: boolean = false): void {
         //
@@ -424,17 +283,18 @@ export class Label extends LabelBase {
         // })();
     }
 
-    @profile
-    setHtml(value: string) {
-        const nativeView = this.nativeViewProtected;
-        if (value) {
-            nativeView.setText((com as any).nativescript.label.Font.stringBuilderFromHtmlString(context, fontPath, value));
-        } else {
-            nativeView.setText(null);
-        }
-    }
+    // @profile
+    // setHtml(value: string) {
+    //     const nativeView = this.nativeViewProtected;
+    //     if (value) {
+    //         nativeView.setText((com as any).nativescript.label.Font.stringBuilderFromHtmlString(context, fontPath, value));
+    //     } else {
+    //         nativeView.setText(null);
+    //     }
+    // }
     [htmlProperty.setNative](value: string) {
-        this.setHtml(value);
+        // this.setHtml(value);
+        this._setNativeText();
         // textProperty.nativeValueChange(this, value === null || value === undefined ? '' : value.toString());
     }
 
@@ -531,7 +391,8 @@ export class Label extends LabelBase {
 
     [formattedTextProperty.setNative](value: FormattedString) {
         // profile('formattedTextProperty', () => {
-        const nativeView = this.nativeTextViewProtected;
+        // const nativeView = this.nativeTextViewProtected;
+        this._setNativeText();
         // if (!value) {
         //     if (nativeView instanceof android.widget.Button && nativeView.getTransformationMethod() instanceof TextTransformation) {
         //         nativeView.setTransformationMethod(this._defaultTransformationMethod);
@@ -543,10 +404,10 @@ export class Label extends LabelBase {
         //     return;
         // }
 
-        const spannableStringBuilder = createSpannableStringBuilder(value);
-        nativeView.setText(<any>spannableStringBuilder);
+        // const spannableStringBuilder = createSpannableStringBuilder(value);
+        // nativeView.setText(<any>spannableStringBuilder);
 
-        textProperty.nativeValueChange(this, value === null || value === undefined ? '' : value.toString());
+        // textProperty.nativeValueChange(this, value === null || value === undefined ? '' : value.toString());
 
         // if (spannableStringBuilder && nativeView instanceof android.widget.Button && !(nativeView.getTransformationMethod() instanceof TextTransformation)) {
         //     // Replace Android Button's default transformation (in case the developer has not already specified a text-transform) method
@@ -622,13 +483,11 @@ export class Label extends LabelBase {
     // }
     [colorProperty.setNative](value: Color | android.content.res.ColorStateList) {
         // profile('colorProperty', () => {
-        if (!this.formattedText || !(value instanceof Color)) {
             if (value instanceof Color) {
                 this.nativeTextViewProtected.setTextColor(value.android);
             } else {
                 this.nativeTextViewProtected.setTextColor(value);
             }
-        }
         // })();
     }
 
@@ -638,13 +497,11 @@ export class Label extends LabelBase {
     // }
     [fontSizeProperty.setNative](value: number | { nativeSize: number }) {
         // profile('fontSizeProperty', () => {
-        if (!this.formattedText || typeof value !== 'number') {
             if (typeof value === 'number') {
                 this.nativeTextViewProtected.setTextSize(value);
             } else {
                 this.nativeTextViewProtected.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, value.nativeSize);
             }
-        }
         // })();
     }
 
@@ -664,7 +521,7 @@ export class Label extends LabelBase {
     // }
     [fontInternalProperty.setNative](value: Font | android.graphics.Typeface) {
         // profile('fontInternalProperty', () => {
-        if (!this.formattedText || !(value instanceof Font)) {
+        if (!(value instanceof Font)) {
             this.nativeTextViewProtected.setTypeface(value instanceof Font ? value.getAndroidTypeface() : value);
         }
         // })();
@@ -752,8 +609,12 @@ export class Label extends LabelBase {
         }
 
         let transformedText: any;
-        if (this.formattedText) {
+        if (this.html) {
+            transformedText = (com as any).nativescript.label.Font.stringBuilderFromHtmlString(context, fontPath, this.html);
+            textProperty.nativeValueChange(this, this.html === null || this.html === undefined ? '' : this.html);
+        } else if (this.formattedText) {
             transformedText = createSpannableStringBuilder(this.formattedText);
+            textProperty.nativeValueChange(this, this.formattedText === null || this.formattedText === undefined ? '' : this.formattedText.toString());
         } else {
             const text = this.text;
             const stringValue = text === null || text === undefined ? '' : text.toString();
@@ -842,11 +703,11 @@ export class Label extends LabelBase {
         this._resumeNativeUpdates(SuspendType.UISetup);
         // })();
 
-        this.eachChild(child => {
-            child._setupUI(context);
+        // this.eachChild(child => {
+        //     child._setupUI(context);
 
-            return true;
-        });
+        //     return true;
+        // });
     }
 }
 
