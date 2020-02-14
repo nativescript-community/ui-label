@@ -5,6 +5,28 @@ import { Label as TNLabel } from 'tns-core-modules/ui/label';
 import { Style } from 'tns-core-modules/ui/styling/style';
 import { layout } from 'tns-core-modules/utils/utils';
 import { Label as LabelViewDefinition, TextShadow } from './label';
+import { FormattedString } from 'tns-core-modules/text/formatted-string';
+import { Span } from 'tns-core-modules/text/span';
+
+
+declare module 'tns-core-modules/text/formatted-string' {
+    interface FormattedString {
+        addPropertyChangeHandler(): void;
+        removePropertyChangeHandler(): void;
+    }
+}
+declare module 'tns-core-modules/text/span' {
+    interface Span {
+        addPropertyChangeHandler(): void;
+        removePropertyChangeHandler(): void;
+    }
+}
+
+FormattedString.prototype.addPropertyChangeHandler = function() {}
+FormattedString.prototype.removePropertyChangeHandler = function() {}
+Span.prototype.addPropertyChangeHandler = function() {}
+Span.prototype.removePropertyChangeHandler = function() {}
+
 
 export const cssProperty = (target: Object, key: string | symbol) => {
     // property getter
