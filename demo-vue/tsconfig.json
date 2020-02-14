@@ -19,7 +19,7 @@
         "paths": {
             "~/*": ["app/*"],
             "nativescript-vue": ["./node_modules/nativescript-akylas-vue"],
-            "*": ["./node_modules/tns-core-modules/*", "./node_modules/*"]
+            "*": ["./node_modules/@nativescript/core/*", "./node_modules/*"]
         }
     },
     "include": ["app/**/*", "references.d.ts"],

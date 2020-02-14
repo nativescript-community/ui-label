@@ -1,7 +1,7 @@
-﻿import * as application from 'tns-core-modules/application';
-import * as fs from 'tns-core-modules/file-system';
-import { Font, FontStyle } from 'tns-core-modules/ui/styling/font';
-import { FontWeight } from 'tns-core-modules/ui/styling/font-common';
+﻿import * as application from '@nativescript/core/application';
+import * as fs from '@nativescript/core/file-system';
+import { Font, FontStyle } from '@nativescript/core/ui/styling/font';
+import { FontWeight } from '@nativescript/core/ui/styling/font-common';
 import {
     TextTransform,
     WhiteSpace,
@@ -35,11 +35,11 @@ import {
     Property,
     Observable,
     backgroundColorProperty
-} from 'tns-core-modules/ui/text-base/text-base';
-import { layout } from 'tns-core-modules/utils/utils';
-import { FormattedString } from 'tns-core-modules/text/formatted-string';
-import { Span } from 'tns-core-modules/text/span';
-import { profile } from 'tns-core-modules/profiling';
+} from '@nativescript/core/ui/text-base/text-base';
+import { layout } from '@nativescript/core/utils/utils';
+import { FormattedString } from '@nativescript/core/ui/text-base/formatted-string';
+import { Span } from '@nativescript/core/ui/text-base/span';
+import { profile } from '@nativescript/core/profiling';
 import { Label as LabelViewDefinition, TextShadow } from './label';
 import { lineBreakProperty, maxLinesProperty, textShadowProperty, VerticalTextAlignment, verticalTextAlignmentProperty, cssProperty } from './label-common';
 
@@ -56,12 +56,12 @@ Font.prototype.getAndroidTypeface = function() {
     return this._typeface;
 };
 
-declare module 'tns-core-modules/text/formatted-string' {
+declare module '@nativescript/core/ui/text-base/formatted-string' {
     interface FormattedString {
         toNativeString(): string;
     }
 }
-declare module 'tns-core-modules/text/span' {
+declare module '@nativescript/core/ui/text-base/span' {
     interface Span {
         toNativeString(): string;
     }
@@ -134,7 +134,7 @@ enum SuspendType {
     UISetup = 1 << 22,
     IncrementalCountMask = ~((1 << 20) + (1 << 21) + (1 << 22))
 }
-declare module 'tns-core-modules/ui/core/view-base' {
+declare module '@nativescript/core/ui/core/view-base' {
     interface ViewBase {
         _resumeNativeUpdates(type: SuspendType);
         _defaultPaddingTop: number;

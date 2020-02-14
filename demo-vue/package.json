@@ -3,34 +3,28 @@
     "license": "SEE LICENSE IN LICENSE.md",
     "readme": "README.md",
     "nativescript": {
-        "id": "org.nativescript.demovuehtmllabel",
-        "tns-ios": {
-            "version": "6.2.0-rc-2019-10-16-131038-01"
-        },
-        "tns-android": {
-            "version": "6.3.1"
-        }
+        "id": "org.nativescript.demovuehtmllabel"
     },
     "dependencies": {
         "nativescript-htmllabel": "../plugin",
         "nativescript-theme-core": "~2.0.24",
         "nativescript-akylas-vue": "~2.3.5",
-        "tns-core-modules": "6.1.2",
+        "@nativescript/core": "6.4.0",
         "tslib": "^1.10.0"
     },
     "devDependencies": {
-        "nativescript-akylas-webpack-template": "^0.3.1",
-        "nativescript-dev-webpack": "~1.2.1",
-        "tns-platform-declarations": "^6.1.2",
-        "tslint": "^5.20.0",
+        "nativescript-akylas-webpack-template": "^1.0.15",
+        "nativescript-dev-webpack": "~1.5.0",
+        "tns-platform-declarations": "^6.4.0",
+        "tslint": "^6.0.0",
         "tslint-config-prettier": "^1.18.0",
-        "tslint-config-standard": "^8.0.1",
-        "typescript": "^3.6.4",
-        "vue": "^2.6.10",
-        "vue-i18n": "^8.14.1",
-        "vue-property-decorator": "^8.2.2",
-        "webpack": "^4.41.1",
-        "webpack-cli": "^3.3.9"
+        "tslint-config-standard": "^9.0.0",
+        "typescript": "^3.7.5",
+        "vue": "^2.6.11",
+        "vue-i18n": "^8.15.3",
+        "vue-property-decorator": "^8.4.0",
+        "webpack": "^4.41.6",
+        "webpack-cli": "^3.3.11"
     },
     "scripts": {
         "tslint": "npm i && tslint --config '../tslint.json' 'app/**/*.ts' --exclude '**/node_modules/**'"

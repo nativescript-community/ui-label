@@ -2,10 +2,10 @@
  * Contains the Label class, which represents a custom label widget which correctly supports html.
  */ /** */
 
-import { Property, View } from 'tns-core-modules/ui/core/view';
-import { Label as TNLabel } from 'tns-core-modules/ui/label/label';
-import { dip } from 'tns-core-modules/ui/core/view';
-import { Color } from 'tns-core-modules/color/color';
+import { Property, View } from '@nativescript/core/ui/core/view/view';
+import { Label as TNLabel } from '@nativescript/core/ui/label/label';
+import { dip } from '@nativescript/core/ui/core/view/view';
+import { Color } from '@nativescript/core/color/color';
 /**
  * Represents a label with html content. Use this component instead WebView when you want to show just static HTML content.
  * [iOS support](https://developer.apple.com/library/ios/documentation/UIKit/Reference/NSAttributedString_UIKit_Additions/#//apple_ref/occ/instm/NSAttributedString/initWithData:options:documentAttributes:error:)
