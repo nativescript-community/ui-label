@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.18](https://github.com/Akylas/nativescript-label/compare/v1.0.17...v1.0.18) (2020-02-14)
+
+
+### Bug Fixes
+
+* **ios:** dont use DTCoreText anymore ([9895c56](https://github.com/Akylas/nativescript-label/commit/9895c56e52f1aa76179ffaba1ed83440606e5574))
+
+
+
+
+
 ## [1.0.17](https://github.com/Akylas/nativescript-label/compare/v1.0.16...v1.0.17) (2020-02-12)
 
 

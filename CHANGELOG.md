@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.18](https://github.com/Akylas/nativescript-label/compare/v1.0.17...v1.0.18) (2020-02-14)
+
+
+### Bug Fixes
+
+* span/formattedstring fixes for ios too ([755c612](https://github.com/Akylas/nativescript-label/commit/755c612d9880f4e0d8eca3279ac953aaa686417a))
+* **android:** a lot of improvements ([37c8df8](https://github.com/Akylas/nativescript-label/commit/37c8df8082168f6ebba215584372b0145b9740bd))
+* **ios:** dont use DTCoreText anymore ([9895c56](https://github.com/Akylas/nativescript-label/commit/9895c56e52f1aa76179ffaba1ed83440606e5574))
+
+
+
+
+
 ## [1.0.17](https://github.com/Akylas/nativescript-label/compare/v1.0.16...v1.0.17) (2020-02-12)
 
 
