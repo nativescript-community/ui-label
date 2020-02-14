@@ -59,22 +59,13 @@ Font.prototype.getAndroidTypeface = function() {
 declare module 'tns-core-modules/text/formatted-string' {
     interface FormattedString {
         toNativeString(): string;
-        addPropertyChangeHandler(): void;
-        removePropertyChangeHandler(): void;
     }
 }
 declare module 'tns-core-modules/text/span' {
     interface Span {
         toNativeString(): string;
-        addPropertyChangeHandler(): void;
-        removePropertyChangeHandler(): void;
     }
 }
-
-FormattedString.prototype.addPropertyChangeHandler = function() {}
-FormattedString.prototype.removePropertyChangeHandler = function() {}
-Span.prototype.addPropertyChangeHandler = function() {}
-Span.prototype.removePropertyChangeHandler = function() {}
 
 FormattedString.prototype.toNativeString = function() {
     let result = '';
