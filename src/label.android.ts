@@ -5,7 +5,34 @@ import { Font, FontStyle } from '@nativescript/core/ui/styling/font';
 import { FontWeight } from '@nativescript/core/ui/styling/font-common';
 import { FormattedString } from '@nativescript/core/ui/text-base/formatted-string';
 import { Span } from '@nativescript/core/ui/text-base/span';
-import { backgroundColorProperty, booleanConverter, Color, colorProperty, CSSType, fontInternalProperty, fontSizeProperty, Length, letterSpacingProperty, lineHeightProperty, Observable, paddingBottomProperty, paddingLeftProperty, paddingRightProperty, paddingTopProperty, Property, PropertyChangeData, TextAlignment, textAlignmentProperty, TextDecoration, textDecorationProperty, TextTransform, textTransformProperty, View, WhiteSpace, whiteSpaceProperty } from '@nativescript/core/ui/text-base/text-base';
+import {
+    backgroundColorProperty,
+    booleanConverter,
+    Color,
+    colorProperty,
+    CSSType,
+    fontInternalProperty,
+    fontSizeProperty,
+    Length,
+    letterSpacingProperty,
+    lineHeightProperty,
+    Observable,
+    paddingBottomProperty,
+    paddingLeftProperty,
+    paddingRightProperty,
+    paddingTopProperty,
+    Property,
+    PropertyChangeData,
+    TextAlignment,
+    textAlignmentProperty,
+    TextDecoration,
+    textDecorationProperty,
+    TextTransform,
+    textTransformProperty,
+    View,
+    WhiteSpace,
+    whiteSpaceProperty
+} from '@nativescript/core/ui/text-base/text-base';
 import { layout } from '@nativescript/core/utils/utils';
 import { Label as LabelViewDefinition, TextShadow } from './label';
 import { cssProperty, lineBreakProperty, maxLinesProperty, textShadowProperty, VerticalTextAlignment, verticalTextAlignmentProperty } from './label-common';
@@ -54,10 +81,10 @@ Span.prototype.toNativeString = function() {
     let backgroundColor: Color;
     if (backgroundColorProperty.isSet(spanStyle)) {
         backgroundColor = spanStyle.backgroundColor;
-    // } else if (backgroundColorProperty.isSet(this.parent.style)) {
+        // } else if (backgroundColorProperty.isSet(this.parent.style)) {
         // parent is FormattedString
         // backgroundColor = this.parent.style.backgroundColor;
-    // } else if (backgroundColorProperty.isSet(this.parent.parent.style)) {
+        // } else if (backgroundColorProperty.isSet(this.parent.parent.style)) {
         // parent.parent is TextBase
         // backgroundColor = this.parent.parent.style.backgroundColor;
     }
@@ -323,6 +350,7 @@ export class Label extends LabelBase {
                 this.nativeTextViewProtected.setGravity(android.view.Gravity.TOP | horizontalGravity);
                 break;
             case 'middle':
+            case 'center':
                 this.nativeTextViewProtected.setGravity(android.view.Gravity.CENTER_VERTICAL | horizontalGravity);
                 break;
 
@@ -441,11 +469,11 @@ export class Label extends LabelBase {
     // }
     [colorProperty.setNative](value: Color | android.content.res.ColorStateList) {
         // profile('colorProperty', () => {
-            if (value instanceof Color) {
-                this.nativeTextViewProtected.setTextColor(value.android);
-            } else {
-                this.nativeTextViewProtected.setTextColor(value);
-            }
+        if (value instanceof Color) {
+            this.nativeTextViewProtected.setTextColor(value.android);
+        } else {
+            this.nativeTextViewProtected.setTextColor(value);
+        }
         // })();
     }
 
@@ -455,11 +483,11 @@ export class Label extends LabelBase {
     // }
     [fontSizeProperty.setNative](value: number | { nativeSize: number }) {
         // profile('fontSizeProperty', () => {
-            if (typeof value === 'number') {
-                this.nativeTextViewProtected.setTextSize(value);
-            } else {
-                this.nativeTextViewProtected.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, value.nativeSize);
-            }
+        if (typeof value === 'number') {
+            this.nativeTextViewProtected.setTextSize(value);
+        } else {
+            this.nativeTextViewProtected.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, value.nativeSize);
+        }
         // })();
     }
 
@@ -480,7 +508,7 @@ export class Label extends LabelBase {
     [fontInternalProperty.setNative](value: Font | android.graphics.Typeface) {
         // profile('fontInternalProperty', () => {
         // if (!(value instanceof Font)) {
-            this.nativeTextViewProtected.setTypeface(value instanceof Font ? value.getAndroidTypeface() : value);
+        this.nativeTextViewProtected.setTypeface(value instanceof Font ? value.getAndroidTypeface() : value);
         // }
         // })();
     }
