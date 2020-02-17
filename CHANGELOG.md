@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.19](https://github.com/Akylas/nativescript-label/compare/v1.0.18...v1.0.19) (2020-02-17)
+
+
+### Bug Fixes
+
+* **android:** correctly set font ([82a4af7](https://github.com/Akylas/nativescript-label/commit/82a4af77013f7f88ffaf034062a6f51a71cf39ad))
+* **android:** span should not use parent background color ([e4c9eda](https://github.com/Akylas/nativescript-label/commit/e4c9edaf7027e530a1f8bf77d46b2ae12fb13032))
+* **ios:** apply settings to attributedString ([5f90cdc](https://github.com/Akylas/nativescript-label/commit/5f90cdc7a39b5ecfcc99bbb363ce6e6e45b22935))
+* some spans fixes ([c9fd367](https://github.com/Akylas/nativescript-label/commit/c9fd367e570f24cf7d1d93d8155254f9973751b2))
+
+
+
+
+
 ## [1.0.18](https://github.com/Akylas/nativescript-label/compare/v1.0.17...v1.0.18) (2020-02-14)
 
 
