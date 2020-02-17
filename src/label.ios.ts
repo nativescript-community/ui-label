@@ -327,13 +327,35 @@ export class Label extends LabelBase {
             htmlString = `<style>body{ color: ${this.color};font-family: '${font.familyName}'; font-size:${font.pointSize}px;}</style>${htmlString}`;
             const nsString = NSString.stringWithString(htmlString);
             const nsData = nsString.dataUsingEncoding(NSUTF16StringEncoding);
-            this.htmlText = NSMutableAttributedString.alloc().initWithDataOptionsDocumentAttributesError(
+            const attrText = this.htmlText = NSMutableAttributedString.alloc().initWithDataOptionsDocumentAttributesError(
                 nsData,
                 <any>{
                     [NSDocumentTypeDocumentAttribute]: NSHTMLTextDocumentType
                 },
                 null
             );
+
+            // TODO: letterSpacing should be applied per Span.
+            if (this.letterSpacing !== 0) {
+                attrText.addAttributeValueRange(NSKernAttributeName, this.letterSpacing * this.nativeTextViewProtected.font.pointSize, { location: 0, length: attrText.length });
+            }
+
+            if (this.style.lineHeight) {
+                const paragraphStyle = NSMutableParagraphStyle.alloc().init();
+                paragraphStyle.lineSpacing = this.lineHeight;
+                // make sure a possible previously set text alignment setting is not lost when line height is specified
+                paragraphStyle.alignment = (<UITextField | UITextView | UILabel>this.nativeTextViewProtected).textAlignment;
+                if (this.nativeTextViewProtected instanceof UILabel) {
+                    // make sure a possible previously set line break mode is not lost when line height is specified
+                    paragraphStyle.lineBreakMode = this.nativeTextViewProtected.lineBreakMode;
+                }
+                attrText.addAttributeValueRange(NSParagraphStyleAttributeName, paragraphStyle, { location: 0, length: attrText.length });
+            } else {
+                const paragraphStyle = NSMutableParagraphStyle.alloc().init();
+                paragraphStyle.alignment = (<UITextView>this.nativeTextViewProtected).textAlignment;
+                attrText.addAttributeValueRange(NSParagraphStyleAttributeName, paragraphStyle, { location: 0, length: attrText.length });
+            }
+
 
             this._requestLayoutOnTextChanged();
         }
