@@ -512,9 +512,9 @@ export class Label extends LabelBase {
     // }
     [fontInternalProperty.setNative](value: Font | android.graphics.Typeface) {
         // profile('fontInternalProperty', () => {
-        if (!(value instanceof Font)) {
+        // if (!(value instanceof Font)) {
             this.nativeTextViewProtected.setTypeface(value instanceof Font ? value.getAndroidTypeface() : value);
-        }
+        // }
         // })();
     }
 
