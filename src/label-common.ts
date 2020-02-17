@@ -1,6 +1,6 @@
 import { isIOS } from '@nativescript/core/platform';
 import { CssProperty, InheritedCssProperty, makeParser, makeValidator, Property } from '@nativescript/core/ui/core/properties';
-import { booleanConverter, Color, CSSType, dip } from '@nativescript/core/ui/core/view';
+import { booleanConverter, Color, CSSType, dip, Observable, ViewBase } from '@nativescript/core/ui/core/view';
 import { Label as TNLabel } from '@nativescript/core/ui/label';
 import { Style } from '@nativescript/core/ui/styling/style';
 import { layout } from '@nativescript/core/utils/utils';
@@ -8,25 +8,21 @@ import { Label as LabelViewDefinition, TextShadow } from './label';
 import { FormattedString } from '@nativescript/core/ui/text-base/formatted-string';
 import { Span } from '@nativescript/core/ui/text-base/span';
 
-
 declare module '@nativescript/core/ui/text-base/formatted-string' {
     interface FormattedString {
-        addPropertyChangeHandler(): void;
-        removePropertyChangeHandler(): void;
+        addPropertyChangeHandler(span: Span): void;
+        removePropertyChangeHandler(span: Span): void;
     }
 }
-declare module '@nativescript/core/ui/text-base/span' {
-    interface Span {
-        addPropertyChangeHandler(): void;
-        removePropertyChangeHandler(): void;
-    }
+FormattedString.prototype.addPropertyChangeHandler = function(span: Span) {
+    span.on(Observable.propertyChangeEvent, this.onPropertyChange, this);
+};
+FormattedString.prototype.removePropertyChangeHandler = function(span: Span) {
+    span.off(Observable.propertyChangeEvent, this.onPropertyChange, this);
+};
+FormattedString.prototype.eachChild = function(callback: (child: ViewBase) => boolean): void {
+    this.spans.forEach((v, i, arr) => callback(v));
 }
-
-FormattedString.prototype.addPropertyChangeHandler = function() {}
-FormattedString.prototype.removePropertyChangeHandler = function() {}
-Span.prototype.addPropertyChangeHandler = function() {}
-Span.prototype.removePropertyChangeHandler = function() {}
-
 
 export const cssProperty = (target: Object, key: string | symbol) => {
     // property getter
