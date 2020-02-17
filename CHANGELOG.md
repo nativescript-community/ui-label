@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.20](https://github.com/Akylas/nativescript-label/compare/v1.0.19...v1.0.20) (2020-02-17)
+
+
+### Bug Fixes
+
+* **android:** support center verticalTextAlignment ([1d61b8c](https://github.com/Akylas/nativescript-label/commit/1d61b8c3d3221a60a84f63b05405d9e82aefe664))
+
+
+
+
+
 ## [1.0.19](https://github.com/Akylas/nativescript-label/compare/v1.0.18...v1.0.19) (2020-02-17)
 
 
