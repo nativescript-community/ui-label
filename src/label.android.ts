@@ -87,12 +87,12 @@ Span.prototype.toNativeString = function() {
     let backgroundColor: Color;
     if (backgroundColorProperty.isSet(spanStyle)) {
         backgroundColor = spanStyle.backgroundColor;
-    } else if (backgroundColorProperty.isSet(this.parent.style)) {
+    // } else if (backgroundColorProperty.isSet(this.parent.style)) {
         // parent is FormattedString
-        backgroundColor = this.parent.style.backgroundColor;
-    } else if (backgroundColorProperty.isSet(this.parent.parent.style)) {
+        // backgroundColor = this.parent.style.backgroundColor;
+    // } else if (backgroundColorProperty.isSet(this.parent.parent.style)) {
         // parent.parent is TextBase
-        backgroundColor = this.parent.parent.style.backgroundColor;
+        // backgroundColor = this.parent.parent.style.backgroundColor;
     }
 
     let textDecoration;
