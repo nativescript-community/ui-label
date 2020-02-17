@@ -1,47 +1,14 @@
 ﻿import * as application from '@nativescript/core/application';
 import * as fs from '@nativescript/core/file-system';
+import { profile } from '@nativescript/core/profiling';
 import { Font, FontStyle } from '@nativescript/core/ui/styling/font';
 import { FontWeight } from '@nativescript/core/ui/styling/font-common';
-import {
-    TextTransform,
-    WhiteSpace,
-    whiteSpaceProperty,
-    CSSType,
-    View,
-    TextAlignment,
-    TextDecoration,
-    Length,
-    PropertyChangeData,
-    ViewBase,
-    booleanConverter,
-    textTransformProperty,
-    textAlignmentProperty,
-    colorProperty,
-    Color,
-    fontSizeProperty,
-    lineHeightProperty,
-    fontInternalProperty,
-    textDecorationProperty,
-    letterSpacingProperty,
-    paddingTopProperty,
-    paddingRightProperty,
-    paddingBottomProperty,
-    paddingLeftProperty,
-    CssProperty,
-    makeValidator,
-    makeParser,
-    InheritedCssProperty,
-    Style,
-    Property,
-    Observable,
-    backgroundColorProperty
-} from '@nativescript/core/ui/text-base/text-base';
-import { layout } from '@nativescript/core/utils/utils';
 import { FormattedString } from '@nativescript/core/ui/text-base/formatted-string';
 import { Span } from '@nativescript/core/ui/text-base/span';
-import { profile } from '@nativescript/core/profiling';
+import { backgroundColorProperty, booleanConverter, Color, colorProperty, CSSType, fontInternalProperty, fontSizeProperty, Length, letterSpacingProperty, lineHeightProperty, Observable, paddingBottomProperty, paddingLeftProperty, paddingRightProperty, paddingTopProperty, Property, PropertyChangeData, TextAlignment, textAlignmentProperty, TextDecoration, textDecorationProperty, TextTransform, textTransformProperty, View, WhiteSpace, whiteSpaceProperty } from '@nativescript/core/ui/text-base/text-base';
+import { layout } from '@nativescript/core/utils/utils';
 import { Label as LabelViewDefinition, TextShadow } from './label';
-import { lineBreakProperty, maxLinesProperty, textShadowProperty, VerticalTextAlignment, verticalTextAlignmentProperty, cssProperty } from './label-common';
+import { cssProperty, lineBreakProperty, maxLinesProperty, textShadowProperty, VerticalTextAlignment, verticalTextAlignmentProperty } from './label-common';
 
 let context;
 const fontPath = fs.path.join(fs.knownFolders.currentApp().path, 'fonts');
@@ -611,8 +578,7 @@ export class Label extends LabelBase {
             const stringValue = text === null || text === undefined ? '' : text.toString();
             transformedText = getTransformedText(stringValue, this.textTransform);
         }
-
-        this.nativeTextViewProtected.setText(<any>transformedText);
+        this.nativeTextViewProtected.setText(transformedText);
     }
 
     @profile
