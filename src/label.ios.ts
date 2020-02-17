@@ -1,16 +1,6 @@
-import { fontInternalProperty, Length, paddingBottomProperty, paddingLeftProperty, paddingRightProperty, paddingTopProperty, View, colorProperty, Color } from '@nativescript/core/ui/page/page';
+import { Color, colorProperty, fontInternalProperty, Length, paddingBottomProperty, paddingLeftProperty, paddingRightProperty, paddingTopProperty, View } from '@nativescript/core/ui/page/page';
 import { Font } from '@nativescript/core/ui/styling/font';
-import {
-    borderBottomWidthProperty,
-    borderLeftWidthProperty,
-    borderRightWidthProperty,
-    borderTopWidthProperty,
-    TextTransform,
-    WhiteSpace,
-    whiteSpaceProperty,
-    formattedTextProperty,
-    FormattedString
-} from '@nativescript/core/ui/text-base';
+import { borderBottomWidthProperty, borderLeftWidthProperty, borderRightWidthProperty, borderTopWidthProperty, FormattedString, formattedTextProperty, TextTransform, WhiteSpace, whiteSpaceProperty } from '@nativescript/core/ui/text-base';
 import { isString } from '@nativescript/core/utils/types';
 import { layout } from '@nativescript/core/utils/utils';
 import { TextShadow, VerticalTextAlignment, verticalTextAlignmentProperty } from './label';
@@ -372,7 +362,7 @@ export class Label extends LabelBase {
     }
     [colorProperty.setNative](value: Color | UIColor) {
         const color = value instanceof Color ? value.ios : value;
-        if(!this.formattedText && !this.html) {
+        if (!this.formattedText && !this.html) {
             const nativeView = this.nativeTextViewProtected;
             nativeView.textColor = color;
         }
@@ -383,7 +373,7 @@ export class Label extends LabelBase {
         }
     }
     [formattedTextProperty.setNative](value: FormattedString) {
-        super[formattedTextProperty.setNative](value)
+        super[formattedTextProperty.setNative](value);
     }
     [fontInternalProperty.getDefault](): UIFont {
         const nativeView = this.nativeViewProtected;
