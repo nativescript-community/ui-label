@@ -27,6 +27,7 @@ public class Font {
     static final String TAG = "Font";
 
     public static Typeface loadFontFromFile(Context context, String fontFolder, String fontFamily) {
+        // Log.d(TAG, "loadFontFromFile: " + fontFamily  + " in folder " + fontFolder);
         if (typefaceCache.containsKey(fontFamily)) {
             return typefaceCache.get(fontFamily);
         }
@@ -57,7 +58,7 @@ public class Font {
         if (!file.exists()) {
             file = new File(fontFolder, fontFamily + ".otf");
             if (!file.exists()) {
-                Log.w(TAG, "Could not find font file for " + fontFamily);
+                Log.w(TAG, "Could not find font file for " + fontFamily + " in folder " + fontFolder);
                 return null;
             }
 
@@ -125,7 +126,7 @@ public class Font {
             return result;
         }
         if (!value.contains(",")) {
-            result.add(value);
+            result.add(value.replace("'", "").replace("\"", ""));
             return result;
         }
 
@@ -133,7 +134,7 @@ public class Font {
         // should be done in span/text properties
         StringTokenizer st = new StringTokenizer(value, ",");
         while(st.hasMoreTokens()) {
-            result.add(st.nextToken());
+            result.add(st.nextToken().replace("'", "").replace("\"", "").trim());
         }
         return result;
     }
@@ -153,7 +154,9 @@ public class Font {
         }
 
         // http://stackoverflow.com/questions/19691530/valid-values-for-androidfontfamily-and-what-they-map-to
+        // Log.d(TAG, "createTypeface: " + fontFamily);
         ArrayList<String> fonts = parseFontFamily(fontFamily);
+        // Log.d(TAG, "createTypeface1: " + fonts.toString());
         Typeface result = null;
         for (int i = 0; i < fonts.size(); i++) {
             switch (fonts.get(i).toLowerCase()) {
