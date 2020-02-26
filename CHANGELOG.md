@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.21](https://github.com/Akylas/nativescript-label/compare/v1.0.20...v1.0.21) (2020-02-26)
+
+
+### Bug Fixes
+
+* **android:** fixed parsing of font family ([09412f2](https://github.com/Akylas/nativescript-label/commit/09412f2c5090798b61a12550beea6dd47571ee54))
+
+
+
+
+
 ## [1.0.20](https://github.com/Akylas/nativescript-label/compare/v1.0.19...v1.0.20) (2020-02-17)
 
 
