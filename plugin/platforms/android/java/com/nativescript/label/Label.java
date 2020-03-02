@@ -2,11 +2,25 @@ package com.nativescript.label;
 
 import android.graphics.Typeface;
 import android.content.Context;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.text.method.TransformationMethod;
 
 public class Label extends com.lsjwzh.widget.text.FastTextView {
+    static final String TAG = "Label";
     public Label(Context context) {
-        super(context);
+        this(context, null);
+    }
+
+    public Label(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    static public View inflate (Context context) {
+       LayoutInflater inflater = (LayoutInflater)  context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);     
+        return  inflater.inflate(R.layout.label, null);
     }
 
     public TransformationMethod getTransformationMethod() {
