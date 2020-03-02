@@ -1,10 +1,10 @@
-import { Color, colorProperty, fontInternalProperty, Length, paddingBottomProperty, paddingLeftProperty, paddingRightProperty, paddingTopProperty, View } from '@nativescript/core/ui/page/page';
+import { Color, colorProperty, fontInternalProperty, Length, paddingBottomProperty, paddingLeftProperty, paddingRightProperty, paddingTopProperty, View, lineHeightProperty } from '@nativescript/core/ui/page/page';
 import { Font } from '@nativescript/core/ui/styling/font';
-import { borderBottomWidthProperty, borderLeftWidthProperty, borderRightWidthProperty, borderTopWidthProperty, FormattedString, formattedTextProperty, TextTransform, WhiteSpace, whiteSpaceProperty } from '@nativescript/core/ui/text-base';
+import { borderBottomWidthProperty, borderLeftWidthProperty, borderRightWidthProperty, borderTopWidthProperty, FormattedString, formattedTextProperty, TextTransform, WhiteSpace, whiteSpaceProperty, letterSpacingProperty, textAlignmentProperty } from '@nativescript/core/ui/text-base';
 import { isString } from '@nativescript/core/utils/types';
 import { layout } from '@nativescript/core/utils/utils';
 import { TextShadow, VerticalTextAlignment, verticalTextAlignmentProperty } from './label';
-import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty, textShadowProperty } from './label-common';
+import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty, textShadowProperty, needFormattedStringComputation } from './label-common';
 
 export * from './label-common';
 enum FixedSize {
@@ -17,6 +17,7 @@ enum FixedSize {
 declare module '@nativescript/core/ui/text-base' {
     interface TextBase {
         _requestLayoutOnTextChanged();
+        _setNativeText();
     }
 }
 
@@ -81,6 +82,7 @@ export class Label extends LabelBase {
     private _observer: NSObject;
     nativeViewProtected: UITextView;
     nativeTextViewProtected: UITextView;
+    attributedString: NSMutableAttributedString;
     // static DTCORETEXT_INIT = false;
     constructor() {
         super();
@@ -114,7 +116,7 @@ export class Label extends LabelBase {
         this._observer = ObserverClass.alloc().init();
         this._observer['_owner'] = new WeakRef(this);
         this.nativeViewProtected.addObserverForKeyPathOptionsContext(this._observer, 'contentSize', NSKeyValueObservingOptions.New, null);
-        this.nativeViewProtected.attributedText = this.htmlText;
+        this.nativeViewProtected.attributedText = this.attributedString;
         // this.htmlText = null;
         // this.needsHTMLUpdate = false;
         // this.updatingHTML = false;
@@ -307,17 +309,16 @@ export class Label extends LabelBase {
         return null;
     }
 
-    htmlText: NSMutableAttributedString;
     updateHTMLString() {
         if (!this.html) {
-            this.htmlText = null;
+            this.attributedString = null;
         } else {
             let htmlString = this.html;
             const font = this.nativeView.font;
             htmlString = `<style>body{ color: ${this.color};font-family: '${font.familyName}'; font-size:${font.pointSize}px;}</style>${htmlString}`;
             const nsString = NSString.stringWithString(htmlString);
             const nsData = nsString.dataUsingEncoding(NSUTF16StringEncoding);
-            const attrText = this.htmlText = NSMutableAttributedString.alloc().initWithDataOptionsDocumentAttributesError(
+            const attrText = this.attributedString = NSMutableAttributedString.alloc().initWithDataOptionsDocumentAttributesError(
                 nsData,
                 <any>{
                     [NSDocumentTypeDocumentAttribute]: NSHTMLTextDocumentType
@@ -335,10 +336,10 @@ export class Label extends LabelBase {
                 paragraphStyle.lineSpacing = this.lineHeight;
                 // make sure a possible previously set text alignment setting is not lost when line height is specified
                 paragraphStyle.alignment = (<UITextField | UITextView | UILabel>this.nativeTextViewProtected).textAlignment;
-                if (this.nativeTextViewProtected instanceof UILabel) {
-                    // make sure a possible previously set line break mode is not lost when line height is specified
-                    paragraphStyle.lineBreakMode = this.nativeTextViewProtected.lineBreakMode;
-                }
+                // if (this.nativeTextViewProtected instanceof UILabel) {
+                //     // make sure a possible previously set line break mode is not lost when line height is specified
+                //     paragraphStyle.lineBreakMode = this.nativeTextViewProtected.lineBreakMode;
+                // }
                 attrText.addAttributeValueRange(NSParagraphStyleAttributeName, paragraphStyle, { location: 0, length: attrText.length });
             } else {
                 const paragraphStyle = NSMutableParagraphStyle.alloc().init();
@@ -350,42 +351,51 @@ export class Label extends LabelBase {
             this._requestLayoutOnTextChanged();
         }
         if (this.nativeViewProtected) {
-            this.nativeViewProtected.attributedText = this.htmlText;
+            this.nativeViewProtected.attributedText = this.attributedString;
         }
-    }
-    applyingNativeSetters = false;
-    public onResumeNativeUpdates(): void {
-        // Applying native setters...
-        this.applyingNativeSetters = true;
-        super.onResumeNativeUpdates();
-        this.applyingNativeSetters = false;
     }
     [colorProperty.setNative](value: Color | UIColor) {
         const color = value instanceof Color ? value.ios : value;
-        if (!this.formattedText && !this.html) {
+        // if (!this.formattedText && !this.html) {
             const nativeView = this.nativeTextViewProtected;
             nativeView.textColor = color;
-        }
+        // }
     }
+    @needFormattedStringComputation
     [htmlProperty.setNative](value: string) {
-        if (!this.style.fontInternal || !this.applyingNativeSetters) {
+        if (!this.style.fontInternal ) {
             this.updateHTMLString();
         }
     }
-    [formattedTextProperty.setNative](value: FormattedString) {
-        super[formattedTextProperty.setNative](value);
+    @needFormattedStringComputation
+    [letterSpacingProperty.setNative](value: number) {
+        super[letterSpacingProperty.setNative](value);
     }
+    @needFormattedStringComputation
+    [lineHeightProperty.setNative](value: number) {
+        super[lineHeightProperty.setNative](value);
+    }
+    @needFormattedStringComputation
+    [textAlignmentProperty.setNative](value: number) {
+        super[lineHeightProperty.setNative](value);
+    }
+    _setNativeText() {
+        if (!this.html) {
+        this.updateHTMLString();
+        } else {
+            super._setNativeText();
+        }
+    }
+    // [formattedTextProperty.setNative](value: FormattedString) {
+    //     super[formattedTextProperty.setNative](value);
+    // }
     [fontInternalProperty.getDefault](): UIFont {
         const nativeView = this.nativeViewProtected;
         return nativeView.font;
     }
-    [fontInternalProperty.setNative](value: Font | UIFont) {
-        super[fontInternalProperty.setNative](value);
-        // font setter always called after html
-        if (this.html) {
-            this.updateHTMLString();
-        }
-    }
+    // [fontInternalProperty.setNative](value: Font | UIFont) {
+    //     super[fontInternalProperty.setNative](value);
+    // }
 
     [paddingTopProperty.getDefault](): Length {
         return {

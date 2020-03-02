@@ -24,6 +24,18 @@ FormattedString.prototype.eachChild = function(callback: (child: ViewBase) => bo
     this.spans.forEach((v, i, arr) => callback(v));
 }
 
+
+export const needFormattedStringComputation = function(target: any, propertyKey: string | Symbol, descriptor: PropertyDescriptor) {
+    let originalMethod = descriptor.value;
+    descriptor.value = function (...args: any[]) {
+        if (!this._canChangeText) {
+            this._needFormattedStringComputation = true;
+            return;
+        }
+        return originalMethod.apply(this, args);
+    }
+}
+
 export const cssProperty = (target: Object, key: string | symbol) => {
     // property getter
     const getter = function() {
@@ -44,11 +56,24 @@ export const cssProperty = (target: Object, key: string | symbol) => {
 };
 
 @CSSType('HTMLLabel')
-export class LabelBase extends TNLabel implements LabelViewDefinition {
+export abstract class LabelBase extends TNLabel implements LabelViewDefinition {
     @cssProperty maxLines: string | number;
     @cssProperty autoFontSize: boolean;
     @cssProperty verticalTextAlignment: VerticalTextAlignment;
     public html: string;
+
+    _canChangeText = true;
+    _needFormattedStringComputation = false;
+    public onResumeNativeUpdates(): void {
+        // {N} suspends properties update on `_suspendNativeUpdates`. So we only need to do this in onResumeNativeUpdates
+        this._canChangeText = false;
+        super.onResumeNativeUpdates();
+        this._canChangeText = true;
+        if (this._needFormattedStringComputation) {
+            this._needFormattedStringComputation = false;
+            this._setNativeText();
+        }
+    }
 }
 
 // TODO: Can we use Label.ios optimization for affectsLayout???
