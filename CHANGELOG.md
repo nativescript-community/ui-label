@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.23](https://github.com/Akylas/nativescript-label/compare/v1.0.22...v1.0.23) (2020-03-02)
+
+
+### Bug Fixes
+
+* only update nativeText when all props updates have been processed ([d73e2d0](https://github.com/Akylas/nativescript-label/commit/d73e2d02ccd4110aede95e9f0ffdfa32d12bc154))
+
+
+
+
+
 ## [1.0.22](https://github.com/Akylas/nativescript-label/compare/v1.0.21...v1.0.22) (2020-02-27)
 
 **Note:** Version bump only for package nativescript-htmllabel
