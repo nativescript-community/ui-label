@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.25](https://github.com/Akylas/nativescript-label/compare/v1.0.24...v1.0.25) (2020-03-04)
+
+**Note:** Version bump only for package nativescript-htmllabel
+
+
+
+
+
 ## [1.0.24](https://github.com/Akylas/nativescript-label/compare/v1.0.23...v1.0.24) (2020-03-04)
 
 **Note:** Version bump only for package nativescript-htmllabel
