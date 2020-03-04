@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.24](https://github.com/Akylas/nativescript-label/compare/v1.0.23...v1.0.24) (2020-03-04)
+
+
+### Bug Fixes
+
+* **ios:** fix text not showing … ([e404d4b](https://github.com/Akylas/nativescript-label/commit/e404d4bd1dcbafa9fda525f6bad7c1d88d7715ae))
+
+
+
+
+
 ## [1.0.23](https://github.com/Akylas/nativescript-label/compare/v1.0.22...v1.0.23) (2020-03-02)
 
 
