@@ -1,6 +1,16 @@
-import { Color, colorProperty, fontInternalProperty, Length, paddingBottomProperty, paddingLeftProperty, paddingRightProperty, paddingTopProperty, View, lineHeightProperty } from '@nativescript/core/ui/page/page';
-import { Font } from '@nativescript/core/ui/styling/font';
-import { borderBottomWidthProperty, borderLeftWidthProperty, borderRightWidthProperty, borderTopWidthProperty, FormattedString, formattedTextProperty, TextTransform, WhiteSpace, whiteSpaceProperty, letterSpacingProperty, textAlignmentProperty } from '@nativescript/core/ui/text-base';
+import { Color, colorProperty, fontInternalProperty, Length, paddingBottomProperty, paddingLeftProperty, paddingRightProperty, paddingTopProperty, View } from '@nativescript/core/ui/page/page';
+import { lineHeightProperty } from '@nativescript/core/ui/text-base/text-base';
+import {
+    borderBottomWidthProperty,
+    borderLeftWidthProperty,
+    borderRightWidthProperty,
+    borderTopWidthProperty,
+    TextTransform,
+    WhiteSpace,
+    whiteSpaceProperty,
+    letterSpacingProperty,
+    textAlignmentProperty
+} from '@nativescript/core/ui/text-base';
 import { isString } from '@nativescript/core/utils/types';
 import { layout } from '@nativescript/core/utils/utils';
 import { TextShadow, VerticalTextAlignment, verticalTextAlignmentProperty } from './label';
@@ -318,13 +328,13 @@ export class Label extends LabelBase {
             htmlString = `<style>body{ color: ${this.color};font-family: '${font.familyName}'; font-size:${font.pointSize}px;}</style>${htmlString}`;
             const nsString = NSString.stringWithString(htmlString);
             const nsData = nsString.dataUsingEncoding(NSUTF16StringEncoding);
-            const attrText = this.attributedString = NSMutableAttributedString.alloc().initWithDataOptionsDocumentAttributesError(
+            const attrText = (this.attributedString = NSMutableAttributedString.alloc().initWithDataOptionsDocumentAttributesError(
                 nsData,
                 <any>{
                     [NSDocumentTypeDocumentAttribute]: NSHTMLTextDocumentType
                 },
                 null
-            );
+            ));
 
             // TODO: letterSpacing should be applied per Span.
             if (this.letterSpacing !== 0) {
@@ -347,7 +357,6 @@ export class Label extends LabelBase {
                 attrText.addAttributeValueRange(NSParagraphStyleAttributeName, paragraphStyle, { location: 0, length: attrText.length });
             }
 
-
             this._requestLayoutOnTextChanged();
         }
         if (this.nativeViewProtected) {
@@ -357,15 +366,16 @@ export class Label extends LabelBase {
     [colorProperty.setNative](value: Color | UIColor) {
         const color = value instanceof Color ? value.ios : value;
         // if (!this.formattedText && !this.html) {
-            const nativeView = this.nativeTextViewProtected;
-            nativeView.textColor = color;
+        const nativeView = this.nativeTextViewProtected;
+        nativeView.textColor = color;
         // }
     }
     @needFormattedStringComputation
     [htmlProperty.setNative](value: string) {
-        if (!this.style.fontInternal ) {
+        console.log('htmlProperty', value);
+        // if (!this.style.fontInternal) {
             this.updateHTMLString();
-        }
+        // }
     }
     @needFormattedStringComputation
     [letterSpacingProperty.setNative](value: number) {
@@ -380,8 +390,8 @@ export class Label extends LabelBase {
         super[lineHeightProperty.setNative](value);
     }
     _setNativeText() {
-        if (!this.html) {
-        this.updateHTMLString();
+        if (this.html) {
+            this.updateHTMLString();
         } else {
             super._setNativeText();
         }
