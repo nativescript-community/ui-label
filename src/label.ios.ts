@@ -385,10 +385,10 @@ export class Label extends LabelBase {
     [lineHeightProperty.setNative](value: number) {
         super[lineHeightProperty.setNative](value);
     }
-    @needFormattedStringComputation
-    [textAlignmentProperty.setNative](value: number) {
-        super[lineHeightProperty.setNative](value);
-    }
+    // @needFormattedStringComputation
+    // [textAlignmentProperty.setNative](value: number) {
+    //     super[textAlignmentProperty.setNative](value);
+    // }
     _setNativeText() {
         if (this.html) {
             this.updateHTMLString();
@@ -399,10 +399,10 @@ export class Label extends LabelBase {
     // [formattedTextProperty.setNative](value: FormattedString) {
     //     super[formattedTextProperty.setNative](value);
     // }
-    [fontInternalProperty.getDefault](): UIFont {
-        const nativeView = this.nativeViewProtected;
-        return nativeView.font;
-    }
+    // [fontInternalProperty.getDefault](): UIFont {
+    //     const nativeView = this.nativeViewProtected;
+    //     return nativeView.font;
+    // }
     // [fontInternalProperty.setNative](value: Font | UIFont) {
     //     super[fontInternalProperty.setNative](value);
     // }
