@@ -31,7 +31,9 @@ import {
     textTransformProperty,
     View,
     WhiteSpace,
-    whiteSpaceProperty
+    whiteSpaceProperty,
+    ViewBase,
+    fontFamilyProperty
 } from '@nativescript/core/ui/text-base/text-base';
 import { layout } from '@nativescript/core/utils/utils';
 import { Label as LabelViewDefinition, TextShadow } from './label';
@@ -519,17 +521,17 @@ export class Label extends LabelBase {
         }
 
         this._androidView = nativeView;
-        if (nativeView) {
-            if (this._isPaddingRelative === undefined) {
-                this._isPaddingRelative = false;
-            }
+        // if (nativeView) {
+            // if (this._isPaddingRelative === undefined) {
+            //     this._isPaddingRelative = false;
+            // }
 
-            this._defaultPaddingTop = 0;
-            this._defaultPaddingRight = 0;
-            this._defaultPaddingBottom = 0;
-            this._defaultPaddingLeft = 0;
+            // this._defaultPaddingTop = 0;
+            // this._defaultPaddingRight = 0;
+            // this._defaultPaddingBottom = 0;
+            // this._defaultPaddingLeft = 0;
 
-        }
+        // }
 
         this.setNativeView(nativeView);
         if (this.parent) {
