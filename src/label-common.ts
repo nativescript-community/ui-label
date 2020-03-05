@@ -1,6 +1,6 @@
 import { isIOS } from '@nativescript/core/platform';
 import { CssProperty, InheritedCssProperty, makeParser, makeValidator, Property } from '@nativescript/core/ui/core/properties';
-import { booleanConverter, Color, CSSType, dip, Observable, ViewBase } from '@nativescript/core/ui/core/view';
+import { booleanConverter, Color, CSSType, dip, Observable, ViewBase, PropertyChangeData } from '@nativescript/core/ui/core/view';
 import { Label as TNLabel } from '@nativescript/core/ui/label';
 import { Style } from '@nativescript/core/ui/styling/style';
 import { layout } from '@nativescript/core/utils/utils';
@@ -12,29 +12,47 @@ declare module '@nativescript/core/ui/text-base/formatted-string' {
     interface FormattedString {
         addPropertyChangeHandler(span: Span): void;
         removePropertyChangeHandler(span: Span): void;
+        onPropertyChange(data)
     }
 }
+
+// FormattedString.prototype.onPropertyChange = function(data: PropertyChangeData) {
+//     this.notifyPropertyChange(data.propertyName, this);
+// }
 FormattedString.prototype.addPropertyChangeHandler = function(span: Span) {
     span.on(Observable.propertyChangeEvent, this.onPropertyChange, this);
+    // const style = span.style;
+    // style.on('fontFamilyChange', this.onPropertyChange, this);
+    // style.on('fontSizeChange', this.onPropertyChange, this);
+    // style.on('fontStyleChange', this.onPropertyChange, this);
+    // style.on('fontWeightChange', this.onPropertyChange, this);
+    // style.on('textDecorationChange', this.onPropertyChange, this);
+    // style.on('colorChange', this.onPropertyChange, this);
 };
 FormattedString.prototype.removePropertyChangeHandler = function(span: Span) {
     span.off(Observable.propertyChangeEvent, this.onPropertyChange, this);
+    // const style = span.style;
+    // style.off('fontFamilyChange', this.onPropertyChange, this);
+    // style.off('fontSizeChange', this.onPropertyChange, this);
+    // style.off('fontStyleChange', this.onPropertyChange, this);
+    // style.off('fontWeightChange', this.onPropertyChange, this);
+    // style.off('textDecorationChange', this.onPropertyChange, this);
+    // style.off('colorChange', this.onPropertyChange, this);
 };
-FormattedString.prototype.eachChild = function(callback: (child: ViewBase) => boolean): void {
-    this.spans.forEach((v, i, arr) => callback(v));
-}
-
+// FormattedString.prototype.eachChild = function(callback: (child: ViewBase) => boolean): void {
+//     this.spans.forEach((v, i, arr) => callback(v));
+// };
 
 export const needFormattedStringComputation = function(target: any, propertyKey: string | Symbol, descriptor: PropertyDescriptor) {
     let originalMethod = descriptor.value;
-    descriptor.value = function (...args: any[]) {
+    descriptor.value = function(...args: any[]) {
         if (!this._canChangeText) {
             this._needFormattedStringComputation = true;
             return;
         }
         return originalMethod.apply(this, args);
-    }
-}
+    };
+};
 
 export const cssProperty = (target: Object, key: string | symbol) => {
     // property getter
