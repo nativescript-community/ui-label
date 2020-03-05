@@ -221,12 +221,13 @@ abstract class LabelBase extends View implements LabelViewDefinition {
         this.requestLayout();
     }
 
-    // eachChild(callback: (child: ViewBase) => boolean): void {
-    //     let text = this.formattedText;
-    //     if (text) {
-    //         callback(text);
-    //     }
-    // }
+    // without this spans class wont work :s
+    eachChild(callback: (child: ViewBase) => boolean): void {
+        let text = this.formattedText;
+        if (text) {
+            callback(text);
+        }
+    }
 
     abstract _setNativeText(reset?: boolean):void;
 
