@@ -99,10 +99,10 @@ Span.prototype.toNativeString = function() {
         text = getTransformedText(text, textTransform);
     }
     const delimiter = String.fromCharCode(0x1e);
-    let result = `${this.fontFamily}${delimiter}${this.fontSize}${delimiter}${isBold(this.fontWeight) ? 1 : 0}${delimiter}${
+    let result = `${this.fontFamily || 0}${delimiter}${this.fontSize !== undefined ? this.fontSize: -1}${delimiter}${this.fontWeight || ''}${delimiter}${
         this.fontStyle === 'italic' ? 1 : 0
-    }${delimiter}${textDecoration}${delimiter}${this.color ? this.color.android : undefined}${delimiter}${backgroundColor ? backgroundColor.android : undefined}${delimiter}${this.text}`;
-
+    }${delimiter}${textDecoration || 0}${delimiter}${this.color ? this.color.android : -1}${delimiter}${backgroundColor ? backgroundColor.android : -1}${delimiter}${this.text}`;
+    // console.log('toNativeString', result, this.fontFamily, this.style.fontFamily, this.style.fontWeight, this.style.fontStyle)
     return result;
 };
 
