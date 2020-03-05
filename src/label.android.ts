@@ -244,8 +244,8 @@ export class Label extends LabelBase {
     @profile
     public createNativeView() {
         if (!TextView) {
-            TextView = (com as any).nativescript.label.Label;
-            // TextView = android.widget.TextView;
+            // TextView = (com as any).nativescript.label.Label;
+            TextView = android.widget.TextView;
         }
         return new TextView(this._context);
     }
