@@ -105,6 +105,7 @@ public class Font {
                 return Build.VERSION.SDK_INT >= 16 ? "-light" : "";
             case FontWeight.NORMAL:
             case "400":
+            case "":
                 return "";
             case FontWeight.MEDIUM:
             case FontWeight.SEMI_BOLD:
@@ -258,8 +259,8 @@ public class Font {
 
 
     public static void setSpanModifiers(Context context, String fontFolder, SpannableStringBuilder ssb, ArrayList<String> span, int start, int end) {
-        boolean bold = span.get(2) == "1";
-        boolean italic = span.get(3) == "1";
+        boolean bold = span.get(2).equals("bold") || span.get(2).equals("700");
+        boolean italic = span.get(3).equals("1");
 
         if (bold && italic) {
             ssb.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD_ITALIC), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -270,8 +271,8 @@ public class Font {
         }
 
         String fontFamily = span.get(0);
-        if (!fontFamily.equals("undefined") ) {
-            Typeface typeface = createTypeface(context, fontFolder, fontFamily, bold ? "bold" : "normal",
+        if (!fontFamily.equals("0") ) {
+            Typeface typeface = createTypeface(context, fontFolder, fontFamily, span.get(2),
                     bold, italic);
 //        const font = new Font(fontFamily, 0, (italic) ? "italic" : "normal", (bold) ? "bold" : "normal");
 //        const typeface = font.getAndroidTypeface() || android.graphics.Typeface.create(fontFamily, 0);
@@ -280,30 +281,32 @@ public class Font {
         }
 
         String fontSize = span.get(1);
-        if (!fontSize.equals("undefined") ) {
+        if (!fontSize.equals("-1") ) {
             ssb.setSpan(new AbsoluteSizeSpan(Math.round(Float.parseFloat(fontSize) * context.getResources().getDisplayMetrics().density)), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
         String color = span.get(5);
-        if (!color.equals("undefined") ) {
+        if (!color.equals("-1") ) {
             ssb.setSpan(new ForegroundColorSpan(Integer.parseInt(color)), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
 
         String backgroundColor = span.get(6);
 
-        if (!backgroundColor.equals("undefined") ) {
+        if (!backgroundColor.equals("-1") ) {
             ssb.setSpan(new BackgroundColorSpan(Integer.parseInt(backgroundColor)), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
 
         String textDecoration = span.get(4);
-        if (textDecoration.contains("underline")) {
-            ssb.setSpan(new android.text.style.UnderlineSpan(), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
+        if (!textDecoration.equals("0") ) {
+            if (textDecoration.contains("underline")) {
+                ssb.setSpan(new android.text.style.UnderlineSpan(), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
 
-        if (textDecoration.contains("line-through")) {
-            ssb.setSpan(new android.text.style.StrikethroughSpan(), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            if (textDecoration.contains("line-through")) {
+                ssb.setSpan(new android.text.style.StrikethroughSpan(), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
         }
         long stopTime = System.nanoTime();
         // TODO: Implement letterSpacing for Span here.
