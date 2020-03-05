@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.26](https://github.com/Akylas/nativescript-label/compare/v1.0.25...v1.0.26) (2020-03-05)
+
+
+### Bug Fixes
+
+* **android:** fix for now was breaking classes in spans ([fce58b1](https://github.com/Akylas/nativescript-label/commit/fce58b1a2ebafa7b59483e6be54b7002ef9970ce))
+* **android:** use textview for now (wrong measure) ([4b8ad6f](https://github.com/Akylas/nativescript-label/commit/4b8ad6f31534172a40068cc1da4c2fb0cddcd548))
+* **android:** wrong weight for spans ([8da7923](https://github.com/Akylas/nativescript-label/commit/8da792322f5318bf3b600567b166a7aa9e201229))
+
+
+
+
+
 ## [1.0.25](https://github.com/Akylas/nativescript-label/compare/v1.0.24...v1.0.25) (2020-03-04)
 
 
