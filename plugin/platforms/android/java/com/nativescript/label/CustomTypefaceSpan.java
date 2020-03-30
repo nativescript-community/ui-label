@@ -18,6 +18,10 @@ public class CustomTypefaceSpan extends TypefaceSpan {
         this.typeface = typeface;
     }
 
+    public Typeface getTypeface() {
+        return this.typeface;
+    }
+
     public void updateDrawState(TextPaint ds) {
         this.applyCustomTypeFace(ds);
     }
