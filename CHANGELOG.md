@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.27](https://github.com/Akylas/nativescript-label/compare/v1.0.26...v1.0.27) (2020-03-30)
+
+
+### Bug Fixes
+
+* some bug fixes ([38c3927](https://github.com/Akylas/nativescript-label/commit/38c3927ef33fdb2040a9868e6056d07afdbed6d6))
+* **android:** use new textview class to fix multi lines ellipsize ([b3feeee](https://github.com/Akylas/nativescript-label/commit/b3feeee4f9a616123d3b8456c19161fbaca430d3))
+
+
+
+
+
 ## [1.0.26](https://github.com/Akylas/nativescript-label/compare/v1.0.25...v1.0.26) (2020-03-05)
 
 
