@@ -372,7 +372,6 @@ export class Label extends LabelBase {
     }
     @needFormattedStringComputation
     [htmlProperty.setNative](value: string) {
-        console.log('htmlProperty', value);
         // if (!this.style.fontInternal) {
             this.updateHTMLString();
         // }
@@ -529,7 +528,7 @@ export class Label extends LabelBase {
         if (value === 'none') {
             this.nativeViewProtected.textContainer.maximumNumberOfLines = 0;
         } else {
-            this.nativeViewProtected.textContainer.maximumNumberOfLines = value as number;
+            this.nativeViewProtected.textContainer.maximumNumberOfLines = typeof value === 'string' ? parseInt(value, 10) : value;
         }
     }
 
@@ -547,8 +546,11 @@ export class Label extends LabelBase {
     }
     [whiteSpaceProperty.setNative](value: WhiteSpace) {
         const nativeView = this.nativeTextViewProtected;
+        // only if no lineBreak
+        if (!this.lineBreak) {
+            nativeView.textContainer.lineBreakMode = whiteSpaceToLineBreakMode(value);
 
-        nativeView.textContainer.lineBreakMode = whiteSpaceToLineBreakMode(value);
+        }
     }
     // [autoFontSizeProperty.getDefault](): boolean {
     //     return this.nativeViewProtected.adjustsFontSizeToFitWidth;
