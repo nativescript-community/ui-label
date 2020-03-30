@@ -36,7 +36,7 @@ import {
     fontFamilyProperty
 } from '@nativescript/core/ui/text-base/text-base';
 import { layout } from '@nativescript/core/utils/utils';
-import { Label as LabelViewDefinition, TextShadow } from './label';
+import { Label as LabelViewDefinition, TextShadow, LineBreak } from './label';
 import { cssProperty, needFormattedStringComputation, lineBreakProperty, maxLinesProperty, textShadowProperty, VerticalTextAlignment, verticalTextAlignmentProperty } from './label-common';
 
 let context;
@@ -104,7 +104,6 @@ Span.prototype.toNativeString = function() {
     let result = `${this.fontFamily || 0}${delimiter}${this.fontSize !== undefined ? this.fontSize: -1}${delimiter}${this.fontWeight || ''}${delimiter}${
         this.fontStyle === 'italic' ? 1 : 0
     }${delimiter}${textDecoration || 0}${delimiter}${this.color ? this.color.android : -1}${delimiter}${backgroundColor ? backgroundColor.android : -1}${delimiter}${this.text}`;
-    // console.log('toNativeString', result, this.fontFamily, this.style.fontFamily, this.style.fontWeight, this.style.fontStyle)
     return result;
 };
 
@@ -162,6 +161,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     @cssProperty fontWeight: FontWeight;
     @cssProperty letterSpacing: number;
     @cssProperty lineHeight: number;
+    @cssProperty lineBreak: LineBreak;
     @cssProperty textAlignment: TextAlignment;
     @cssProperty textDecoration: TextDecoration;
     @cssProperty textTransform: TextTransform;
@@ -194,8 +194,10 @@ abstract class LabelBase extends View implements LabelViewDefinition {
         if (typeof value === 'string') {
             value = booleanConverter(value);
         }
-
-        this.style.whiteSpace = value ? 'normal' : 'nowrap';
+        const newValue = value ? 'normal' : 'nowrap'
+        if (this.style.whiteSpace !== newValue) {
+            this.style.whiteSpace = newValue;
+        }
     }
 
     public _onFormattedTextContentsChanged(data: PropertyChangeData) {
@@ -267,29 +269,34 @@ export class Label extends LabelBase {
         return 'none';
     }
     [maxLinesProperty.setNative](value: number | string) {
+        // this.nativeViewProtected.setMinLines(1);
         if (value === 'none') {
             this.nativeViewProtected.setMaxLines(-1);
         } else {
-            this.nativeViewProtected.setMaxLines(value as number);
+            this.nativeViewProtected.setMaxLines(typeof value === 'string' ? parseInt(value, 10) : value);
         }
     }
     [lineBreakProperty.setNative](value: string) {
         const nativeView = this.nativeTextViewProtected;
         switch (value) {
             case 'end':
-                nativeView.setSingleLine(true);
+                // nativeView.setSingleLine(true);
                 nativeView.setEllipsize(android.text.TextUtils.TruncateAt.END);
                 break;
             case 'start':
-                nativeView.setSingleLine(true);
+                // nativeView.setSingleLine(true);
                 nativeView.setEllipsize(android.text.TextUtils.TruncateAt.START);
                 break;
+            case 'marquee':
+                // nativeView.setSingleLine(true);
+                nativeView.setEllipsize(android.text.TextUtils.TruncateAt.MARQUEE);
+                break;
             case 'middle':
-                nativeView.setSingleLine(true);
+                // nativeView.setSingleLine(true);
                 nativeView.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);
                 break;
             case 'none':
-                nativeView.setSingleLine(false);
+                // nativeView.setSingleLine(false);
                 nativeView.setEllipsize(null);
                 break;
         }
@@ -301,11 +308,11 @@ export class Label extends LabelBase {
             case 'initial':
             case 'normal':
                 nativeView.setSingleLine(false);
-                nativeView.setEllipsize(null);
+                // nativeView.setEllipsize(null);
                 break;
             case 'nowrap':
                 nativeView.setSingleLine(true);
-                nativeView.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                // nativeView.setEllipsize(android.text.TextUtils.TruncateAt.END);
                 break;
         }
     }
@@ -376,22 +383,6 @@ export class Label extends LabelBase {
         }
     }
 
-    // Overridden in TextField because setSingleLine(false) will remove methodTransformation.
-    // and we don't want to allow TextField to be multiline
-    [whiteSpaceProperty.setNative](value: WhiteSpace) {
-        const nativeView = this.nativeTextViewProtected;
-        switch (value) {
-            case 'initial':
-            case 'normal':
-                nativeView.setSingleLine(false);
-                nativeView.setEllipsize(null);
-                break;
-            case 'nowrap':
-                nativeView.setSingleLine(true);
-                nativeView.setEllipsize(android.text.TextUtils.TruncateAt.END);
-                break;
-        }
-    }
     [colorProperty.setNative](value: Color | android.content.res.ColorStateList) {
         if (value instanceof Color) {
             this.nativeTextViewProtected.setTextColor(value.android);

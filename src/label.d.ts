@@ -28,8 +28,10 @@ export declare class Label extends TNLabel {
     html: string;
 
     verticalTextAlignment: VerticalTextAlignment;
+    lineBreak: LineBreak;
 }
 export type VerticalTextAlignment = 'initial' | 'top' | 'middle' | 'bottom' | 'center';
+export type LineBreak = "end" | "start" | "middle" | "none";
 
 export declare const htmlProperty: Property<Label, string>;
 export declare const verticalTextAlignmentProperty: Property<Label, VerticalTextAlignment>;

@@ -4,7 +4,7 @@ import { booleanConverter, Color, CSSType, dip, Observable, ViewBase, PropertyCh
 import { Label as TNLabel } from '@nativescript/core/ui/label';
 import { Style } from '@nativescript/core/ui/styling/style';
 import { layout } from '@nativescript/core/utils/utils';
-import { Label as LabelViewDefinition, TextShadow } from './label';
+import { Label as LabelViewDefinition, TextShadow, LineBreak } from './label';
 import { FormattedString } from '@nativescript/core/ui/text-base/formatted-string';
 import { Span } from '@nativescript/core/ui/text-base/span';
 
@@ -78,7 +78,8 @@ export abstract class LabelBase extends TNLabel implements LabelViewDefinition {
     @cssProperty maxLines: string | number;
     @cssProperty autoFontSize: boolean;
     @cssProperty verticalTextAlignment: VerticalTextAlignment;
-    public html: string;
+    @cssProperty lineBreak: LineBreak;
+    html: string;
 
     _canChangeText = true;
     _needFormattedStringComputation = false;
