@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.28](https://github.com/Akylas/nativescript-label/compare/v1.0.27...v1.0.28) (2020-04-29)
+
+
+### Bug Fixes
+
+* same as before but with fontName ([8b32d51](https://github.com/Akylas/nativescript-label/commit/8b32d51945f964ca8ed349f78a07668e08d058ab))
+* use this fontSize to ensure correct size event if font not updated yet ([603921d](https://github.com/Akylas/nativescript-label/commit/603921d7438fb1e9a14475ba7bf939cc5e950cff))
+
+
+
+
+
 ## [1.0.27](https://github.com/Akylas/nativescript-label/compare/v1.0.26...v1.0.27) (2020-03-30)
 
 
