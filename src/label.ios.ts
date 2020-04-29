@@ -325,7 +325,7 @@ export class Label extends LabelBase {
         } else {
             let htmlString = this.html;
             const font = this.nativeView.font;
-            htmlString = `<style>body{ color: ${this.color};font-family: '${font.familyName}'; font-size:${font.pointSize}px;}</style>${htmlString}`;
+            htmlString = `<style>body{ color: ${this.color};font-family: '${font.familyName}'; font-size:${this.fontSize}px;}</style>${htmlString}`;
             const nsString = NSString.stringWithString(htmlString);
             const nsData = nsString.dataUsingEncoding(NSUTF16StringEncoding);
             const attrText = (this.attributedString = NSMutableAttributedString.alloc().initWithDataOptionsDocumentAttributesError(
