@@ -325,7 +325,9 @@ export class Label extends LabelBase {
         } else {
             let htmlString = this.html;
             const font = this.nativeView.font;
-            htmlString = `<style>body{ color: ${this.color};font-family: '${font.familyName}'; font-size:${this.fontSize}px;}</style>${htmlString}`;
+            const fontSize = this.fontSize || font.pointSize;
+            const familyName = this.style.fontFamily || font.familyName;
+            htmlString = `<style>body{ color: ${this.color};font-family: '${familyName}'; font-size:${fontSize}px;}</style>${htmlString}`;
             const nsString = NSString.stringWithString(htmlString);
             const nsData = nsString.dataUsingEncoding(NSUTF16StringEncoding);
             const attrText = (this.attributedString = NSMutableAttributedString.alloc().initWithDataOptionsDocumentAttributesError(
@@ -338,7 +340,7 @@ export class Label extends LabelBase {
 
             // TODO: letterSpacing should be applied per Span.
             if (this.letterSpacing !== 0) {
-                attrText.addAttributeValueRange(NSKernAttributeName, this.letterSpacing * this.nativeTextViewProtected.font.pointSize, { location: 0, length: attrText.length });
+                attrText.addAttributeValueRange(NSKernAttributeName, this.letterSpacing * fontSize, { location: 0, length: attrText.length });
             }
 
             if (this.style.lineHeight) {
