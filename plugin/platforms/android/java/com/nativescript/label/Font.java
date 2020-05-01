@@ -2,6 +2,7 @@ package com.nativescript.label;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.text.SpannableStringBuilder;
@@ -12,7 +13,14 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.TypefaceSpan;
 import android.util.Log;
 
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
+
 import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
@@ -201,7 +209,8 @@ public class Font {
         if (htmlString == null) {
             return null;
         }
-        Spanned spannedString = HtmlCompat.fromHtml(htmlString, HtmlCompat.FROM_HTML_MODE_COMPACT);
+//        Spanned spannedString = HtmlCompat.fromHtml(htmlString, HtmlCompat.FROM_HTML_MODE_COMPACT);
+        CharSequence spannedString = fromHtml(htmlString, context, false);
         SpannableStringBuilder builder = new SpannableStringBuilder(spannedString);
 
         TypefaceSpan[] spans = builder.getSpans(0, builder.length(), android.text.style.TypefaceSpan.class);
@@ -215,8 +224,8 @@ public class Font {
             if (split.length > 1) {
                 style = split[1];
             }
-            Typeface typeface = createTypeface(context, fontFolder, fontFamily, style == "bold" ? "bold" : "normal",
-                    style == "bold", style == "italic");
+            Typeface typeface = createTypeface(context, fontFolder, fontFamily, style.equals("bold") ? "bold" : "normal",
+                    style.equals("bold"), style.equals("italic"));
 
             if (typeface == null) {
                 typeface = Typeface.create(fontFamily, Typeface.NORMAL);
@@ -337,5 +346,25 @@ public class Font {
         }
 
         return ssb;
+    }
+
+    public static CharSequence fromHtml(CharSequence html, Context context, final boolean disableLinkStyle) {
+	    if (html instanceof String) {
+            XMLReader xmlReader;
+            try {
+                xmlReader = XMLReaderFactory.createXMLReader ("org.ccil.cowan.tagsoup.Parser");
+                HtmlToSpannedConverter converter =
+                        new HtmlToSpannedConverter(context, null, null, disableLinkStyle);
+                xmlReader.setContentHandler (converter);
+                xmlReader.parse (new InputSource(new StringReader((String)html)));
+                return converter.spannable();
+            } catch (SAXException | IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return html;
+	}
+    public static CharSequence fromHtml(Context context, CharSequence html) {
+        return fromHtml(html, context,false);
     }
 }
