@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.29](https://github.com/Akylas/nativescript-label/compare/v1.0.28...v1.0.29) (2020-05-01)
+
+
+### Bug Fixes
+
+* **android:** custom fromHTML to add more tags support ([b89d3a8](https://github.com/Akylas/nativescript-label/commit/b89d3a80b9368239c09c703a83b6540b346c5153))
+
+
+
+
+
 ## [1.0.28](https://github.com/Akylas/nativescript-label/compare/v1.0.27...v1.0.28) (2020-04-29)
 
 **Note:** Version bump only for package nativescript-htmllabel
