@@ -6,6 +6,7 @@ import { Property, View } from '@nativescript/core/ui/core/view/view';
 import { Label as TNLabel } from '@nativescript/core/ui/label/label';
 import { dip } from '@nativescript/core/ui/core/view/view';
 import { Color } from '@nativescript/core/color/color';
+import { TextAlignment } from '@nativescript/core/ui/text-base';
 /**
  * Represents a label with html content. Use this component instead WebView when you want to show just static HTML content.
  * [iOS support](https://developer.apple.com/library/ios/documentation/UIKit/Reference/NSAttributedString_UIKit_Additions/#//apple_ref/occ/instm/NSAttributedString/initWithData:options:documentAttributes:error:)
@@ -31,7 +32,7 @@ export declare class Label extends TNLabel {
     lineBreak: LineBreak;
 }
 export type VerticalTextAlignment = 'initial' | 'top' | 'middle' | 'bottom' | 'center';
-export type LineBreak = "end" | "start" | "middle" | "none";
+export type LineBreak = 'end' | 'start' | 'middle' | 'none';
 
 export declare const htmlProperty: Property<Label, string>;
 export declare const verticalTextAlignmentProperty: Property<Label, VerticalTextAlignment>;
@@ -42,3 +43,14 @@ export interface TextShadow {
     blurRadius: dip;
     color: Color;
 }
+
+export function buildHTMLString(data: {
+    text: string;
+    color?: Color | string | number;
+    familyName?: string;
+    fontSize?: number;
+    letterSpacing?: number;
+    lineHeight?: number;
+    textAlignment?: TextAlignment;
+}): any;
+export function enableIOSDTCoreText();
