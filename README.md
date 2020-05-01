@@ -15,6 +15,20 @@ This command automatically installs the necessary files, as well as stores nativ
 ## Configuration
 It works exactly the same way as the {N} plugin. However it adds a few improvements
 
+
+## iOS Performances
+On iOS generating html string can be slow using the system way.
+You can enable `DTCoreText` to make it faster.
+
+* add pod `DTCoreText` in your app Podfile at `App_Resources/ios`
+```
+pod 'DTCoreText'
+```
+* enable it in your `app.(js|ts)` (as soon as possible)
+```javascript
+require('nativescript-htmlabel').enableIOSDTCoreText();
+```
+
 ### Properties
 * **html**  
 Html text that will be used to render text. HTML supported tags are a bit different on iOS and Android. To make sure it works as expected, for now only used Android [supported ones](https://stackoverflow.com/questions/9754076/which-html-tags-are-supported-by-android-textview)
