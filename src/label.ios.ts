@@ -1,5 +1,5 @@
 import { Color, colorProperty, fontInternalProperty, Length, paddingBottomProperty, paddingLeftProperty, paddingRightProperty, paddingTopProperty, View } from '@nativescript/core/ui/page/page';
-import { lineHeightProperty } from '@nativescript/core/ui/text-base/text-base';
+import { lineHeightProperty, TextAlignment } from '@nativescript/core/ui/text-base/text-base';
 import {
     borderBottomWidthProperty,
     borderLeftWidthProperty,
@@ -9,19 +9,19 @@ import {
     WhiteSpace,
     whiteSpaceProperty,
     letterSpacingProperty,
-    textAlignmentProperty
+    textAlignmentProperty,
 } from '@nativescript/core/ui/text-base';
 import { isString } from '@nativescript/core/utils/types';
 import { layout } from '@nativescript/core/utils/utils';
 import { TextShadow, VerticalTextAlignment, verticalTextAlignmentProperty } from './label';
-import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty, textShadowProperty, needFormattedStringComputation } from './label-common';
+import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty, textShadowProperty, needFormattedStringComputation, textAlignmentConverter } from './label-common';
 
 export * from './label-common';
 enum FixedSize {
     NONE = 0,
     WIDTH = 1,
     HEIGHT = 2,
-    BOTH = 3
+    BOTH = 3,
 }
 
 declare module '@nativescript/core/ui/text-base' {
@@ -88,15 +88,125 @@ class ObserverClass extends NSObject {
     }
 }
 
+ let iOSUseDTCoreText = false;
+ export function enableIOSDTCoreText() {
+    iOSUseDTCoreText = true;
+ }
+
+function HTMLStringToNSMutableAttributedString({
+    text,
+    familyName = '-apple-system',
+    fontSize,
+    letterSpacing,
+    lineHeight,
+    color,
+    textAlignment,
+}: {
+    text: string;
+    color: Color;
+    familyName: string;
+    fontSize: number;
+    letterSpacing?: number;
+    lineHeight?: number;
+    textAlignment: NSTextAlignment;
+}) {
+    let htmlString;
+    if (iOSUseDTCoreText) {
+        htmlString =
+        color || familyName || fontSize
+            ? `<span style=" ${color ? `color: ${color};` : ''}  ${familyName ? `font-family:'${familyName.replace(/'/g, '')}';` : ''}${fontSize ? `font-size: ${fontSize}px;` : ''}">${text}</span>`
+            : text;
+        // `<span style="font-family: ${fontFamily}; font-size:${fontSize};">${htmlString}</span>`;
+    } else {
+     htmlString =
+        color || familyName || fontSize
+            ? `<style>body{ ${color ? `color: ${color};` : ''}  ${familyName ? `font-family:"${familyName.replace(/'/g, '')}";` : ''}${fontSize ? `font-size: ${fontSize}px;` : ''}}</style>${text}`
+            : text;
+    }
+    const nsString = NSString.stringWithString(htmlString);
+    const nsData = nsString.dataUsingEncoding(NSUTF16StringEncoding);
+    let attrText;
+    if (iOSUseDTCoreText) {
+        const options = {
+            [DTDefaultTextAlignment]: kCTLeftTextAlignment,
+            // [NSTextSizeMultiplierDocumentOption]: 1,
+            // [DTIgnoreLinkStyleOption]: false,
+            // [DTDefaultFontFamily]: familyName,
+            // [NSFontAttributeName]: familyName,
+            // [NSTextSizeMultiplierDocumentOption]: 17 / 12.0,
+            [DTUseiOS6Attributes]: true,
+            [DTDocumentPreserveTrailingSpaces]: true,
+            // [DTDefaultLineBreakMode]: kCTLineBreakByWordWrapping
+        } as any;
+        attrText = NSMutableAttributedString.alloc().initWithHTMLDataOptionsDocumentAttributes(nsData, options, null);
+        attrText.enumerateAttributesInRangeOptionsUsingBlock({ location: 0, length: attrText.length }, NSAttributedStringEnumerationReverse, (attributes: NSDictionary<any, any>, range, stop) => {
+            if (!!attributes.valueForKey('DTGUID')) {
+                // We need to remove this attribute or links are not colored right
+                //
+                // @see https://github.com/Cocoanetics/DTCoreText/issues/792
+                attrText.removeAttributeRange('CTForegroundColorFromContext', range);
+            }
+        });
+    } else {
+        attrText = NSMutableAttributedString.alloc().initWithDataOptionsDocumentAttributesError(
+            nsData,
+            <any>{
+                [NSDocumentTypeDocumentAttribute]: NSHTMLTextDocumentType,
+            },
+            null
+        );
+    }
+    // console.log('attrText', attrText)
+
+    // TODO: letterSpacing should be applied per Span.
+    if (letterSpacing !== undefined) {
+        attrText.addAttributeValueRange(NSKernAttributeName, letterSpacing * fontSize, { location: 0, length: attrText.length });
+    }
+
+    if (lineHeight !== undefined) {
+        const paragraphStyle = NSMutableParagraphStyle.alloc().init();
+        paragraphStyle.lineSpacing = this.lineHeight;
+        // make sure a possible previously set text alignment setting is not lost when line height is specified
+        paragraphStyle.alignment = textAlignment;
+        // if (this.nativeTextViewProtected instanceof UILabel) {
+        //     // make sure a possible previously set line break mode is not lost when line height is specified
+        //     paragraphStyle.lineBreakMode = this.nativeTextViewProtected.lineBreakMode;
+        // }
+        attrText.addAttributeValueRange(NSParagraphStyleAttributeName, paragraphStyle, { location: 0, length: attrText.length });
+    } else if (textAlignment !== undefined) {
+        const paragraphStyle = NSMutableParagraphStyle.alloc().init();
+        paragraphStyle.alignment = textAlignment;
+        attrText.addAttributeValueRange(NSParagraphStyleAttributeName, paragraphStyle, { location: 0, length: attrText.length });
+    }
+    return attrText;
+}
+export function buildHTMLString(data: {
+    text: string;
+    color?: Color | string | number;
+    familyName?: string;
+    fontSize?: number;
+    letterSpacing?: number;
+    lineHeight?: number;
+    textAlignment: NSTextAlignment | TextAlignment;
+}) {
+    if (data.textAlignment && typeof data.textAlignment === 'string') {
+        data.textAlignment = textAlignmentConverter(data.textAlignment);
+    }
+    if (data.color && !(data.color instanceof Color)) {
+        data.color = new Color(data.color as any);
+    }
+    return HTMLStringToNSMutableAttributedString(data as any);
+}
+
 export class Label extends LabelBase {
     private _observer: NSObject;
     nativeViewProtected: UITextView;
     nativeTextViewProtected: UITextView;
     attributedString: NSMutableAttributedString;
-    // static DTCORETEXT_INIT = false;
+    static DTCORETEXT_INIT = false;
     constructor() {
         super();
-        // if (!Label.DTCORETEXT_INIT) {
+        // if (iOSUseDTCoreText && !Label.DTCORETEXT_INIT) {
         //     Label.DTCORETEXT_INIT = true;
         //     DTCoreTextFontDescriptor.asyncPreloadFontLookupTable();
         // }
@@ -116,7 +226,7 @@ export class Label extends LabelBase {
             top: 0,
             left: 0,
             bottom: 0,
-            right: 0
+            right: 0,
         };
         return view;
     }
@@ -162,7 +272,7 @@ export class Label extends LabelBase {
                     top,
                     left: inset.left,
                     bottom: inset.bottom,
-                    right: inset.right
+                    right: inset.right,
                 };
                 break;
 
@@ -176,7 +286,7 @@ export class Label extends LabelBase {
                     top: top + topCorrect,
                     left: inset.left,
                     bottom: inset.bottom,
-                    right: inset.right
+                    right: inset.right,
                 };
                 break;
             }
@@ -190,7 +300,7 @@ export class Label extends LabelBase {
                     top: top + bottomCorrect,
                     left: inset.left,
                     bottom: inset.bottom,
-                    right: inset.right
+                    right: inset.right,
                 };
                 break;
             }
@@ -323,41 +433,18 @@ export class Label extends LabelBase {
         if (!this.html) {
             this.attributedString = null;
         } else {
-            let htmlString = this.html;
             const font = this.nativeView.font;
             const fontSize = this.fontSize || font.pointSize;
-            const familyName = this.style.fontFamily || font.familyName;
-            htmlString = `<style>body{ color: ${this.color};font-family: '${familyName}'; font-size:${fontSize}px;}</style>${htmlString}`;
-            const nsString = NSString.stringWithString(htmlString);
-            const nsData = nsString.dataUsingEncoding(NSUTF16StringEncoding);
-            const attrText = (this.attributedString = NSMutableAttributedString.alloc().initWithDataOptionsDocumentAttributesError(
-                nsData,
-                <any>{
-                    [NSDocumentTypeDocumentAttribute]: NSHTMLTextDocumentType
-                },
-                null
-            ));
-
-            // TODO: letterSpacing should be applied per Span.
-            if (this.letterSpacing !== 0) {
-                attrText.addAttributeValueRange(NSKernAttributeName, this.letterSpacing * fontSize, { location: 0, length: attrText.length });
-            }
-
-            if (this.style.lineHeight) {
-                const paragraphStyle = NSMutableParagraphStyle.alloc().init();
-                paragraphStyle.lineSpacing = this.lineHeight;
-                // make sure a possible previously set text alignment setting is not lost when line height is specified
-                paragraphStyle.alignment = (<UITextField | UITextView | UILabel>this.nativeTextViewProtected).textAlignment;
-                // if (this.nativeTextViewProtected instanceof UILabel) {
-                //     // make sure a possible previously set line break mode is not lost when line height is specified
-                //     paragraphStyle.lineBreakMode = this.nativeTextViewProtected.lineBreakMode;
-                // }
-                attrText.addAttributeValueRange(NSParagraphStyleAttributeName, paragraphStyle, { location: 0, length: attrText.length });
-            } else {
-                const paragraphStyle = NSMutableParagraphStyle.alloc().init();
-                paragraphStyle.alignment = (<UITextView>this.nativeTextViewProtected).textAlignment;
-                attrText.addAttributeValueRange(NSParagraphStyleAttributeName, paragraphStyle, { location: 0, length: attrText.length });
-            }
+            const familyName = this.style.fontFamily || this.style.fontInternal.fontFamily || font.familyName;
+            this.attributedString = HTMLStringToNSMutableAttributedString({
+                text: this.html,
+                fontSize,
+                familyName,
+                color: this.color,
+                letterSpacing: this.letterSpacing,
+                lineHeight: this.lineHeight,
+                textAlignment: (<UITextView>this.nativeTextViewProtected).textAlignment,
+            });
 
             this._requestLayoutOnTextChanged();
         }
@@ -375,7 +462,7 @@ export class Label extends LabelBase {
     @needFormattedStringComputation
     [htmlProperty.setNative](value: string) {
         // if (!this.style.fontInternal) {
-            this.updateHTMLString();
+        this.updateHTMLString();
         // }
     }
     @needFormattedStringComputation
@@ -411,7 +498,7 @@ export class Label extends LabelBase {
     [paddingTopProperty.getDefault](): Length {
         return {
             value: this.nativeViewProtected.textContainerInset.top,
-            unit: 'px'
+            unit: 'px',
         };
     }
     [paddingTopProperty.setNative](value: Length) {
@@ -421,14 +508,14 @@ export class Label extends LabelBase {
             top,
             left: inset.left,
             bottom: inset.bottom,
-            right: inset.right
+            right: inset.right,
         };
     }
 
     [paddingRightProperty.getDefault](): Length {
         return {
             value: this.nativeViewProtected.textContainerInset.right,
-            unit: 'px'
+            unit: 'px',
         };
     }
     [paddingRightProperty.setNative](value: Length) {
@@ -438,14 +525,14 @@ export class Label extends LabelBase {
             top: inset.top,
             left: inset.left,
             bottom: inset.bottom,
-            right
+            right,
         };
     }
 
     [paddingBottomProperty.getDefault](): Length {
         return {
             value: this.nativeViewProtected.textContainerInset.bottom,
-            unit: 'px'
+            unit: 'px',
         };
     }
     [paddingBottomProperty.setNative](value: Length) {
@@ -455,13 +542,13 @@ export class Label extends LabelBase {
             top: inset.top,
             left: inset.left,
             bottom,
-            right: inset.right
+            right: inset.right,
         };
     }
     [paddingLeftProperty.getDefault](): Length {
         return {
             value: this.nativeViewProtected.textContainerInset.left,
-            unit: 'px'
+            unit: 'px',
         };
     }
     [paddingLeftProperty.setNative](value: Length) {
@@ -471,14 +558,14 @@ export class Label extends LabelBase {
             top: inset.top,
             left,
             bottom: inset.bottom,
-            right: inset.right
+            right: inset.right,
         };
     }
 
     [borderTopWidthProperty.getDefault](): Length {
         return {
             value: this.nativeTextViewProtected.textContainerInset.top,
-            unit: 'px'
+            unit: 'px',
         };
     }
     [borderTopWidthProperty.setNative](value: Length) {
@@ -490,7 +577,7 @@ export class Label extends LabelBase {
     [borderRightWidthProperty.getDefault](): Length {
         return {
             value: this.nativeTextViewProtected.textContainerInset.right,
-            unit: 'px'
+            unit: 'px',
         };
     }
     [borderRightWidthProperty.setNative](value: Length) {
@@ -502,7 +589,7 @@ export class Label extends LabelBase {
     [borderBottomWidthProperty.getDefault](): Length {
         return {
             value: this.nativeTextViewProtected.textContainerInset.bottom,
-            unit: 'px'
+            unit: 'px',
         };
     }
     [borderBottomWidthProperty.setNative](value: Length) {
@@ -514,7 +601,7 @@ export class Label extends LabelBase {
     [borderLeftWidthProperty.getDefault](): Length {
         return {
             value: this.nativeTextViewProtected.textContainerInset.left,
-            unit: 'px'
+            unit: 'px',
         };
     }
     [borderLeftWidthProperty.setNative](value: Length) {
@@ -551,7 +638,6 @@ export class Label extends LabelBase {
         // only if no lineBreak
         if (!this.lineBreak) {
             nativeView.textContainer.lineBreakMode = whiteSpaceToLineBreakMode(value);
-
         }
     }
     // [autoFontSizeProperty.getDefault](): boolean {

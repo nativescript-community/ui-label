@@ -37,7 +37,9 @@ import {
 } from '@nativescript/core/ui/text-base/text-base';
 import { layout } from '@nativescript/core/utils/utils';
 import { Label as LabelViewDefinition, TextShadow, LineBreak } from './label';
-import { cssProperty, needFormattedStringComputation, lineBreakProperty, maxLinesProperty, textShadowProperty, VerticalTextAlignment, verticalTextAlignmentProperty } from './label-common';
+import { cssProperty, needFormattedStringComputation, lineBreakProperty, maxLinesProperty, textShadowProperty, VerticalTextAlignment, verticalTextAlignmentProperty, textAlignmentConverter } from './label-common';
+
+export function enableIOSDTCoreText() {} //unused
 
 let context;
 const fontPath = fs.path.join(fs.knownFolders.currentApp().path, 'fonts');
@@ -138,6 +140,27 @@ declare module '@nativescript/core/ui/core/view-base' {
 const textProperty = new Property<Label, string>({ name: 'text', defaultValue: '', affectsLayout: true });
 const formattedTextProperty = new Property<Label, FormattedString>({ name: 'formattedText', affectsLayout: true, valueChanged: onFormattedTextPropertyChanged });
 export const htmlProperty = new Property<Label, string>({ name: 'html', defaultValue: null, affectsLayout: true });
+
+
+
+export function buildHTMLString(data: {
+    text: string;
+    color: Color | string | number;
+    familyName: string;
+    fontSize: number;
+    letterSpacing?: number;
+    lineHeight?: number;
+    textAlignment: NSTextAlignment | TextAlignment;
+}) {
+    if (data.textAlignment && typeof data.textAlignment === 'string') {
+        data.textAlignment = textAlignmentConverter(data.textAlignment);
+    }
+    if (data.color && !(data.color instanceof Color)) {
+        data.color = new Color(data.color as any);
+    }
+    const result = (com as any).nativescript.label.Font.stringBuilderFromHtmlString(context, fontPath, data.text);
+    return result;
+}
 
 @CSSType('HTMLLabel')
 abstract class LabelBase extends View implements LabelViewDefinition {

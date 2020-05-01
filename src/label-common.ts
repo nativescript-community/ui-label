@@ -7,19 +7,20 @@ import { layout } from '@nativescript/core/utils/utils';
 import { Label as LabelViewDefinition, TextShadow, LineBreak } from './label';
 import { FormattedString } from '@nativescript/core/ui/text-base/formatted-string';
 import { Span } from '@nativescript/core/ui/text-base/span';
+import { TextAlignment } from '@nativescript/core/ui/text-base';
 
 declare module '@nativescript/core/ui/text-base/formatted-string' {
     interface FormattedString {
         addPropertyChangeHandler(span: Span): void;
         removePropertyChangeHandler(span: Span): void;
-        onPropertyChange(data)
+        onPropertyChange(data);
     }
 }
 
 // FormattedString.prototype.onPropertyChange = function(data: PropertyChangeData) {
 //     this.notifyPropertyChange(data.propertyName, this);
 // }
-FormattedString.prototype.addPropertyChangeHandler = function(span: Span) {
+FormattedString.prototype.addPropertyChangeHandler = function (span: Span) {
     span.on(Observable.propertyChangeEvent, this.onPropertyChange, this);
     // const style = span.style;
     // style.on('fontFamilyChange', this.onPropertyChange, this);
@@ -29,7 +30,7 @@ FormattedString.prototype.addPropertyChangeHandler = function(span: Span) {
     // style.on('textDecorationChange', this.onPropertyChange, this);
     // style.on('colorChange', this.onPropertyChange, this);
 };
-FormattedString.prototype.removePropertyChangeHandler = function(span: Span) {
+FormattedString.prototype.removePropertyChangeHandler = function (span: Span) {
     span.off(Observable.propertyChangeEvent, this.onPropertyChange, this);
     // const style = span.style;
     // style.off('fontFamilyChange', this.onPropertyChange, this);
@@ -43,9 +44,9 @@ FormattedString.prototype.removePropertyChangeHandler = function(span: Span) {
 //     this.spans.forEach((v, i, arr) => callback(v));
 // };
 
-export const needFormattedStringComputation = function(target: any, propertyKey: string | Symbol, descriptor: PropertyDescriptor) {
+export const needFormattedStringComputation = function (target: any, propertyKey: string | Symbol, descriptor: PropertyDescriptor) {
     let originalMethod = descriptor.value;
-    descriptor.value = function(...args: any[]) {
+    descriptor.value = function (...args: any[]) {
         if (!this._canChangeText) {
             this._needFormattedStringComputation = true;
             return;
@@ -56,12 +57,12 @@ export const needFormattedStringComputation = function(target: any, propertyKey:
 
 export const cssProperty = (target: Object, key: string | symbol) => {
     // property getter
-    const getter = function() {
+    const getter = function () {
         return this.style[key];
     };
 
     // property setter
-    const setter = function(newVal) {
+    const setter = function (newVal) {
         this.style[key] = newVal;
     };
 
@@ -69,7 +70,7 @@ export const cssProperty = (target: Object, key: string | symbol) => {
         get: getter,
         set: setter,
         enumerable: true,
-        configurable: true
+        configurable: true,
     });
 };
 
@@ -101,19 +102,19 @@ htmlProperty.register(LabelBase);
 
 export const maxLinesProperty = new CssProperty<Style, number>({
     name: 'maxLines',
-    cssName: 'max-lines'
+    cssName: 'max-lines',
 });
 maxLinesProperty.register(Style);
 export const lineBreakProperty = new CssProperty<Style, string>({
     name: 'lineBreak',
-    cssName: 'line-break'
+    cssName: 'line-break',
 });
 lineBreakProperty.register(Style);
 
 export const autoFontSizeProperty = new CssProperty<Style, boolean>({
     name: 'autoFontSize',
     cssName: 'auto-font-size',
-    valueConverter: booleanConverter
+    valueConverter: booleanConverter,
 });
 autoFontSizeProperty.register(Style);
 
@@ -129,25 +130,27 @@ export const textShadowProperty = new CssProperty<Style, string | TextShadow>({
     name: 'textShadow',
     cssName: 'text-shadow',
     affectsLayout: isIOS,
-    valueConverter: value => {
+    valueConverter: (value) => {
         const params = value.split(' ');
         return {
             offsetX: parseDIPs(params[0]),
             offsetY: parseDIPs(params[1]),
             blurRadius: parseDIPs(params[2]),
-            color: new Color(params.slice(3).join(''))
+            color: new Color(params.slice(3).join('')),
         };
-    }
+    },
 });
 textShadowProperty.register(Style);
 
 export type VerticalTextAlignment = 'initial' | 'top' | 'middle' | 'bottom' | 'center';
 
-const textAlignmentConverter = makeParser<VerticalTextAlignment>(makeValidator<VerticalTextAlignment>('initial', 'top', 'middle', 'bottom', 'center'));
+export const verticalTextAlignmentConverter = makeParser<VerticalTextAlignment>(makeValidator<VerticalTextAlignment>('initial', 'top', 'middle', 'bottom', 'center'));
+export const textAlignmentConverter = makeParser<TextAlignment>(makeValidator<TextAlignment>('initial', 'left', 'right', 'center'));
+
 export const verticalTextAlignmentProperty = new InheritedCssProperty<Style, VerticalTextAlignment>({
     name: 'verticalTextAlignment',
     cssName: 'vertical-text-align',
     defaultValue: 'initial',
-    valueConverter: textAlignmentConverter
+    valueConverter: verticalTextAlignmentConverter,
 });
 verticalTextAlignmentProperty.register(Style);
