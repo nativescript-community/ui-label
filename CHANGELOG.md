@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.30](https://github.com/Akylas/nativescript-label/compare/v1.0.29...v1.0.30) (2020-05-02)
+
+
+### Bug Fixes
+
+* **android:** rewrote the html parser to make it faster ([8930751](https://github.com/Akylas/nativescript-label/commit/8930751ae19010c3727f3a839acbc4bd51d5beca))
+
+
+
+
+
 ## [1.0.29](https://github.com/Akylas/nativescript-label/compare/v1.0.28...v1.0.29) (2020-05-01)
 
 
