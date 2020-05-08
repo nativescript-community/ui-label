@@ -113,20 +113,24 @@ function HTMLStringToNSMutableAttributedString({
     let htmlString;
     if (iOSUseDTCoreText) {
         htmlString =
-        color || familyName || fontSize
-            ? `<span style=" ${color ? `color: ${color};` : ''}  ${familyName ? `font-family:'${familyName.replace(/'/g, '')}';` : ''}${fontSize ? `font-size: ${fontSize}px;` : ''}">${text}</span>`
-            : text;
+            color || familyName || fontSize
+                ? `<span style=" ${color ? `color: ${color};` : ''}  ${familyName ? `font-family:'${familyName.replace(/'/g, '')}';` : ''}${
+                      fontSize ? `font-size: ${fontSize}px;` : ''
+                  }">${text}</span>`
+                : text;
         // `<span style="font-family: ${fontFamily}; font-size:${fontSize};">${htmlString}</span>`;
     } else {
-     htmlString =
-        color || familyName || fontSize
-            ? `<style>body{ ${color ? `color: ${color};` : ''}  ${familyName ? `font-family:"${familyName.replace(/'/g, '')}";` : ''}${fontSize ? `font-size: ${fontSize}px;` : ''}}</style>${text}`
-            : text;
+        htmlString =
+            color || familyName || fontSize
+                ? `<style>body{ ${color ? `color: ${color};` : ''}  ${familyName ? `font-family:"${familyName.replace(/'/g, '')}";` : ''}${fontSize ? `font-size: ${fontSize}px;` : ''}}</style>${text}`
+                : text;
     }
     const nsString = NSString.stringWithString(htmlString);
     const nsData = nsString.dataUsingEncoding(NSUTF16StringEncoding);
     let attrText;
     if (iOSUseDTCoreText) {
+        // on iOS 13.3 there is bug with the system font
+        // https://github.com/Cocoanetics/DTCoreText/issues/1168
         const options = {
             [DTDefaultTextAlignment]: kCTLeftTextAlignment,
             // [NSTextSizeMultiplierDocumentOption]: 1,
