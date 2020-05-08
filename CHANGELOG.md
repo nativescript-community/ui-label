@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.31](https://github.com/Akylas/nativescript-label/compare/v1.0.30...v1.0.31) (2020-05-08)
+
+
+### Bug Fixes
+
+* **android:** fix some edge case font names ([7c0bcff](https://github.com/Akylas/nativescript-label/commit/7c0bcffeabbdd543c4c27a63964d7777bdd49a22))
+
+
+
+
+
 ## [1.0.30](https://github.com/Akylas/nativescript-label/compare/v1.0.29...v1.0.30) (2020-05-02)
 
 
