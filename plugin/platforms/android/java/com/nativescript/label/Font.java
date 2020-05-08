@@ -223,7 +223,7 @@ public class Font {
                 style = split[1];
             }
             Typeface typeface = createTypeface(context, fontFolder, fontFamily,
-                    style.equals("bold") ? "bold" : "normal", style.equals("bold"), style.equals("italic"));
+            (style != null) && style.equals("bold") ? "bold" : "normal", (style != null) && style.equals("bold"), (style != null) && style.equals("italic"));
 
             if (typeface == null) {
                 typeface = Typeface.create(fontFamily, Typeface.NORMAL);
