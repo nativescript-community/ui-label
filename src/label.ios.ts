@@ -88,10 +88,10 @@ class ObserverClass extends NSObject {
     }
 }
 
- let iOSUseDTCoreText = false;
- export function enableIOSDTCoreText() {
+let iOSUseDTCoreText = false;
+export function enableIOSDTCoreText() {
     iOSUseDTCoreText = true;
- }
+}
 
 function HTMLStringToNSMutableAttributedString({
     text,
