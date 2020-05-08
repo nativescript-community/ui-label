@@ -1,5 +1,5 @@
 import { Color, colorProperty, fontInternalProperty, Length, paddingBottomProperty, paddingLeftProperty, paddingRightProperty, paddingTopProperty, View } from '@nativescript/core/ui/page/page';
-import { lineHeightProperty, TextAlignment } from '@nativescript/core/ui/text-base/text-base';
+import { lineHeightProperty, TextAlignment, FormattedString } from '@nativescript/core/ui/text-base/text-base';
 import {
     borderBottomWidthProperty,
     borderLeftWidthProperty,
@@ -28,6 +28,7 @@ declare module '@nativescript/core/ui/text-base' {
     interface TextBase {
         _requestLayoutOnTextChanged();
         _setNativeText();
+        // createNSMutableAttributedString(formattedString: FormattedString);
     }
 }
 
@@ -488,6 +489,9 @@ export class Label extends LabelBase {
             super._setNativeText();
         }
     }
+    // createNSMutableAttributedString(formattedString: FormattedString): NSMutableAttributedString {
+    //     return super.createNSMutableAttributedString(formattedString);
+    // } 
     // [formattedTextProperty.setNative](value: FormattedString) {
     //     super[formattedTextProperty.setNative](value);
     // }
