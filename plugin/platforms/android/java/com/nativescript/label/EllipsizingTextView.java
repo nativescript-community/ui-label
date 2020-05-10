@@ -32,6 +32,7 @@ import android.text.style.TextAppearanceSpan;
 import android.text.style.TypefaceSpan;
 import android.text.style.URLSpan;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,21 +40,22 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatTextView;
 
-public class EllipsizingTextView extends AppCompatTextView {
+public class EllipsizingTextView extends TextView {
+    final static String TAG = "EllipsizingTextView";
 
     private TextUtils.TruncateAt ellipsize = null;
     private TextUtils.TruncateAt multiLineEllipsize = null;
-    private boolean isEllipsized;
-    private boolean needsEllipsing;
-    private boolean needsResizing;
+    private boolean isEllipsized = false;
+    private boolean needsEllipsing = false;
+    private boolean needsResizing = false;
     private boolean singleline = false;
     private boolean readyToEllipsize = false;
-    private CharSequence fullText;
+    private CharSequence fullText = null;
     private int maxLines = 0;
     private float lineSpacingMultiplier = 1.0f;
     private float lineAdditionalVerticalPadding = 0.0f;
-    private float minTextSize;
-    private float maxTextSize;
+    private float minTextSize = 20;
+    private float maxTextSize = 30;
 
     float lastEllipsizeWidth = -1;
     float lastEllipsizeHeight = -1;
@@ -61,26 +63,38 @@ public class EllipsizingTextView extends AppCompatTextView {
     private int[] lockedCompoundPadding;
 
     private float strokeWidth = 0;
-    private Integer strokeColor = Color.TRANSPARENT;
-    private Paint.Join strokeJoin = Paint.Join.MITER;
+    private Integer strokeColor = null;
+//    private Paint.Join strokeJoin = Paint.Join.MITER;
     private float strokeMiter = 10;
-//    private float minimumFontSize = -1;
+    //    private float minimumFontSize = -1;
 //    private float autoshrinkSetFontSize = -1;
     private boolean wordWrap = true;
+    private boolean initialized = false;
 
     int lastMeasuredWidth = -1;
     int lastMeasuredHeight = -1;
 
-    private String ELLIPSIZE_CHAR = "...";
+    private final static String ELLIPSIZE_CHAR = "...";
+    private boolean needsEllipsize = false;
+
+    public EllipsizingTextView(Context context) {
+        super(context);
+        maxTextSize = this.getTextSize();
+        if (maxTextSize < 35) {
+            maxTextSize = 30;
+        }
+        super.setSingleLine(false);
+        initialized = true;
+    }
 
     @Override
     public void onDraw(Canvas canvas) {
-        if (strokeColor != Color.TRANSPARENT && strokeWidth > 0) {
+        if (strokeColor != null && strokeWidth > 0) {
             freeze();
             int restoreColor = this.getCurrentTextColor();
             TextPaint paint = this.getPaint();
             paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeJoin(strokeJoin);
+//            paint.setStrokeJoin(strokeJoin);
             paint.setStrokeMiter(strokeMiter);
             this.setTextColor(strokeColor);
             paint.setStrokeWidth(strokeWidth * 2); // because the stroke is centered and not outside
@@ -112,7 +126,7 @@ public class EllipsizingTextView extends AppCompatTextView {
             if (w != lastMeasuredWidth || h != lastMeasuredHeight) {
                 updateEllipsize(w - getPaddingLeft() - getPaddingRight(), h - getPaddingTop() - getPaddingBottom());
             } else {
-                if (needsEllipsize() && readyToEllipsize == true && needsEllipsing == true) {
+                if (needsEllipsize && readyToEllipsize == true && needsEllipsing == true) {
                     ellipseText(w - getPaddingLeft() - getPaddingRight(), h - getPaddingTop() - getPaddingBottom());
                 }
             }
@@ -188,26 +202,30 @@ public class EllipsizingTextView extends AppCompatTextView {
 
     @Override
     public void requestLayout() {
-        if (!frozen)
+        if (!frozen) {
             super.requestLayout();
+        }
     }
 
     @Override
     public void postInvalidate() {
-        if (!frozen)
+        if (!frozen) {
             super.postInvalidate();
+        }
     }
 
     @Override
     public void postInvalidate(int left, int top, int right, int bottom) {
-        if (!frozen)
+        if (!frozen) {
             super.postInvalidate(left, top, right, bottom);
+        }
     }
 
     @Override
     public void invalidate() {
-        if (!frozen)
+        if (!frozen) {
             super.invalidate();
+        }
     }
 
     @Override
@@ -218,8 +236,9 @@ public class EllipsizingTextView extends AppCompatTextView {
 
     @Override
     public void invalidate(int l, int t, int r, int b) {
-        if (!frozen)
+        if (!frozen) {
             super.invalidate(l, t, r, b);
+        }
     }
 
     @Override
@@ -242,47 +261,6 @@ public class EllipsizingTextView extends AppCompatTextView {
         return !frozen ? super.getCompoundPaddingBottom() : lockedCompoundPadding[3];
     }
 
-    public EllipsizingTextView(Context context) {
-        super(context);
-        maxTextSize = this.getTextSize();
-        if (maxTextSize < 35) {
-            maxTextSize = 30;
-        }
-        minTextSize = 20;
-        needsResizing = false;
-        super.setSingleLine(false);
-    }
-
-//    public EllipsizingTextView clone(CharSequence text) {
-//        EllipsizingTextView newView = new EllipsizingTextView(getContext());
-//        // newView.setInputType(getInputType());
-//        newView.setGravity(getGravity());
-//        newView.setKeyListener(null);
-//        // TiUIView.setBackgroundDrawable(newView, getBackground());
-//        // TiUIHelper.styleText(newView,
-//        // getProxy().getProperties().getKrollDict(TiC.PROPERTY_FONT));
-//        newView.setEllipsize(ellipsize);
-//        newView.setTypeface(this.getTypeface());
-//        newView.setTextSize(this.getTextSize());
-//        newView.singleline = this.singleline;
-//        // newView.setSingleLine(this.singleline);
-//        newView.maxLines = this.maxLines;
-//        newView.maxTextSize = this.maxTextSize;
-//        newView.minTextSize = this.minTextSize;
-//        newView.lineAdditionalVerticalPadding = this.lineAdditionalVerticalPadding;
-//        newView.lineSpacingMultiplier = this.lineSpacingMultiplier;
-//        newView.multiLineEllipsize = this.multiLineEllipsize;
-//        newView.setTextColor(getTextColors());
-//        newView.setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom());
-//            newView.setShadowLayer(getShadowRadius(), getShadowDx(), getShadowDy(), getShadowColor());
-//        if (text instanceof Spannable) {
-//            newView.setText(text, TextView.BufferType.SPANNABLE);
-//        } else {
-//            newView.setText(text);
-//        }
-//        newView.SetReadyToEllipsize(true);
-//        return newView;
-//    }
 
     public float getMinTextSize() {
         return minTextSize;
@@ -312,16 +290,18 @@ public class EllipsizingTextView extends AppCompatTextView {
 
     @Override
     public void setMaxLines(int maxLines) {
-
+        //log("EllipsizingTextView setMaxLines");
         super.setMaxLines((maxLines == 0) ? Integer.MAX_VALUE : maxLines);
-        if (maxLines == Integer.MAX_VALUE)
+        if (maxLines == Integer.MAX_VALUE) {
             maxLines = 0;
+        }
         this.maxLines = maxLines;
         updateEllipsize();
     }
 
     public void updateEllipsize(int width, int height) {
-        if (needsEllipsize()) {
+        //log("EllipsizingTextView updateEllipsize");
+        if (needsEllipsize) {
             needsEllipsing = true;
             if (readyToEllipsize == true) {
                 ellipseText(width, height);
@@ -330,7 +310,8 @@ public class EllipsizingTextView extends AppCompatTextView {
     }
 
     public void updateEllipsize() {
-        if (needsEllipsize()) {
+        //log("EllipsizingTextView updateEllipsize " + needsEllipsize);
+        if (needsEllipsize) {
             needsEllipsing = true;
             if (readyToEllipsize == true) {
                 ellipseText(getMeasuredWidth(), getMeasuredHeight());
@@ -344,6 +325,7 @@ public class EllipsizingTextView extends AppCompatTextView {
 
     @Override
     public void setLineSpacing(float add, float mult) {
+        //log("EllipsizingTextView setLineSpacing");
         this.lineAdditionalVerticalPadding = add;
         this.lineSpacingMultiplier = mult;
         super.setLineSpacing(add, mult);
@@ -352,12 +334,19 @@ public class EllipsizingTextView extends AppCompatTextView {
 
     @Override
     public void setTypeface(Typeface tf, int style) {
+        //log("EllipsizingTextView setTypeface");
         super.setTypeface(tf, style);
         updateEllipsize();
     }
+    
+    private void log(final String message) {
+        Log.d(TAG, message);
+    }
+    
 
     @Override
     public void setTextSize(int unit, float size) {
+        //log("EllipsizingTextView setTextSize");
         super.setTextSize(unit, size);
         updateEllipsize();
     }
@@ -377,6 +366,8 @@ public class EllipsizingTextView extends AppCompatTextView {
     public void setText(CharSequence text, BufferType type) {
         // first set the super text so that linkifyIfEnabled
         // can read the value
+//        final boolean textChanged = text != this.getText();
+        //log("EllipsizingTextView setText '" + text + "' " );
         super.setText(text, type);
 //        if (!linkifying && autoLink != 16) {
 //            linkifying = true;
@@ -384,7 +375,7 @@ public class EllipsizingTextView extends AppCompatTextView {
 //            text = super.getText();
 //            linkifying = false;
 //        }
-        if (text instanceof Spannable) {
+//        if (text instanceof Spannable) {
 //            SpannableStringBuilder strBuilder = (SpannableStringBuilder) ((text instanceof SpannableStringBuilder)
 //                    ? text
 //                    : new SpannableStringBuilder(text));
@@ -393,20 +384,24 @@ public class EllipsizingTextView extends AppCompatTextView {
 //                makeLinkClickable(strBuilder, span[i]);
 //            }
 //            text = strBuilder;
-            super.setText(text, type);
-        }
-        fullText = text;
-
-        updateEllipsize();
+//            super.setText(text, type);
+//        }
+//        if (textChanged) {
+            fullText = text;
+            updateShouldEllipsize();
+            updateEllipsize();
+//        }
     }
 
-    // @Override
-    // public CharSequence getText() {
-    // return fullText != null;
-    // }
+    private void updateShouldEllipsize() {
+        //log("EllipsizingTextView updateShouldEllipsize");
+        needsEllipsize = (ellipsize != null || multiLineEllipsize != null) && fullText != null && fullText.length() > 0;
+
+    }
 
     @Override
     public void setSingleLine(boolean singleLine) {
+        //log("EllipsizingTextView setSingleLine");
         if (this.singleline == singleLine)
             return;
         this.singleline = singleLine;
@@ -421,20 +416,26 @@ public class EllipsizingTextView extends AppCompatTextView {
 
     @Override
     public void setEllipsize(TextUtils.TruncateAt where) {
+        //log("EllipsizingTextView setEllipsize");
         super.setEllipsize(where);
         ellipsize = where;
+        updateShouldEllipsize();
         updateEllipsize();
     }
 
     @Override
     protected void onTextChanged(final CharSequence text, final int start, final int before, final int after) {
+        //log("EllipsizingTextView onTextChanged " + needsResizing);
+        super.onTextChanged(text, start, before, after);
         if (needsResizing) {
             refitText(this.getText().toString(), this.getWidth());
         }
     }
 
     public void setMultiLineEllipsize(TextUtils.TruncateAt where) {
+        //log("EllipsizingTextView setMultiLineEllipsize");
         multiLineEllipsize = where;
+        updateShouldEllipsize();
         updateEllipsize();
     }
 
@@ -443,6 +444,7 @@ public class EllipsizingTextView extends AppCompatTextView {
     }
 
     private void refitText(String text, int textWidth) {
+        //log("EllipsizingTextView refitText");
         if (textWidth > 0) {
             int availableWidth = textWidth - this.getPaddingLeft() - this.getPaddingRight();
             float trySize = maxTextSize;
@@ -461,6 +463,7 @@ public class EllipsizingTextView extends AppCompatTextView {
     }
 
     private CharSequence strimText(CharSequence text) {
+        //log("EllipsizingTextView strimText");
         int strimEnd = text.toString().trim().length();
         if (strimEnd != text.length()) {
             return text.subSequence(0, strimEnd);
@@ -469,6 +472,7 @@ public class EllipsizingTextView extends AppCompatTextView {
     }
 
     private CharSequence getEllipsedTextForOneLine(CharSequence text, TextUtils.TruncateAt where, int width) {
+        //log("EllipsizingTextView getEllipsedTextForOneLine");
         CharSequence newText = strimText(text);
         int length = ELLIPSIZE_CHAR.length();
         if (where == TextUtils.TruncateAt.START || where == TextUtils.TruncateAt.END) {
@@ -508,6 +512,7 @@ public class EllipsizingTextView extends AppCompatTextView {
 
     // @SuppressLint("NewApi")
     private Object duplicateSpan(Object span) {
+        //log("EllipsizingTextView duplicateSpan");
         if (span instanceof ForegroundColorSpan) {
             return new ForegroundColorSpan(((ForegroundColorSpan) span).getForegroundColor());
         }
@@ -562,12 +567,10 @@ public class EllipsizingTextView extends AppCompatTextView {
         return null;
     }
 
-    public boolean needsEllipsize() {
-        return fullText != null && fullText.length() > 0 && (ellipsize != null || multiLineEllipsize != null);
-    }
 
     private void ellipseText(int width, int height) {
-        if (!needsEllipsize() || needsEllipsing == false || (width <= 0) || (height <= 0))
+        //log("EllipsizingTextView ellipseText");
+        if (!needsEllipsize || needsEllipsing == false || (width <= 0) || (height <= 0))
             return;
         // if (width == lastEllipsizeWidth && height == lastEllipsizeHeight)
         // {
@@ -700,15 +703,8 @@ public class EllipsizingTextView extends AppCompatTextView {
     /**
      * Get how many lines of text we are allowed to display.
      */
-    // private int getLinesCount(int width, int height) {
-    // int fullyVisibleLinesCount = getFullyVisibleLinesCount(width, height);
-    // if (fullyVisibleLinesCount == -1) {
-    // return fullyVisibleLinesCount = 1;
-    // }
-    // return (maxLines == 0)?fullyVisibleLinesCount:Math.min(maxLines,
-    // fullyVisibleLinesCount);
-    // }
     private int getLinesCount(Layout layout, int height) {
+        //log("EllipsizingTextView getLinesCount");
         int fullyVisibleLinesCount = getFullyVisibleLinesCount(layout, height);
         if (fullyVisibleLinesCount == -1) {
             return fullyVisibleLinesCount = 1;
@@ -719,11 +715,8 @@ public class EllipsizingTextView extends AppCompatTextView {
     /**
      * Get how many lines of text we can display so their full height is visible.
      */
-    // private int getFullyVisibleLinesCount(int width, int height) {
-    // Layout layout = createWorkingLayout(fullText, width);
-    // return getFullyVisibleLinesCount(layout, height);
-    // }
     private int getFullyVisibleLinesCount(Layout layout, int height) {
+        //log("EllipsizingTextView getFullyVisibleLinesCount");
         int totalLines = layout.getLineCount();
         int index = totalLines - 1;
         int lineHeight = layout.getLineBottom(index);
@@ -735,66 +728,8 @@ public class EllipsizingTextView extends AppCompatTextView {
     }
 
     private Layout createWorkingLayout(CharSequence workingText, int width) {
+        //log("EllipsizingTextView createWorkingLayout");
         return new StaticLayout(workingText, getPaint(), width, Layout.Alignment.ALIGN_NORMAL, lineSpacingMultiplier,
                 lineAdditionalVerticalPadding, false /* includepad */);
     }
-
-//    public int getOffsetForPosition(float x, float y) {
-//        if (getLayout() == null)
-//            return -1;
-//        final int line = getLineNumberAtCoordinate(y);
-//        final int offset = getOffsetAtCoordinate(line, x);
-//        return offset;
-//    }
-
-//    float convertToHorizontalCoordinate(float x) {
-//        x -= getTotalPaddingLeft();
-//        // Clamp the position to inside of the view.
-//        x = Math.max(0.0f, x);
-//        x = Math.min(getWidth() - getTotalPaddingRight() - 1, x);
-//        x += getScrollX();
-//        return x;
-//    }
-
-//    int getLineNumberAtCoordinate(float y) {
-//        y -= getTotalPaddingTop();
-//        // Clamp the position to inside of the view.
-//        y = Math.max(0.0f, y);
-//        y = Math.min(getHeight() - getTotalPaddingBottom() - 1, y);
-//        y += getScrollY();
-//        return getLayout().getLineForVertical((int) y);
-//    }
-
-//    private int getOffsetAtCoordinate(int line, float x) {
-//        x = convertToHorizontalCoordinate(x);
-//        return getLayout().getOffsetForHorizontal(line, x);
-//    }
-
-//    private void adjustTextFontSize(View v) {
-//        if (minimumFontSize != -1) {
-//
-//            if (autoshrinkSetFontSize != -1) {
-//                if (getTextSize() == autoshrinkSetFontSize) {
-////                    String[] fontProperties = TiUIHelper.getFontProperties(proxy.getProperties());
-////
-////                    if (fontProperties.length > TiUIHelper.FONT_SIZE_POSITION && fontProperties[TiUIHelper.FONT_SIZE_POSITION] != null) {
-////                        tv.setTextSize(TiUIHelper.getSizeUnits(fontProperties[TiUIHelper.FONT_SIZE_POSITION]), TiUIHelper.getSize(fontProperties[TiUIHelper.FONT_SIZE_POSITION]));
-////                    } else {
-////                        tv.setTextSize(TiUIHelper.getSizeUnits(null), TiUIHelper.getSize(null));
-////                    }
-//                }
-//            }
-//
-//            TextPaint textPaint = getPaint();
-//            if (textPaint != null) {
-//                float stringWidth = textPaint.measureText(getText().toString());
-//                int textViewWidth = getWidth();
-//                if (textViewWidth < stringWidth && stringWidth > 0) {
-//                    float fontSize = (textViewWidth / stringWidth) * getTextSize();
-//                    autoshrinkSetFontSize = fontSize > minimumFontSize ? fontSize : minimumFontSize;
-//                    setTextSize(autoshrinkSetFontSize);
-//                }
-//            }
-//        }
-//    }
 }
