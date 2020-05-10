@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.32](https://github.com/Akylas/nativescript-label/compare/v1.0.31...v1.0.32) (2020-05-10)
+
+
+### Bug Fixes
+
+* **android:** faster TextView creation ([e4a47a3](https://github.com/Akylas/nativescript-label/commit/e4a47a361ac474141732bc1d130a2cf8d86d1e26))
+
+
+
+
+
 ## [1.0.31](https://github.com/Akylas/nativescript-label/compare/v1.0.30...v1.0.31) (2020-05-08)
 
 
