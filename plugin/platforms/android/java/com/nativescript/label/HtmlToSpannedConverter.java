@@ -1,7 +1,6 @@
 package com.nativescript.label;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -18,7 +17,6 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
-import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
 import android.text.style.ParagraphStyle;
@@ -32,9 +30,7 @@ import android.text.style.TextAppearanceSpan;
 import android.text.style.TypefaceSpan;
 import android.text.style.URLSpan;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -49,15 +45,19 @@ class HtmlToSpannedConverter extends DefaultHandler {
 
     private Html.ImageGetter mImageGetter;
     private float density;
+    private String fontFolder;
+    private Context context;
 
     public void reset() {
         mSpannableStringBuilder = new SpannableStringBuilder();
     }
 
-    public HtmlToSpannedConverter(Context context, Html.ImageGetter imageGetter,
+    public HtmlToSpannedConverter(Context context, String fontFolder, Html.ImageGetter imageGetter,
                                   Html.TagHandler tagHandler, final boolean disableLinkStyle) {
         mSpannableStringBuilder = new SpannableStringBuilder();
         mImageGetter = imageGetter;
+        this.fontFolder = fontFolder;
+        this.context = context;
         this.disableLinkStyle = disableLinkStyle;
         density = context.getResources().getDisplayMetrics().density;
 //        if (mImageGetter == null) {
@@ -160,18 +160,18 @@ class HtmlToSpannedConverter extends DefaultHandler {
         String face = attributes.getValue("face");
 
         int len = text.length();
-        text.setSpan(new Font(color, face), len, len, Spannable.SPAN_MARK_MARK);
+        text.setSpan(new FontSpan(color, face), len, len, Spannable.SPAN_MARK_MARK);
     }
 
     private void endFont(SpannableStringBuilder text) {
         int len = text.length();
-        Object obj = getLast(text, Font.class);
+        Object obj = getLast(text, FontSpan.class);
         int where = text.getSpanStart(obj);
 
         text.removeSpan(obj);
 
         if (where != len) {
-            Font f = (Font) obj;
+            FontSpan f = (FontSpan) obj;
 
             if (!TextUtils.isEmpty(f.mColor)) {
                 if (f.mColor.startsWith("@")) {
@@ -289,11 +289,11 @@ class HtmlToSpannedConverter extends DefaultHandler {
     private class Strike {
     }
 
-    private class Font {
+    private class FontSpan {
         public String mColor;
         public String mFace;
 
-        public Font(String color, String face) {
+        public FontSpan(String color, String face) {
             mColor = color;
             mFace = face;
         }
@@ -478,6 +478,10 @@ class HtmlToSpannedConverter extends DefaultHandler {
                         fontSize = Float.parseFloat(value.replace("px", "").replace("pt", ""));
                         needsFontSpan = true;
                         break;
+                    case "font-weight":
+                        fontWeight = value;
+                        needsFontSpan = true;
+                        break;
                     case "font-style":
                         fontStyle = value;
                         needsFontSpan = true;
@@ -496,16 +500,16 @@ class HtmlToSpannedConverter extends DefaultHandler {
 
                 }
                 if (needsFontSpan) {
+                    boolean isBold = fontWeight != null && fontWeight.equals("bold") || fontWeight.equals("700");
                     if (fontFamily != null) {
-                        result.add(new TypefaceSpan(fontFamily));
-                    }
-                    if (fontSize != 0) {
-                        result.add(new AbsoluteSizeSpan(Math.round(fontSize * density)));
-                    }
-                    if (fontWeight != null) {
+                        result.add(new CustomTypefaceSpan(fontFamily, Font.createTypeface(this.context, this.fontFolder, fontFamily, fontWeight, isBold, false)));
+                    } else {
                         if (fontWeight.equals("bold") || fontWeight.equals("700")) {
                             result.add(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD));
                         }
+                    }
+                    if (fontSize != 0) {
+                        result.add(new AbsoluteSizeSpan(Math.round(fontSize * density)));
                     }
                     if (color != null) {
                         result.add(new ForegroundColorSpan(Color.parseColor(color)));

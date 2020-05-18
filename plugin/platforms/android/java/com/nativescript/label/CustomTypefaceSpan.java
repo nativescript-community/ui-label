@@ -31,18 +31,18 @@ public class CustomTypefaceSpan extends TypefaceSpan {
     }
 
     private void applyCustomTypeFace(TextPaint paint) {
-        final Typeface old = paint.getTypeface();
-        final int oldStyle = (old == null) ? 0 : old.getStyle();
+        // final Typeface old = paint.getTypeface();
+        // final int oldStyle = (old == null) ? 0 : old.getStyle();
 
         Typeface typeface = this.typeface;
-        int fake = oldStyle & ~typeface.getStyle();
-        if ((fake & android.graphics.Typeface.BOLD) != 0) {
-            paint.setFakeBoldText(true);
-        }
+        // int fake = oldStyle & ~typeface.getStyle();
+        // if ((fake & android.graphics.Typeface.BOLD) != 0) {
+        //     paint.setFakeBoldText(true);
+        // }
 
-        if ((fake & android.graphics.Typeface.ITALIC) != 0) {
-            paint.setTextSkewX(-0.25f);
-        }
+        // if ((fake & android.graphics.Typeface.ITALIC) != 0) {
+        //     paint.setTextSkewX(-0.25f);
+        // }
 
         paint.setTypeface(typeface);
     }
