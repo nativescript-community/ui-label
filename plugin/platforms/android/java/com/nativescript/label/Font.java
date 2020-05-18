@@ -96,6 +96,23 @@ public class Font {
         String system = "system";
     }
 
+    public static int getIntFontWeight(String fontWeight) {
+        switch (fontWeight) {
+            case FontWeight.NORMAL:
+                return 400;
+            case FontWeight.BOLD:
+                return 500;
+            case "thin":
+                return 100;
+            case "light":
+                return 300;
+            case "black":
+                return 900;
+            default:
+                return Integer.parseInt(fontWeight, 10);
+        }
+    }
+
     public static String getFontWeightSuffix(String fontWeight) {
         if (fontWeight == null) {
             return "";
@@ -116,7 +133,7 @@ public class Font {
             case FontWeight.BOLD:
             case "700":
             case FontWeight.EXTRA_BOLD:
-                return "";
+            return Build.VERSION.SDK_INT >= 21 ? "-bold" : "";
             case FontWeight.BLACK:
                 return Build.VERSION.SDK_INT >= 21 ? "-black" : "";
             default:
@@ -157,6 +174,7 @@ public class Font {
         if (isItalic) {
             fontStyle |= Typeface.ITALIC;
         }
+        int fontWeightInt = getIntFontWeight(fontWeight);
 
         // http://stackoverflow.com/questions/19691530/valid-values-for-androidfontfamily-and-what-they-map-to
         // Log.d(TAG, "createTypeface: " + fontFamily);
@@ -182,7 +200,11 @@ public class Font {
                     result = loadFontFromFile(context, fontFolder, fonts.get(i));
 
                     if (result != null && fontStyle != 0) {
-                        result = Typeface.create(result, fontStyle);
+//                        if (Build.VERSION.SDK_INT >= 28)
+//                            result = Typeface.create(result, fontStyle, fontWeightInt, isItalic);
+//                        } else {
+                            result = Typeface.create(result, fontStyle); 
+//                        }
                     }
                     break;
             }
@@ -208,31 +230,31 @@ public class Font {
         // Spanned spannedString = HtmlCompat.fromHtml(htmlString,
         // HtmlCompat.FROM_HTML_MODE_COMPACT);
 
-        CharSequence spannedString = fromHtml(htmlString, context, false);
+        CharSequence spannedString = fromHtml(htmlString, context, fontFolder,false);
         SpannableStringBuilder builder = new SpannableStringBuilder(spannedString);
 
-        TypefaceSpan[] spans = builder.getSpans(0, builder.length(), android.text.style.TypefaceSpan.class);
-        for (int index = 0; index < spans.length; index++) {
-            TypefaceSpan span = spans[index];
-            int start = builder.getSpanStart(span);
-            int end = builder.getSpanEnd(span);
-            String fontFamily = span.getFamily();
-            String[] split = fontFamily.split("-");
-            String style = null;
-            if (split.length > 1) {
-                style = split[1];
-            }
-            Typeface typeface = createTypeface(context, fontFolder, fontFamily,
-            (style != null) && style.equals("bold") ? "bold" : "normal", (style != null) && style.equals("bold"), (style != null) && style.equals("italic"));
+        // TypefaceSpan[] spans = builder.getSpans(0, builder.length(), android.text.style.TypefaceSpan.class);
+        // for (int index = 0; index < spans.length; index++) {
+        //     TypefaceSpan span = spans[index];
+        //     int start = builder.getSpanStart(span);
+        //     int end = builder.getSpanEnd(span);
+        //     String fontFamily = span.getFamily();
+        //     String[] split = fontFamily.split("-");
+        //     String style = null;
+        //     if (split.length > 1) {
+        //         style = split[1];
+        //     }
+        //     Typeface typeface = createTypeface(context, fontFolder, fontFamily,
+        //     (style != null) && style.equals("bold") ? "bold" : "normal", (style != null) && style.equals("bold"), (style != null) && style.equals("italic"));
 
-            if (typeface == null) {
-                typeface = Typeface.create(fontFamily, Typeface.NORMAL);
-            }
-            if (typeface != null) {
-                TypefaceSpan typefaceSpan = new CustomTypefaceSpan(fontFamily, typeface);
-                builder.setSpan(typefaceSpan, start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-        }
+        //     if (typeface == null) {
+        //         typeface = Typeface.create(fontFamily, Typeface.NORMAL);
+        //     }
+        //     if (typeface != null) {
+        //         TypefaceSpan typefaceSpan = new CustomTypefaceSpan(fontFamily, typeface);
+        //         builder.setSpan(typefaceSpan, start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        //     }
+        // }
 
         return builder;
     }
@@ -357,7 +379,7 @@ public class Font {
     }
     static SAXParser saxParser = null;
    static  HtmlToSpannedConverter converter = null;
-    public static CharSequence fromHtml(CharSequence html, Context context, final boolean disableLinkStyle) {
+    public static CharSequence fromHtml(CharSequence html, Context context, String fontFolder, final boolean disableLinkStyle) {
 //        long startTime = System.nanoTime();
 //        XMLReader xmlReader;
         try {
@@ -366,7 +388,7 @@ public class Font {
                  saxParser = factory.newSAXParser();
             }
             if (converter == null) {
-                converter = new HtmlToSpannedConverter(context, null, null, disableLinkStyle);
+                converter = new HtmlToSpannedConverter(context, fontFolder, null, null, disableLinkStyle);
             } else {
                 converter.reset();
                 converter.disableLinkStyle = disableLinkStyle;
@@ -382,7 +404,7 @@ public class Font {
         return html;
     }
 
-    public static CharSequence fromHtml(Context context, CharSequence html) {
-        return fromHtml(html, context, false);
+    public static CharSequence fromHtml(Context context, String fontFolder, CharSequence html) {
+        return fromHtml(html, context, fontFolder, false);
     }
 }
