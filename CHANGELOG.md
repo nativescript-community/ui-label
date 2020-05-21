@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.35](https://github.com/Akylas/nativescript-label/compare/v1.0.34...v1.0.35) (2020-05-21)
+
+
+### Bug Fixes
+
+* sideEffects for tree shacking ([aeb8192](https://github.com/Akylas/nativescript-label/commit/aeb8192c1ebe251df27b6eea1deaacbe07c07719))
+
+
+
+
+
 ## [1.0.34](https://github.com/Akylas/nativescript-label/compare/v1.0.33...v1.0.34) (2020-05-21)
 
 
