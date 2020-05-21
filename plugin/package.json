@@ -1,6 +1,6 @@
 {
     "name": "nativescript-htmllabel",
-    "version": "1.0.32",
+    "version": "1.0.33",
     "description": "Nativescript label implementation supporting HTML",
     "main": "./label",
     "module": "./label.mjs",
