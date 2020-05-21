@@ -3,6 +3,7 @@
     "version": "1.0.32",
     "description": "Nativescript label implementation supporting HTML",
     "main": "./label",
+    "module": "./label.mjs",
     "typings": "./label.d.ts",
     "nativescript": {
         "platforms": {

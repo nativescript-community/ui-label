@@ -11,9 +11,10 @@
         }
     },
     "scripts": {
-        "tsc": "cpy '**/*.d.ts' '../plugin' --parents --cwd=src && tsc -skipLibCheck",
+        "tsc": "cp src/label.d.ts plugin && tsc -skipLibCheck -d",
         "clean": "rimraf ./plugin/**/*.d.ts ./plugin/**/*.js ./plugin/**/*.js.map plugin/node_modules plugin/package-lock.json",
-        "build.plugin": "npm run tsc && cp README.md plugin/",
+        "build.plugin": " cp README.md plugin/ && rm -f .tsbuildinfo && npm run tsc && npm run build.plugin.esm && node ./build.esm.js",
+        "build.plugin.esm": "tsc -skipLibCheck --target es2015 --removeComments --outDir build/esm",
         "build.android": "bash src-native/android/build.sh",
         "build.ios": "bash src-native/ios/build.sh",
         "build.native": "npm run build.android && npm run build.ios",
@@ -53,7 +54,9 @@
         "lerna": "^3.20.2",
         "npm-watch": "^0.6.0",
         "prompt": "^1.0.0",
+        "recursive-copy": "^2.0.10",
         "rimraf": "^3.0.2",
+        "through2": "^3.0.1",
         "@nativescript/core": "6.4.0",
         "tns-platform-declarations": "^6.4.0",
         "tslint": "^6.0.0",
