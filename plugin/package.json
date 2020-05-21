@@ -4,6 +4,7 @@
     "description": "Nativescript label implementation supporting HTML",
     "main": "./label",
     "module": "./label.mjs",
+    "sideEffects": false,
     "typings": "./label.d.ts",
     "nativescript": {
         "platforms": {
