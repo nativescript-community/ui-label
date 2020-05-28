@@ -114,10 +114,14 @@ class HtmlToSpannedConverter extends DefaultHandler {
     }
 
     private void end(SpannableStringBuilder text, Class kind, Object repl) {
+        
         int len = text.length();
         Object obj = getLast(text, kind);
         int where = text.getSpanStart(obj);
         text.removeSpan(obj);
+        if (repl == null) {
+            return;
+        }
         if (where != len) {
             if (Collection.class.isAssignableFrom(repl.getClass())) {
                 Collection<Object> col = (Collection<Object>) repl;
