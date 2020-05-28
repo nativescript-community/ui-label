@@ -36,6 +36,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.util.Log;
+
 class HtmlToSpannedConverter extends DefaultHandler {
     private final String TAG = "HtmlToSpannedConverter";
 
@@ -479,7 +481,7 @@ class HtmlToSpannedConverter extends DefaultHandler {
                         needsFontSpan = true;
                         break;
                     case "font-size":
-                        fontSize = Float.parseFloat(value.replace("px", "").replace("pt", ""));
+                        fontSize = Float.parseFloat(value.replace("px", "").replace("pt", "").trim()) * density;
                         needsFontSpan = true;
                         break;
                     case "font-weight":
@@ -504,16 +506,16 @@ class HtmlToSpannedConverter extends DefaultHandler {
 
                 }
                 if (needsFontSpan) {
-                    boolean isBold = fontWeight != null && fontWeight.equals("bold") || fontWeight.equals("700");
+                    boolean isBold = fontWeight != null && (fontWeight.equals("bold") || fontWeight.equals("700"));
                     if (fontFamily != null) {
                         result.add(new CustomTypefaceSpan(fontFamily, Font.createTypeface(this.context, this.fontFolder, fontFamily, fontWeight, isBold, false)));
                     } else {
-                        if (fontWeight.equals("bold") || fontWeight.equals("700")) {
+                        if (isBold) {
                             result.add(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD));
                         }
                     }
                     if (fontSize != 0) {
-                        result.add(new AbsoluteSizeSpan(Math.round(fontSize * density)));
+                        result.add(new AbsoluteSizeSpan(Math.round(fontSize)));
                     }
                     if (color != null) {
                         result.add(new ForegroundColorSpan(Color.parseColor(color)));
