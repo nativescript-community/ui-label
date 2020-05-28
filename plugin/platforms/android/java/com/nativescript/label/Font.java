@@ -30,7 +30,6 @@ public class Font {
     static final String TAG = "Font";
 
     public static Typeface loadFontFromFile(Context context, String fontFolder, String fontFamily) {
-        // Log.d(TAG, "loadFontFromFile: " + fontFamily + " in folder " + fontFolder);
         if (typefaceCache.containsKey(fontFamily)) {
             return typefaceCache.get(fontFamily);
         }
@@ -97,6 +96,9 @@ public class Font {
     }
 
     public static int getIntFontWeight(String fontWeight) {
+        if (fontWeight == null) {
+            return 400;
+        }
         switch (fontWeight) {
             case FontWeight.NORMAL:
                 return 400;
@@ -174,10 +176,10 @@ public class Font {
         if (isItalic) {
             fontStyle |= Typeface.ITALIC;
         }
+        // Log.d(TAG, "createTypeface: " + fontFamily + ",fontFolder " + fontFolder +",fontWeight " + fontWeight);
         int fontWeightInt = getIntFontWeight(fontWeight);
 
         // http://stackoverflow.com/questions/19691530/valid-values-for-androidfontfamily-and-what-they-map-to
-        // Log.d(TAG, "createTypeface: " + fontFamily);
         ArrayList<String> fonts = parseFontFamily(fontFamily);
         // Log.d(TAG, "createTypeface1: " + fonts.toString());
         Typeface result = null;
