@@ -103,6 +103,7 @@ public class Font {
             case FontWeight.NORMAL:
                 return 400;
             case FontWeight.BOLD:
+            case "semibold":
                 return 500;
             case "thin":
                 return 100;
