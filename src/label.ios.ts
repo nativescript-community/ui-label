@@ -1,20 +1,31 @@
-import { Color, colorProperty, fontInternalProperty, Length, paddingBottomProperty, paddingLeftProperty, paddingRightProperty, paddingTopProperty, View } from '@nativescript/core/ui/page/page';
-import { lineHeightProperty, TextAlignment, FormattedString } from '@nativescript/core/ui/text-base/text-base';
+import { Color } from '@nativescript/core/color';
+import { View } from '@nativescript/core/ui/core/view';
 import {
     borderBottomWidthProperty,
     borderLeftWidthProperty,
     borderRightWidthProperty,
     borderTopWidthProperty,
-    TextTransform,
-    WhiteSpace,
-    whiteSpaceProperty,
-    letterSpacingProperty,
-    textAlignmentProperty,
-} from '@nativescript/core/ui/text-base';
+    colorProperty,
+    paddingBottomProperty,
+    paddingLeftProperty,
+    paddingRightProperty,
+    paddingTopProperty,
+    Length,
+} from '@nativescript/core/ui/styling/style-properties';
+import { letterSpacingProperty, lineHeightProperty, TextAlignment, TextTransform, WhiteSpace, whiteSpaceProperty } from '@nativescript/core/ui/text-base/text-base';
 import { isString } from '@nativescript/core/utils/types';
 import { layout } from '@nativescript/core/utils/utils';
-import { TextShadow, VerticalTextAlignment, verticalTextAlignmentProperty } from './label';
-import { htmlProperty, LabelBase, lineBreakProperty, maxLinesProperty, textShadowProperty, needFormattedStringComputation, textAlignmentConverter } from './label-common';
+import { TextShadow, VerticalTextAlignment } from './label';
+import {
+    htmlProperty,
+    LabelBase,
+    lineBreakProperty,
+    maxLinesProperty,
+    needFormattedStringComputation,
+    textAlignmentConverter,
+    textShadowProperty,
+    verticalTextAlignmentProperty,
+} from './label-common';
 
 export * from './label-common';
 enum FixedSize {
@@ -491,7 +502,7 @@ export class Label extends LabelBase {
     }
     // createNSMutableAttributedString(formattedString: FormattedString): NSMutableAttributedString {
     //     return super.createNSMutableAttributedString(formattedString);
-    // } 
+    // }
     // [formattedTextProperty.setNative](value: FormattedString) {
     //     super[formattedTextProperty.setNative](value);
     // }
