@@ -1,53 +1,61 @@
-﻿import * as application from '@nativescript/core/application';
-import * as fs from '@nativescript/core/file-system';
+﻿import { android as androidApp } from '@nativescript/core/application';
+import { knownFolders, path } from '@nativescript/core/file-system';
 import { profile } from '@nativescript/core/profiling';
 import { Font, FontStyle } from '@nativescript/core/ui/styling/font';
 import { FontWeight } from '@nativescript/core/ui/styling/font-common';
 import { FormattedString } from '@nativescript/core/ui/text-base/formatted-string';
 import { Span } from '@nativescript/core/ui/text-base/span';
+import { PropertyChangeData, Observable } from '@nativescript/core/data/observable';
+import { Property } from '@nativescript/core/ui/core/properties';
 import {
-    backgroundColorProperty,
-    booleanConverter,
-    Color,
-    colorProperty,
-    CSSType,
-    fontInternalProperty,
-    fontSizeProperty,
-    Length,
     letterSpacingProperty,
-    lineHeightProperty,
-    Observable,
-    paddingBottomProperty,
-    paddingLeftProperty,
-    paddingRightProperty,
-    paddingTopProperty,
-    Property,
-    PropertyChangeData,
     TextAlignment,
     textAlignmentProperty,
     TextDecoration,
     textDecorationProperty,
     TextTransform,
     textTransformProperty,
-    View,
     WhiteSpace,
     whiteSpaceProperty,
-    ViewBase,
-    fontFamilyProperty
-} from '@nativescript/core/ui/text-base/text-base';
+} from '@nativescript/core/ui/text-base';
+import { CSSType, View } from '@nativescript/core/ui/core/view';
+import { booleanConverter, ViewBase } from '@nativescript/core/ui/core/view-base';
+import {
+    backgroundColorProperty,
+    colorProperty,
+    fontInternalProperty,
+    fontSizeProperty,
+    Length,
+    lineHeightProperty,
+    paddingBottomProperty,
+    paddingLeftProperty,
+    paddingRightProperty,
+    paddingTopProperty,
+    fontFamilyProperty,
+} from '@nativescript/core/ui/styling/style-properties';
 import { layout } from '@nativescript/core/utils/utils';
+import { Color } from '@nativescript/core/color';
 import { Label as LabelViewDefinition, TextShadow, LineBreak } from './label';
-import { cssProperty, needFormattedStringComputation, lineBreakProperty, maxLinesProperty, textShadowProperty, VerticalTextAlignment, verticalTextAlignmentProperty, textAlignmentConverter } from './label-common';
+import {
+    cssProperty,
+    needFormattedStringComputation,
+    lineBreakProperty,
+    maxLinesProperty,
+    textShadowProperty,
+    VerticalTextAlignment,
+    verticalTextAlignmentProperty,
+    textAlignmentConverter,
+} from './label-common';
 
 export function enableIOSDTCoreText() {} //unused
 
 let context;
-const fontPath = fs.path.join(fs.knownFolders.currentApp().path, 'fonts');
+const fontPath = path.join(knownFolders.currentApp().path, 'fonts');
 
-Font.prototype.getAndroidTypeface = function() {
+Font.prototype.getAndroidTypeface = function () {
     if (!this._typeface) {
         if (!context) {
-            context = application.android.context;
+            context = androidApp.context;
         }
         this._typeface = (com as any).nativescript.label.Font.createTypeface(context, fontPath, this.fontFamily, this.fontWeight, this.isBold, this.isItalic);
     }
@@ -65,7 +73,7 @@ declare module '@nativescript/core/ui/text-base/span' {
     }
 }
 
-FormattedString.prototype.toNativeString = function() {
+FormattedString.prototype.toNativeString = function () {
     let result = '';
     const length = this._spans.length;
     for (let i = 0; i < length; i++) {
@@ -79,7 +87,7 @@ function isBold(fontWeight: FontWeight): boolean {
     return fontWeight === 'bold' || fontWeight === '700' || fontWeight === '800' || fontWeight === '900';
 }
 
-Span.prototype.toNativeString = function() {
+Span.prototype.toNativeString = function () {
     const textTransform = this.parent.parent.textTransform;
     const spanStyle = this.style;
     let backgroundColor: Color;
@@ -103,7 +111,7 @@ Span.prototype.toNativeString = function() {
         text = getTransformedText(text, textTransform);
     }
     const delimiter = String.fromCharCode(0x1e);
-    let result = `${this.fontFamily || 0}${delimiter}${this.fontSize !== undefined ? this.fontSize: -1}${delimiter}${this.fontWeight || ''}${delimiter}${
+    let result = `${this.fontFamily || 0}${delimiter}${this.fontSize !== undefined ? this.fontSize : -1}${delimiter}${this.fontWeight || ''}${delimiter}${
         this.fontStyle === 'italic' ? 1 : 0
     }${delimiter}${textDecoration || 0}${delimiter}${this.color ? this.color.android : -1}${delimiter}${backgroundColor ? backgroundColor.android : -1}${delimiter}${this.text}`;
     return result;
@@ -123,7 +131,7 @@ enum SuspendType {
     Loaded = 1 << 20,
     NativeView = 1 << 21,
     UISetup = 1 << 22,
-    IncrementalCountMask = ~((1 << 20) + (1 << 21) + (1 << 22))
+    IncrementalCountMask = ~((1 << 20) + (1 << 21) + (1 << 22)),
 }
 declare module '@nativescript/core/ui/core/view-base' {
     interface ViewBase {
@@ -140,8 +148,6 @@ declare module '@nativescript/core/ui/core/view-base' {
 const textProperty = new Property<Label, string>({ name: 'text', defaultValue: '', affectsLayout: true });
 const formattedTextProperty = new Property<Label, FormattedString>({ name: 'formattedText', affectsLayout: true, valueChanged: onFormattedTextPropertyChanged });
 export const htmlProperty = new Property<Label, string>({ name: 'html', defaultValue: null, affectsLayout: true });
-
-
 
 export function buildHTMLString(data: {
     text: string;
@@ -217,7 +223,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
         if (typeof value === 'string') {
             value = booleanConverter(value);
         }
-        const newValue = value ? 'normal' : 'nowrap'
+        const newValue = value ? 'normal' : 'nowrap';
         if (this.style.whiteSpace !== newValue) {
             this.style.whiteSpace = newValue;
         }
@@ -256,7 +262,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
         }
     }
 
-    abstract _setNativeText(reset?: boolean):void;
+    abstract _setNativeText(reset?: boolean): void;
 
     protected _paintFlags: number;
 }
@@ -277,11 +283,9 @@ export class Label extends LabelBase {
         return new TextView(this._context);
     }
 
-
     [htmlProperty.getDefault](): string {
         return '';
     }
-
 
     @needFormattedStringComputation
     [htmlProperty.setNative](value: string) {
@@ -373,7 +377,6 @@ export class Label extends LabelBase {
     @needFormattedStringComputation
     [formattedTextProperty.setNative](value: FormattedString) {
         this._setNativeText();
-       
     }
 
     @needFormattedStringComputation
@@ -481,7 +484,6 @@ export class Label extends LabelBase {
         org.nativescript.widgets.ViewHelper.setPaddingLeft(this.nativeTextViewProtected, Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderLeftWidth, 0));
     }
 
-
     @profile
     createHTMLString() {
         return (com as any).nativescript.label.Font.stringBuilderFromHtmlString(context, fontPath, this.html);
@@ -536,14 +538,14 @@ export class Label extends LabelBase {
 
         this._androidView = nativeView;
         // if (nativeView) {
-            // if (this._isPaddingRelative === undefined) {
-            //     this._isPaddingRelative = false;
-            // }
+        // if (this._isPaddingRelative === undefined) {
+        //     this._isPaddingRelative = false;
+        // }
 
-            // this._defaultPaddingTop = 0;
-            // this._defaultPaddingRight = 0;
-            // this._defaultPaddingBottom = 0;
-            // this._defaultPaddingLeft = 0;
+        // this._defaultPaddingTop = 0;
+        // this._defaultPaddingRight = 0;
+        // this._defaultPaddingBottom = 0;
+        // this._defaultPaddingLeft = 0;
 
         // }
 
