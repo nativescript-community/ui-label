@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.40](https://github.com/Akylas/nativescript-label/compare/v1.0.39...v1.0.40) (2020-07-26)
+
+
+### Bug Fixes
+
+* **android:** correctly handle semibold font ([a3bb69a](https://github.com/Akylas/nativescript-label/commit/a3bb69afcdcd6b6333adb72b2c63d7290f5564b0))
+
+
+
+
+
 ## [1.0.39](https://github.com/Akylas/nativescript-label/compare/v1.0.38...v1.0.39) (2020-05-28)
 
 
