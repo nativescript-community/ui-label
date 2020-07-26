@@ -9,6 +9,7 @@ import { PropertyChangeData, Observable } from '@nativescript/core/data/observab
 import { Property } from '@nativescript/core/ui/core/properties';
 import {
     letterSpacingProperty,
+    lineHeightProperty,
     TextAlignment,
     textAlignmentProperty,
     TextDecoration,
@@ -26,7 +27,6 @@ import {
     fontInternalProperty,
     fontSizeProperty,
     Length,
-    lineHeightProperty,
     paddingBottomProperty,
     paddingLeftProperty,
     paddingRightProperty,
