@@ -1,13 +1,16 @@
+import { Color } from '@nativescript/core/color';
+import { Observable } from '@nativescript/core/data/observable';
 import { isIOS } from '@nativescript/core/platform';
 import { CssProperty, InheritedCssProperty, makeParser, makeValidator, Property } from '@nativescript/core/ui/core/properties';
-import { booleanConverter, Color, CSSType, dip, Observable, ViewBase, PropertyChangeData } from '@nativescript/core/ui/core/view';
+import { CSSType, dip } from '@nativescript/core/ui/core/view';
+import { booleanConverter } from '@nativescript/core/ui/core/view-base';
 import { Label as TNLabel } from '@nativescript/core/ui/label';
 import { Style } from '@nativescript/core/ui/styling/style';
-import { layout } from '@nativescript/core/utils/utils';
-import { Label as LabelViewDefinition, TextShadow, LineBreak } from './label';
+import { TextAlignment } from '@nativescript/core/ui/text-base';
 import { FormattedString } from '@nativescript/core/ui/text-base/formatted-string';
 import { Span } from '@nativescript/core/ui/text-base/span';
-import { TextAlignment } from '@nativescript/core/ui/text-base';
+import { layout } from '@nativescript/core/utils/utils';
+import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
 
 declare module '@nativescript/core/ui/text-base/formatted-string' {
     interface FormattedString {
