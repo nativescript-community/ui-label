@@ -1,25 +1,29 @@
-import { Color } from '@nativescript/core/color';
-import { Observable } from '@nativescript/core/data/observable';
-import { isIOS } from '@nativescript/core/platform';
-import { CssProperty, InheritedCssProperty, makeParser, makeValidator, Property } from '@nativescript/core/ui/core/properties';
-import { CSSType, dip } from '@nativescript/core/ui/core/view';
-import { booleanConverter } from '@nativescript/core/ui/core/view-base';
-import { Label as TNLabel } from '@nativescript/core/ui/label';
-import { Style } from '@nativescript/core/ui/styling/style';
+import {
+    CSSType,
+    Color,
+    CssProperty,
+    FormattedString,
+    InheritedCssProperty,
+    Observable,
+    Property,
+    Span,
+    Style,
+    Label as TNLabel,
+    booleanConverter,
+    makeParser,
+    makeValidator,
+} from '@nativescript/core';
+import { dip } from '@nativescript/core/ui/core/view';
 import { TextAlignment } from '@nativescript/core/ui/text-base';
-import { FormattedString } from '@nativescript/core/ui/text-base/formatted-string';
-import { Span } from '@nativescript/core/ui/text-base/span';
 import { layout } from '@nativescript/core/utils/utils';
 import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
 
 declare module '@nativescript/core/ui/text-base/formatted-string' {
     interface FormattedString {
-        addPropertyChangeHandler(span: Span): void;
-        removePropertyChangeHandler(span: Span): void;
-        onPropertyChange(data);
+        addPropertyChangeHandler(span: Span);
+        removePropertyChangeHandler(span: Span);
     }
 }
-
 // FormattedString.prototype.onPropertyChange = function(data: PropertyChangeData) {
 //     this.notifyPropertyChange(data.propertyName, this);
 // }
@@ -48,7 +52,7 @@ FormattedString.prototype.removePropertyChangeHandler = function (span: Span) {
 // };
 
 export const needFormattedStringComputation = function (target: any, propertyKey: string | Symbol, descriptor: PropertyDescriptor) {
-    let originalMethod = descriptor.value;
+    const originalMethod = descriptor.value;
     descriptor.value = function (...args: any[]) {
         if (!this._canChangeText) {
             this._needFormattedStringComputation = true;
@@ -132,7 +136,7 @@ function parseDIPs(value: string): dip {
 export const textShadowProperty = new CssProperty<Style, string | TextShadow>({
     name: 'textShadow',
     cssName: 'text-shadow',
-    affectsLayout: isIOS,
+    affectsLayout: global.isIOS,
     valueConverter: (value) => {
         const params = value.split(' ');
         return {
