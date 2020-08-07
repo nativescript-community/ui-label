@@ -1,50 +1,43 @@
-﻿import { android as androidApp } from '@nativescript/core/application';
-import { knownFolders, path } from '@nativescript/core/file-system';
-import { profile } from '@nativescript/core/profiling';
-import { Font, FontStyle } from '@nativescript/core/ui/styling/font';
-import { FontWeight } from '@nativescript/core/ui/styling/font-common';
-import { FormattedString } from '@nativescript/core/ui/text-base/formatted-string';
-import { Span } from '@nativescript/core/ui/text-base/span';
-import { PropertyChangeData, Observable } from '@nativescript/core/data/observable';
-import { Property } from '@nativescript/core/ui/core/properties';
+﻿import { CSSType, FormattedString, Observable, Property, PropertyChangeData, Span, View, ViewBase, booleanConverter, knownFolders, path, profile } from '@nativescript/core';
+import { android as androidApp } from '@nativescript/core/application';
+import { Color } from '@nativescript/core/color';
+import { Font, FontStyle, FontWeight } from '@nativescript/core/ui/styling/font';
 import {
-    letterSpacingProperty,
-    lineHeightProperty,
-    TextAlignment,
-    textAlignmentProperty,
-    TextDecoration,
-    textDecorationProperty,
-    TextTransform,
-    textTransformProperty,
-    WhiteSpace,
-    whiteSpaceProperty,
-} from '@nativescript/core/ui/text-base';
-import { CSSType, View } from '@nativescript/core/ui/core/view';
-import { booleanConverter, ViewBase } from '@nativescript/core/ui/core/view-base';
-import {
+    Length,
     backgroundColorProperty,
     colorProperty,
     fontInternalProperty,
     fontSizeProperty,
-    Length,
     paddingBottomProperty,
     paddingLeftProperty,
     paddingRightProperty,
     paddingTopProperty,
-    fontFamilyProperty,
 } from '@nativescript/core/ui/styling/style-properties';
-import { layout } from '@nativescript/core/utils/utils';
-import { Color } from '@nativescript/core/color';
-import { Label as LabelViewDefinition, TextShadow, LineBreak } from './label';
 import {
+    TextAlignment,
+    TextDecoration,
+    TextTransform,
+    WhiteSpace,
+    letterSpacingProperty,
+    textAlignmentProperty,
+    textDecorationProperty,
+    textTransformProperty,
+    whiteSpaceProperty,
+} from '@nativescript/core/ui/text-base';
+import {
+    lineHeightProperty
+} from '@nativescript/core/ui/text-base/text-base-common';
+import { layout } from '@nativescript/core/utils/utils';
+import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
+import {
+    VerticalTextAlignment,
     cssProperty,
-    needFormattedStringComputation,
     lineBreakProperty,
     maxLinesProperty,
-    textShadowProperty,
-    VerticalTextAlignment,
-    verticalTextAlignmentProperty,
+    needFormattedStringComputation,
     textAlignmentConverter,
+    textShadowProperty,
+    verticalTextAlignmentProperty,
 } from './label-common';
 
 export function enableIOSDTCoreText() {} //unused
@@ -107,11 +100,11 @@ Span.prototype.toNativeString = function () {
     }
 
     let text = this.text;
-    if (text && textTransform != null && textTransform != 'none') {
+    if (text && textTransform != null && textTransform !== 'none') {
         text = getTransformedText(text, textTransform);
     }
     const delimiter = String.fromCharCode(0x1e);
-    let result = `${this.fontFamily || 0}${delimiter}${this.fontSize !== undefined ? this.fontSize : -1}${delimiter}${this.fontWeight || ''}${delimiter}${
+    const result = `${this.fontFamily || 0}${delimiter}${this.fontSize !== undefined ? this.fontSize : -1}${delimiter}${this.fontWeight || ''}${delimiter}${
         this.fontStyle === 'italic' ? 1 : 0
     }${delimiter}${textDecoration || 0}${delimiter}${this.color ? this.color.android : -1}${delimiter}${backgroundColor ? backgroundColor.android : -1}${delimiter}${this.text}`;
     return result;
@@ -256,7 +249,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
 
     // without this spans class wont work :s
     eachChild(callback: (child: ViewBase) => boolean): void {
-        let text = this.formattedText;
+        const text = this.formattedText;
         if (text) {
             callback(text);
         }
@@ -381,10 +374,6 @@ export class Label extends LabelBase {
 
     @needFormattedStringComputation
     [textTransformProperty.setNative](value: TextTransform) {
-        // Don't change the transformation method if this is secure TextField or we'll lose the hiding characters.
-        if ((<any>this).secure) {
-            return;
-        }
         this._setNativeText();
     }
 
@@ -392,7 +381,7 @@ export class Label extends LabelBase {
         return 'initial';
     }
     [textAlignmentProperty.setNative](value: TextAlignment) {
-        let verticalGravity = this.nativeTextViewProtected.getGravity() & android.view.Gravity.VERTICAL_GRAVITY_MASK;
+        const verticalGravity = this.nativeTextViewProtected.getGravity() & android.view.Gravity.VERTICAL_GRAVITY_MASK;
         switch (value) {
             case 'initial':
             case 'left':

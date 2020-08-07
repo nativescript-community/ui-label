@@ -1,24 +1,24 @@
-import { Color } from '@nativescript/core/color';
-import { View } from '@nativescript/core/ui/core/view';
+import { Color, View } from '@nativescript/core';
 import {
+    Length,
     borderBottomWidthProperty,
     borderLeftWidthProperty,
     borderRightWidthProperty,
     borderTopWidthProperty,
     colorProperty,
+    lineHeightProperty,
     paddingBottomProperty,
     paddingLeftProperty,
     paddingRightProperty,
     paddingTopProperty,
-    Length,
 } from '@nativescript/core/ui/styling/style-properties';
-import { letterSpacingProperty, lineHeightProperty, TextAlignment, TextTransform, WhiteSpace, whiteSpaceProperty } from '@nativescript/core/ui/text-base/text-base';
+import { TextAlignment, TextTransform, WhiteSpace, letterSpacingProperty, whiteSpaceProperty } from '@nativescript/core/ui/text-base';
 import { isString } from '@nativescript/core/utils/types';
 import { layout } from '@nativescript/core/utils/utils';
 import { TextShadow, VerticalTextAlignment } from './label';
 import {
-    htmlProperty,
     LabelBase,
+    htmlProperty,
     lineBreakProperty,
     maxLinesProperty,
     needFormattedStringComputation,
@@ -127,8 +127,8 @@ function HTMLStringToNSMutableAttributedString({
         htmlString =
             color || familyName || fontSize
                 ? `<span style=" ${color ? `color: ${color};` : ''}  ${familyName ? `font-family:'${familyName.replace(/'/g, '')}';` : ''}${
-                      fontSize ? `font-size: ${fontSize}px;` : ''
-                  }">${text}</span>`
+                    fontSize ? `font-size: ${fontSize}px;` : ''
+                }">${text}</span>`
                 : text;
         // `<span style="font-family: ${fontFamily}; font-size:${fontSize};">${htmlString}</span>`;
     } else {
@@ -166,9 +166,9 @@ function HTMLStringToNSMutableAttributedString({
     } else {
         attrText = NSMutableAttributedString.alloc().initWithDataOptionsDocumentAttributesError(
             nsData,
-            <any>{
+            {
                 [NSDocumentTypeDocumentAttribute]: NSHTMLTextDocumentType,
-            },
+            } as any,
             null
         );
     }
@@ -459,7 +459,7 @@ export class Label extends LabelBase {
                 color: this.color,
                 letterSpacing: this.letterSpacing,
                 lineHeight: this.lineHeight,
-                textAlignment: (<UITextView>this.nativeTextViewProtected).textAlignment,
+                textAlignment: this.nativeTextViewProtected.textAlignment,
             });
 
             this._requestLayoutOnTextChanged();
