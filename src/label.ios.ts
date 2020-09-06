@@ -87,6 +87,7 @@ function whiteSpaceToLineBreakMode(value: WhiteSpace) {
     }
 }
 
+@NativeClass
 class ObserverClass extends NSObject {
     _owner: WeakRef<Label>;
     // NOTE: Refactor this - use Typescript property instead of strings....
