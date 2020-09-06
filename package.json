@@ -40,10 +40,10 @@
         "email": "martin@akylas.fr"
     },
     "bugs": {
-        "url": "https://github.com/Akylas/nativescript-label/issues"
+        "url": "https://github.com/nativescript-community/ui-label/issues"
     },
     "license": "Apache-2.0",
-    "homepage": "https://github.com/Akylas/nativescript-label",
+    "homepage": "https://github.com/nativescript-community/ui-label",
     "readmeFilename": "README.md",
     "devDependencies": {
         "@angular/common": "^10.1.0",
