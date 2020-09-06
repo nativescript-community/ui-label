@@ -1,6 +1,6 @@
 {
     "name": "@nativescript-community/ui-label",
-    "version": "1.0.43",
+    "version": "1.0.44",
     "description": "Nativescript label implementation supporting HTML",
     "main": "./label",
     "sideEffects": false,
