@@ -3,18 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [1.0.45](https://github.com/Akylas/nativescript-label/compare/v1.0.44...v1.0.45) (2020-09-08)
+## [1.0.45](https://github.com/nativescript-community/ui-label/compare/v1.0.44...v1.0.45) (2020-09-08)
 
 
 ### Bug Fixes
 
-* **ios:** crash ([67b1d6e](https://github.com/Akylas/nativescript-label/commit/67b1d6e71d22e17c0f28d250042dfe7fd2a93062))
+* **ios:** crash ([67b1d6e](https://github.com/nativescript-community/ui-label/commit/67b1d6e71d22e17c0f28d250042dfe7fd2a93062))
 
 
 
 
 
-## [1.0.44](https://github.com/Akylas/nativescript-label/compare/v1.0.43...v1.0.44) (2020-09-06)
+## [1.0.44](https://github.com/nativescript-community/ui-label/compare/v1.0.43...v1.0.44) (2020-09-06)
 
 **Note:** Version bump only for package @nativescript-community/ui-label
 
