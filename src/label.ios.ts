@@ -6,13 +6,20 @@ import {
     borderRightWidthProperty,
     borderTopWidthProperty,
     colorProperty,
-    lineHeightProperty,
     paddingBottomProperty,
     paddingLeftProperty,
     paddingRightProperty,
     paddingTopProperty,
 } from '@nativescript/core/ui/styling/style-properties';
-import { TextAlignment, TextTransform, WhiteSpace, letterSpacingProperty, whiteSpaceProperty } from '@nativescript/core/ui/text-base';
+
+import { lineHeightProperty } from '@nativescript/core/ui/text-base/text-base-common';
+import {
+    TextAlignment,
+    TextTransform,
+    WhiteSpace,
+    letterSpacingProperty,
+    whiteSpaceProperty,
+} from '@nativescript/core/ui/text-base';
 import { isString } from '@nativescript/core/utils/types';
 import { layout } from '@nativescript/core/utils/utils';
 import { TextShadow, VerticalTextAlignment } from './label';
@@ -127,15 +134,17 @@ function HTMLStringToNSMutableAttributedString({
     if (iOSUseDTCoreText) {
         htmlString =
             color || familyName || fontSize
-                ? `<span style=" ${color ? `color: ${color};` : ''}  ${familyName ? `font-family:'${familyName.replace(/'/g, '')}';` : ''}${
-                    fontSize ? `font-size: ${fontSize}px;` : ''
-                }">${text}</span>`
+                ? `<span style=" ${color ? `color: ${color};` : ''}  ${
+                    familyName ? `font-family:'${familyName.replace(/'/g, '')}';` : ''
+                }${fontSize ? `font-size: ${fontSize}px;` : ''}">${text}</span>`
                 : text;
         // `<span style="font-family: ${fontFamily}; font-size:${fontSize};">${htmlString}</span>`;
     } else {
         htmlString =
             color || familyName || fontSize
-                ? `<style>body{ ${color ? `color: ${color};` : ''}  ${familyName ? `font-family:"${familyName.replace(/'/g, '')}";` : ''}${fontSize ? `font-size: ${fontSize}px;` : ''}}</style>${text}`
+                ? `<style>body{ ${color ? `color: ${color};` : ''}  ${
+                    familyName ? `font-family:"${familyName.replace(/'/g, '')}";` : ''
+                }${fontSize ? `font-size: ${fontSize}px;` : ''}}</style>${text}`
                 : text;
     }
     const nsString = NSString.stringWithString(htmlString);
@@ -156,14 +165,18 @@ function HTMLStringToNSMutableAttributedString({
             // [DTDefaultLineBreakMode]: kCTLineBreakByWordWrapping
         } as any;
         attrText = NSMutableAttributedString.alloc().initWithHTMLDataOptionsDocumentAttributes(nsData, options, null);
-        attrText.enumerateAttributesInRangeOptionsUsingBlock({ location: 0, length: attrText.length }, NSAttributedStringEnumerationReverse, (attributes: NSDictionary<any, any>, range, stop) => {
-            if (!!attributes.valueForKey('DTGUID')) {
-                // We need to remove this attribute or links are not colored right
-                //
-                // @see https://github.com/Cocoanetics/DTCoreText/issues/792
-                attrText.removeAttributeRange('CTForegroundColorFromContext', range);
+        attrText.enumerateAttributesInRangeOptionsUsingBlock(
+            { location: 0, length: attrText.length },
+            NSAttributedStringEnumerationReverse,
+            (attributes: NSDictionary<any, any>, range, stop) => {
+                if (!!attributes.valueForKey('DTGUID')) {
+                    // We need to remove this attribute or links are not colored right
+                    //
+                    // @see https://github.com/Cocoanetics/DTCoreText/issues/792
+                    attrText.removeAttributeRange('CTForegroundColorFromContext', range);
+                }
             }
-        });
+        );
     } else {
         attrText = NSMutableAttributedString.alloc().initWithDataOptionsDocumentAttributesError(
             nsData,
@@ -252,7 +265,12 @@ export class Label extends LabelBase {
         super.initNativeView();
         this._observer = ObserverClass.alloc().init();
         this._observer['_owner'] = new WeakRef(this);
-        this.nativeViewProtected.addObserverForKeyPathOptionsContext(this._observer, 'contentSize', NSKeyValueObservingOptions.New, null);
+        this.nativeViewProtected.addObserverForKeyPathOptionsContext(
+            this._observer,
+            'contentSize',
+            NSKeyValueObservingOptions.New,
+            null
+        );
         this.nativeViewProtected.attributedText = this.attributedString;
         // this.htmlText = null;
         // this.needsHTMLUpdate = false;
@@ -276,7 +294,11 @@ export class Label extends LabelBase {
             const rect = text.boundingRectWithSizeOptionsContext(size, NSStringDrawingOptions.UsesLineFragmentOrigin, null);
             return rect.size.height;
         }
-        return NSString.stringWithString(text).sizeWithFontConstrainedToSizeLineBreakMode(font, size, tv.textContainer.lineBreakMode).height;
+        return NSString.stringWithString(text).sizeWithFontConstrainedToSizeLineBreakMode(
+            font,
+            size,
+            tv.textContainer.lineBreakMode
+        ).height;
     }
     updateVerticalAlignment() {
         const tv = this.nativeTextViewProtected;
