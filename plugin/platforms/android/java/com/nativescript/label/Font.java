@@ -77,15 +77,15 @@ public class Font {
     }
 
     public interface FontWeight {
-        String THIN = "100";
-        String EXTRA_LIGHT = "200";
-        String LIGHT = "300";
+        String THIN = "thin";
+        String EXTRA_LIGHT = "extralight";
+        String LIGHT = "light";
         String NORMAL = "normal";
-        String MEDIUM = "500";
-        String SEMI_BOLD = "600";
+        String MEDIUM = "medium";
+        String SEMI_BOLD = "semibold";
         String BOLD = "bold";
-        String EXTRA_BOLD = "800";
-        String BLACK = "900";
+        String EXTRA_BOLD = "extrabold";
+        String BLACK = "black";
     }
 
     public interface genericFontFamilies {
@@ -100,44 +100,46 @@ public class Font {
             return 400;
         }
         switch (fontWeight) {
+            case FontWeight.THIN:
+                return 100;
+            case FontWeight.EXTRA_LIGHT:
+                return 200;
+            case FontWeight.LIGHT:
+                return 300;
             case FontWeight.NORMAL:
                 return 400;
-            case FontWeight.BOLD:
-            case "semibold":
+            case FontWeight.MEDIUM:
                 return 500;
-            case "thin":
-                return 100;
-            case "light":
-                return 300;
-            case "black":
+            case FontWeight.SEMI_BOLD:
+                return 600;
+            case FontWeight.BOLD:
+                return 700;
+            case FontWeight.EXTRA_BOLD:
+                return 800;
+            case FontWeight.BLACK:
                 return 900;
             default:
                 return Integer.parseInt(fontWeight, 10);
         }
     }
 
-    public static String getFontWeightSuffix(String fontWeight) {
-        if (fontWeight == null) {
-            return "";
-        }
+    public static String getFontWeightSuffix(int fontWeight) {
+
         switch (fontWeight) {
-            case FontWeight.THIN:
+            case 100:
                 return Build.VERSION.SDK_INT >= 16 ? "-thin" : "";
-            case FontWeight.EXTRA_LIGHT:
-            case FontWeight.LIGHT:
+            case 200:
+            case 300:
                 return Build.VERSION.SDK_INT >= 16 ? "-light" : "";
-            case FontWeight.NORMAL:
-            case "400":
-            case "":
+            case 400:
                 return "";
-            case FontWeight.MEDIUM:
-            case FontWeight.SEMI_BOLD:
+            case 500:
+            case 600:
                 return Build.VERSION.SDK_INT >= 21 ? "-medium" : "";
-            case FontWeight.BOLD:
-            case "700":
-            case FontWeight.EXTRA_BOLD:
-            return Build.VERSION.SDK_INT >= 21 ? "-bold" : "";
-            case FontWeight.BLACK:
+            case 700:
+            case 800:
+                return Build.VERSION.SDK_INT >= 21 ? "-bold" : "";
+            case 900:
                 return Build.VERSION.SDK_INT >= 21 ? "-black" : "";
             default:
                 throw new Error("Invalid font weight:" + fontWeight);
@@ -166,10 +168,7 @@ public class Font {
 
     public static Typeface createTypeface(Context context, String fontFolder, String fontFamily, String fontWeight,
             boolean isBold, boolean isItalic) {
-        final String cacheKey = fontFamily + fontWeight + isBold + isItalic;
-        if (typefaceCreatedCache.containsKey(cacheKey)) {
-            return typefaceCreatedCache.get(cacheKey);
-        }
+
         int fontStyle = 0;
         if (isBold) {
             fontStyle |= Typeface.BOLD;
@@ -177,9 +176,13 @@ public class Font {
         if (isItalic) {
             fontStyle |= Typeface.ITALIC;
         }
-        // Log.d(TAG, "createTypeface: " + fontFamily + ",fontFolder " + fontFolder +",fontWeight " + fontWeight);
         int fontWeightInt = getIntFontWeight(fontWeight);
-
+        final String cacheKey = fontFamily + fontWeightInt + isItalic;
+        // Log.d("JS", "Font createTypeface: " + fontFamily + ",fontFolder " + fontFolder + ",fontWeight " + fontWeight
+                // + ",fontWeightInt " + fontWeightInt);
+        if (typefaceCreatedCache.containsKey(cacheKey)) {
+            return typefaceCreatedCache.get(cacheKey);
+        }
         // http://stackoverflow.com/questions/19691530/valid-values-for-androidfontfamily-and-what-they-map-to
         ArrayList<String> fonts = parseFontFamily(fontFamily);
         // Log.d(TAG, "createTypeface1: " + fonts.toString());
@@ -187,39 +190,41 @@ public class Font {
         for (int i = 0; i < fonts.size(); i++) {
             switch (fonts.get(i).toLowerCase()) {
                 case genericFontFamilies.serif:
-                    result = Typeface.create("serif" + getFontWeightSuffix(fontWeight), fontStyle);
+                    result = Typeface.create("serif" + getFontWeightSuffix(fontWeightInt), fontStyle);
                     break;
 
                 case genericFontFamilies.sansSerif:
                 case genericFontFamilies.system:
-                    result = Typeface.create("sans-serif" + getFontWeightSuffix(fontWeight), fontStyle);
+                    result = Typeface.create("sans-serif" + getFontWeightSuffix(fontWeightInt), fontStyle);
                     break;
 
                 case genericFontFamilies.monospace:
-                    result = Typeface.create("monospace" + getFontWeightSuffix(fontWeight), fontStyle);
+                    result = Typeface.create("monospace" + getFontWeightSuffix(fontWeightInt), fontStyle);
                     break;
 
                 default:
                     result = loadFontFromFile(context, fontFolder, fonts.get(i));
 
-                    if (result != null && fontStyle != 0) {
-//                        if (Build.VERSION.SDK_INT >= 28)
-//                            result = Typeface.create(result, fontStyle, fontWeightInt, isItalic);
-//                        } else {
-                            result = Typeface.create(result, fontStyle); 
-//                        }
+                    if (result != null && (fontStyle != 0 || isItalic || fontWeightInt != 400)) {
+                        if (Build.VERSION.SDK_INT >= 28) {
+                            result = Typeface.create(result, fontWeightInt, isItalic);
+                        } else {
+                            // Log.d("JS", "Font loading font style found: " + fonts.get(i) + ",fontStyle " + fontStyle + ",fontWeightInt " + fontWeightInt);
+                            result = Typeface.create(result, fontStyle);
+                        }
                     }
                     break;
             }
 
             if (result != null) {
                 // Found the font!
+                // Log.d("JS", "Font found: " + fonts.get(i) + ",fontStyle " + fontStyle + ",fontWeightInt " + fontWeightInt);
                 break;
             }
         }
 
         if (result == null) {
-            result = Typeface.create("sans-serif" + getFontWeightSuffix(fontWeight), fontStyle);
+            result = Typeface.create("sans-serif" + getFontWeightSuffix(fontWeightInt), fontStyle);
         }
         typefaceCreatedCache.put(cacheKey, result);
         return result;
@@ -233,30 +238,33 @@ public class Font {
         // Spanned spannedString = HtmlCompat.fromHtml(htmlString,
         // HtmlCompat.FROM_HTML_MODE_COMPACT);
 
-        CharSequence spannedString = fromHtml(htmlString, context, fontFolder,false);
+        CharSequence spannedString = fromHtml(htmlString, context, fontFolder, false);
         SpannableStringBuilder builder = new SpannableStringBuilder(spannedString);
 
-        // TypefaceSpan[] spans = builder.getSpans(0, builder.length(), android.text.style.TypefaceSpan.class);
+        // TypefaceSpan[] spans = builder.getSpans(0, builder.length(),
+        // android.text.style.TypefaceSpan.class);
         // for (int index = 0; index < spans.length; index++) {
-        //     TypefaceSpan span = spans[index];
-        //     int start = builder.getSpanStart(span);
-        //     int end = builder.getSpanEnd(span);
-        //     String fontFamily = span.getFamily();
-        //     String[] split = fontFamily.split("-");
-        //     String style = null;
-        //     if (split.length > 1) {
-        //         style = split[1];
-        //     }
-        //     Typeface typeface = createTypeface(context, fontFolder, fontFamily,
-        //     (style != null) && style.equals("bold") ? "bold" : "normal", (style != null) && style.equals("bold"), (style != null) && style.equals("italic"));
+        // TypefaceSpan span = spans[index];
+        // int start = builder.getSpanStart(span);
+        // int end = builder.getSpanEnd(span);
+        // String fontFamily = span.getFamily();
+        // String[] split = fontFamily.split("-");
+        // String style = null;
+        // if (split.length > 1) {
+        // style = split[1];
+        // }
+        // Typeface typeface = createTypeface(context, fontFolder, fontFamily,
+        // (style != null) && style.equals("bold") ? "bold" : "normal", (style != null)
+        // && style.equals("bold"), (style != null) && style.equals("italic"));
 
-        //     if (typeface == null) {
-        //         typeface = Typeface.create(fontFamily, Typeface.NORMAL);
-        //     }
-        //     if (typeface != null) {
-        //         TypefaceSpan typefaceSpan = new CustomTypefaceSpan(fontFamily, typeface);
-        //         builder.setSpan(typefaceSpan, start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        //     }
+        // if (typeface == null) {
+        // typeface = Typeface.create(fontFamily, Typeface.NORMAL);
+        // }
+        // if (typeface != null) {
+        // TypefaceSpan typefaceSpan = new CustomTypefaceSpan(fontFamily, typeface);
+        // builder.setSpan(typefaceSpan, start, end,
+        // android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        // }
         // }
 
         return builder;
@@ -351,7 +359,7 @@ public class Font {
                         android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
-//        long stopTime = System.nanoTime();
+        // long stopTime = System.nanoTime();
         // TODO: Implement letterSpacing for Span here.
         // const letterSpacing = formattedString.parent.style.letterSpacing;
         // if (letterSpacing > 0) {
@@ -380,15 +388,18 @@ public class Font {
 
         return ssb;
     }
+
     static SAXParser saxParser = null;
-   static  HtmlToSpannedConverter converter = null;
-    public static CharSequence fromHtml(CharSequence html, Context context, String fontFolder, final boolean disableLinkStyle) {
-//        long startTime = System.nanoTime();
-//        XMLReader xmlReader;
+    static HtmlToSpannedConverter converter = null;
+
+    public static CharSequence fromHtml(CharSequence html, Context context, String fontFolder,
+            final boolean disableLinkStyle) {
+        // long startTime = System.nanoTime();
+        // XMLReader xmlReader;
         try {
             if (saxParser == null) {
                 SAXParserFactory factory = SAXParserFactory.newInstance();
-                 saxParser = factory.newSAXParser();
+                saxParser = factory.newSAXParser();
             }
             if (converter == null) {
                 converter = new HtmlToSpannedConverter(context, fontFolder, null, null, disableLinkStyle);
@@ -396,10 +407,10 @@ public class Font {
                 converter.reset();
                 converter.disableLinkStyle = disableLinkStyle;
             }
-//            Log.d(TAG, "parse: " +html);
+            // Log.d(TAG, "parse: " +html);
             final String toParse = "<doc>" + ((String) html).replaceAll("<br>", "<br></br>") + "</doc>";
             saxParser.parse(new InputSource(new StringReader(toParse)), converter);
-//            Log.d(TAG, "fromHtml: " + ((System.nanoTime() - startTime)/1000000) + "ms");
+            // Log.d(TAG, "fromHtml: " + ((System.nanoTime() - startTime)/1000000) + "ms");
             return converter.spannable();
         } catch (Exception e) {
             e.printStackTrace();
