@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.46](https://github.com/Akylas/nativescript-label/compare/v1.0.45...v1.0.46) (2020-10-07)
+
+
+### Bug Fixes
+
+* some android font loading fixes ([d7ae654](https://github.com/Akylas/nativescript-label/commit/d7ae65416717bddbc0f1cd4ce0ac0632d212a7c5))
+
+
+
+
+
 ## [1.0.45](https://github.com/nativescript-community/ui-label/compare/v1.0.44...v1.0.45) (2020-09-08)
 
 
