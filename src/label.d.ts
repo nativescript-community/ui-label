@@ -2,10 +2,9 @@
  * Contains the Label class, which represents a custom label widget which correctly supports html.
  */ /** */
 
+import { Color, Label as TNLabel } from '@nativescript/core';
 import { Property } from '@nativescript/core/ui/core/properties';
-import { Label as TNLabel } from '@nativescript/core/ui/label';
 import { dip } from '@nativescript/core/ui/core/view';
-import { Color } from '@nativescript/core/color';
 import { TextAlignment } from '@nativescript/core/ui/text-base';
 /**
  * Represents a label with html content. Use this component instead WebView when you want to show just static HTML content.
