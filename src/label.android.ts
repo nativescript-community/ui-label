@@ -1,4 +1,18 @@
-﻿import { CSSType, FormattedString, Observable, Property, PropertyChangeData, Span, View, ViewBase, booleanConverter, knownFolders, path, profile } from '@nativescript/core';
+﻿import { VerticalTextAlignment, verticalTextAlignmentProperty } from '@nativescript-community/text';
+import {
+    CSSType,
+    FormattedString,
+    Observable,
+    Property,
+    PropertyChangeData,
+    Span,
+    View,
+    ViewBase,
+    booleanConverter,
+    knownFolders,
+    path,
+    profile,
+} from '@nativescript/core';
 import { android as androidApp } from '@nativescript/core/application';
 import { Color } from '@nativescript/core/color';
 import { Font, FontStyle, FontWeight } from '@nativescript/core/ui/styling/font';
@@ -24,20 +38,16 @@ import {
     textTransformProperty,
     whiteSpaceProperty,
 } from '@nativescript/core/ui/text-base';
-import {
-    lineHeightProperty
-} from '@nativescript/core/ui/text-base/text-base-common';
+import { lineHeightProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import { layout } from '@nativescript/core/utils/utils';
 import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
 import {
-    VerticalTextAlignment,
     cssProperty,
     lineBreakProperty,
     maxLinesProperty,
     needFormattedStringComputation,
     textAlignmentConverter,
     textShadowProperty,
-    verticalTextAlignmentProperty,
 } from './label-common';
 
 export function enableIOSDTCoreText() {} //unused
@@ -45,15 +55,22 @@ export function enableIOSDTCoreText() {} //unused
 let context;
 const fontPath = path.join(knownFolders.currentApp().path, 'fonts');
 
-Font.prototype.getAndroidTypeface = function () {
+Font.prototype.getAndroidTypeface = profile('getAndroidTypeface', function () {
     if (!this._typeface) {
         if (!context) {
             context = androidApp.context;
         }
-        this._typeface = (com as any).nativescript.label.Font.createTypeface(context, fontPath, this.fontFamily, this.fontWeight, this.isBold, this.isItalic);
+        this._typeface = (com as any).nativescript.label.Font.createTypeface(
+            context,
+            fontPath,
+            this.fontFamily,
+            this.fontWeight,
+            this.isBold,
+            this.isItalic
+        );
     }
     return this._typeface;
-};
+});
 
 declare module '@nativescript/core/ui/text-base/formatted-string' {
     interface FormattedString {
@@ -104,9 +121,11 @@ Span.prototype.toNativeString = function () {
         text = getTransformedText(text, textTransform);
     }
     const delimiter = String.fromCharCode(0x1e);
-    const result = `${this.fontFamily || 0}${delimiter}${this.fontSize !== undefined ? this.fontSize : -1}${delimiter}${this.fontWeight || ''}${delimiter}${
-        this.fontStyle === 'italic' ? 1 : 0
-    }${delimiter}${textDecoration || 0}${delimiter}${this.color ? this.color.android : -1}${delimiter}${backgroundColor ? backgroundColor.android : -1}${delimiter}${this.text}`;
+    const result = `${this.fontFamily || 0}${delimiter}${this.fontSize !== undefined ? this.fontSize : -1}${delimiter}${
+        this.fontWeight || ''
+    }${delimiter}${this.fontStyle === 'italic' ? 1 : 0}${delimiter}${textDecoration || 0}${delimiter}${
+        this.color ? this.color.android : -1
+    }${delimiter}${backgroundColor ? backgroundColor.android : -1}${delimiter}${this.text}`;
     return result;
 };
 
@@ -139,7 +158,11 @@ declare module '@nativescript/core/ui/core/view-base' {
 }
 
 const textProperty = new Property<Label, string>({ name: 'text', defaultValue: '', affectsLayout: true });
-const formattedTextProperty = new Property<Label, FormattedString>({ name: 'formattedText', affectsLayout: true, valueChanged: onFormattedTextPropertyChanged });
+const formattedTextProperty = new Property<Label, FormattedString>({
+    name: 'formattedText',
+    affectsLayout: true,
+    valueChanged: onFormattedTextPropertyChanged,
+});
 export const htmlProperty = new Property<Label, string>({ name: 'html', defaultValue: null, affectsLayout: true });
 
 export function buildHTMLString(data: {
@@ -337,11 +360,17 @@ export class Label extends LabelBase {
         }
     }
     [textShadowProperty.setNative](value: TextShadow) {
-        this.nativeViewProtected.setShadowLayer(layout.toDevicePixels(value.blurRadius), layout.toDevicePixels(value.offsetX), layout.toDevicePixels(value.offsetY), value.color.android);
+        this.nativeViewProtected.setShadowLayer(
+            layout.toDevicePixels(value.blurRadius),
+            layout.toDevicePixels(value.offsetX),
+            layout.toDevicePixels(value.offsetY),
+            value.color.android
+        );
     }
 
     [verticalTextAlignmentProperty.setNative](value: VerticalTextAlignment) {
         const horizontalGravity = this.nativeTextViewProtected.getGravity() & android.view.Gravity.HORIZONTAL_GRAVITY_MASK;
+        console.log('verticalTextAlignmentProperty', value, horizontalGravity);
         switch (value) {
             case 'initial':
             case 'top':
@@ -433,7 +462,9 @@ export class Label extends LabelBase {
                 this.nativeTextViewProtected.setPaintFlags(android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
                 break;
             case 'underline line-through':
-                this.nativeTextViewProtected.setPaintFlags(android.graphics.Paint.UNDERLINE_TEXT_FLAG | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
+                this.nativeTextViewProtected.setPaintFlags(
+                    android.graphics.Paint.UNDERLINE_TEXT_FLAG | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
+                );
                 break;
             default:
                 this.nativeTextViewProtected.setPaintFlags(value);
@@ -449,28 +480,40 @@ export class Label extends LabelBase {
         return { value: this._defaultPaddingTop, unit: 'px' };
     }
     [paddingTopProperty.setNative](value: Length) {
-        org.nativescript.widgets.ViewHelper.setPaddingTop(this.nativeTextViewProtected, Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderTopWidth, 0));
+        org.nativescript.widgets.ViewHelper.setPaddingTop(
+            this.nativeTextViewProtected,
+            Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderTopWidth, 0)
+        );
     }
 
     [paddingRightProperty.getDefault](): Length {
         return { value: this._defaultPaddingRight, unit: 'px' };
     }
     [paddingRightProperty.setNative](value: Length) {
-        org.nativescript.widgets.ViewHelper.setPaddingRight(this.nativeTextViewProtected, Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderRightWidth, 0));
+        org.nativescript.widgets.ViewHelper.setPaddingRight(
+            this.nativeTextViewProtected,
+            Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderRightWidth, 0)
+        );
     }
 
     [paddingBottomProperty.getDefault](): Length {
         return { value: this._defaultPaddingBottom, unit: 'px' };
     }
     [paddingBottomProperty.setNative](value: Length) {
-        org.nativescript.widgets.ViewHelper.setPaddingBottom(this.nativeTextViewProtected, Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderBottomWidth, 0));
+        org.nativescript.widgets.ViewHelper.setPaddingBottom(
+            this.nativeTextViewProtected,
+            Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderBottomWidth, 0)
+        );
     }
 
     [paddingLeftProperty.getDefault](): Length {
         return { value: this._defaultPaddingLeft, unit: 'px' };
     }
     [paddingLeftProperty.setNative](value: Length) {
-        org.nativescript.widgets.ViewHelper.setPaddingLeft(this.nativeTextViewProtected, Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderLeftWidth, 0));
+        org.nativescript.widgets.ViewHelper.setPaddingLeft(
+            this.nativeTextViewProtected,
+            Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderLeftWidth, 0)
+        );
     }
 
     @profile
@@ -498,7 +541,10 @@ export class Label extends LabelBase {
             textProperty.nativeValueChange(this, this.html === null || this.html === undefined ? '' : this.html);
         } else if (this.formattedText) {
             transformedText = this.createSpannableStringBuilder();
-            textProperty.nativeValueChange(this, this.formattedText === null || this.formattedText === undefined ? '' : this.formattedText.toString());
+            textProperty.nativeValueChange(
+                this,
+                this.formattedText === null || this.formattedText === undefined ? '' : this.formattedText.toString()
+            );
         } else {
             const text = this.text;
             const stringValue = text === null || text === undefined ? '' : text.toString();

@@ -1,3 +1,4 @@
+import { VerticalTextAlignment, verticalTextAlignmentProperty } from '@nativescript-community/text';
 import { Color, View } from '@nativescript/core';
 import {
     Length,
@@ -11,8 +12,6 @@ import {
     paddingRightProperty,
     paddingTopProperty,
 } from '@nativescript/core/ui/styling/style-properties';
-
-import { lineHeightProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import {
     TextAlignment,
     TextTransform,
@@ -20,9 +19,10 @@ import {
     letterSpacingProperty,
     whiteSpaceProperty,
 } from '@nativescript/core/ui/text-base';
+import { lineHeightProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import { isString } from '@nativescript/core/utils/types';
 import { layout } from '@nativescript/core/utils/utils';
-import { TextShadow, VerticalTextAlignment } from './label';
+import { TextShadow } from './label';
 import {
     LabelBase,
     htmlProperty,
@@ -31,7 +31,6 @@ import {
     needFormattedStringComputation,
     textAlignmentConverter,
     textShadowProperty,
-    verticalTextAlignmentProperty,
 } from './label-common';
 
 export * from './label-common';
