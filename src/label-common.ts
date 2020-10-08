@@ -17,6 +17,7 @@ import { dip } from '@nativescript/core/ui/core/view';
 import { TextAlignment } from '@nativescript/core/ui/text-base';
 import { layout } from '@nativescript/core/utils/utils';
 import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
+import { VerticalTextAlignment } from '@nativescript-community/text';
 
 declare module '@nativescript/core/ui/text-base/formatted-string' {
     interface FormattedString {
@@ -149,15 +150,5 @@ export const textShadowProperty = new CssProperty<Style, string | TextShadow>({
 });
 textShadowProperty.register(Style);
 
-export type VerticalTextAlignment = 'initial' | 'top' | 'middle' | 'bottom' | 'center';
-
-export const verticalTextAlignmentConverter = makeParser<VerticalTextAlignment>(makeValidator<VerticalTextAlignment>('initial', 'top', 'middle', 'bottom', 'center'));
 export const textAlignmentConverter = makeParser<TextAlignment>(makeValidator<TextAlignment>('initial', 'left', 'right', 'center'));
 
-export const verticalTextAlignmentProperty = new InheritedCssProperty<Style, VerticalTextAlignment>({
-    name: 'verticalTextAlignment',
-    cssName: 'vertical-text-align',
-    defaultValue: 'initial',
-    valueConverter: verticalTextAlignmentConverter,
-});
-verticalTextAlignmentProperty.register(Style);
