@@ -40,7 +40,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatTextView;
 
-public class EllipsizingTextView extends TextView {
+public class EllipsizingTextView extends AppCompatTextView {
     final static String TAG = "EllipsizingTextView";
 
     private TextUtils.TruncateAt ellipsize = null;
