@@ -28,6 +28,6 @@
     "homepage": "https://github.com/nativescript-community/ui-label",
     "readmeFilename": "README.md",
     "dependencies": {
-        "@nativescript-community/text": "^1.2.5"
+        "@nativescript-community/text": "^1.3.1"
     }
 }
