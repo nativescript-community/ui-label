@@ -43,13 +43,4 @@ export interface TextShadow {
     color: Color;
 }
 
-export function buildHTMLString(data: {
-    text: string;
-    color?: Color | string | number;
-    familyName?: string;
-    fontSize?: number;
-    letterSpacing?: number;
-    lineHeight?: number;
-    textAlignment?: TextAlignment;
-}): any;
-export function enableIOSDTCoreText();
+export { enableIOSDTCoreText, createNativeAttributedString } from '@nativescript-community/text';

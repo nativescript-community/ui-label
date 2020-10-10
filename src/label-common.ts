@@ -17,7 +17,7 @@ import { dip } from '@nativescript/core/ui/core/view';
 import { TextAlignment } from '@nativescript/core/ui/text-base';
 import { layout } from '@nativescript/core/utils/utils';
 import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
-import { VerticalTextAlignment } from '@nativescript-community/text';
+import { VerticalTextAlignment, cssProperty } from '@nativescript-community/text';
 
 declare module '@nativescript/core/ui/text-base/formatted-string' {
     interface FormattedString {
@@ -52,7 +52,11 @@ FormattedString.prototype.removePropertyChangeHandler = function (span: Span) {
 //     this.spans.forEach((v, i, arr) => callback(v));
 // };
 
-export const needFormattedStringComputation = function (target: any, propertyKey: string | Symbol, descriptor: PropertyDescriptor) {
+export const needFormattedStringComputation = function (
+    target: any,
+    propertyKey: string | Symbol,
+    descriptor: PropertyDescriptor
+) {
     const originalMethod = descriptor.value;
     descriptor.value = function (...args: any[]) {
         if (!this._canChangeText) {
@@ -61,25 +65,6 @@ export const needFormattedStringComputation = function (target: any, propertyKey
         }
         return originalMethod.apply(this, args);
     };
-};
-
-export const cssProperty = (target: Object, key: string | symbol) => {
-    // property getter
-    const getter = function () {
-        return this.style[key];
-    };
-
-    // property setter
-    const setter = function (newVal) {
-        this.style[key] = newVal;
-    };
-
-    Object.defineProperty(target, key, {
-        get: getter,
-        set: setter,
-        enumerable: true,
-        configurable: true,
-    });
 };
 
 @CSSType('HTMLLabel')
@@ -149,6 +134,3 @@ export const textShadowProperty = new CssProperty<Style, string | TextShadow>({
     },
 });
 textShadowProperty.register(Style);
-
-export const textAlignmentConverter = makeParser<TextAlignment>(makeValidator<TextAlignment>('initial', 'left', 'right', 'center'));
-
