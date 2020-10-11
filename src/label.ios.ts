@@ -20,8 +20,8 @@ import {
     whiteSpaceProperty,
 } from '@nativescript/core/ui/text-base';
 import { lineHeightProperty } from '@nativescript/core/ui/text-base/text-base-common';
-import { isString } from '@nativescript/core/utils/types';
-import { layout } from '@nativescript/core/utils/utils';
+import { isNullOrUndefined, isString } from '@nativescript/core/utils/types';
+import { iOSNativeHelper, layout } from '@nativescript/core/utils/utils';
 import { TextShadow } from './label';
 import {
     LabelBase,
@@ -35,6 +35,8 @@ import {
 export { enableIOSDTCoreText, createNativeAttributedString } from '@nativescript-community/text';
 
 export * from './label-common';
+const majorVersion = iOSNativeHelper.MajorVersion;
+
 enum FixedSize {
     NONE = 0,
     WIDTH = 1,
@@ -348,9 +350,10 @@ export class Label extends LabelBase {
         if (!this.html) {
             this.attributedString = null;
         } else {
-            const font = this.nativeView.font;
+            const font = this.nativeViewProtected.font;
             const fontSize = this.fontSize || font.pointSize;
             const familyName = this.style.fontFamily || this.style.fontInternal.fontFamily || font.familyName;
+
             this.attributedString = createNativeAttributedString({
                 text: this.html,
                 fontSize,
@@ -397,6 +400,85 @@ export class Label extends LabelBase {
             this.updateHTMLString();
         } else {
             super._setNativeText();
+        }
+    }
+    setTextDecorationAndTransform() {
+        const style = this.style;
+        const dict = new Map();
+        switch (style.textDecoration) {
+            case 'none':
+                break;
+            case 'underline':
+                dict.set(NSUnderlineStyleAttributeName, 1 /* Single */);
+                break;
+            case 'line-through':
+                dict.set(NSStrikethroughStyleAttributeName, 1 /* Single */);
+                break;
+            case 'underline line-through':
+                dict.set(NSUnderlineStyleAttributeName, 1 /* Single */);
+                dict.set(NSStrikethroughStyleAttributeName, 1 /* Single */);
+                break;
+            default:
+                throw new Error(
+                    `Invalid text decoration value: ${style.textDecoration}. Valid values are: 'none', 'underline', 'line-through', 'underline line-through'.`
+                );
+        }
+        if (style.letterSpacing !== 0 && this.nativeTextViewProtected.font) {
+            const kern = style.letterSpacing * this.nativeTextViewProtected.font.pointSize;
+            dict.set(NSKernAttributeName, kern);
+            if (this.nativeTextViewProtected instanceof UITextField) {
+                this.nativeTextViewProtected.defaultTextAttributes.setValueForKey(kern, NSKernAttributeName);
+            }
+        }
+        const isTextView = false;
+        if (style.lineHeight) {
+            const paragraphStyle = NSMutableParagraphStyle.alloc().init();
+            paragraphStyle.lineSpacing = style.lineHeight;
+            // make sure a possible previously set text alignment setting is not lost when line height is specified
+            if (this.nativeTextViewProtected instanceof UIButton) {
+                paragraphStyle.alignment = this.nativeTextViewProtected.titleLabel.textAlignment;
+            } else {
+                paragraphStyle.alignment = this.nativeTextViewProtected.textAlignment;
+            }
+            if (this.nativeTextViewProtected instanceof UILabel) {
+                // make sure a possible previously set line break mode is not lost when line height is specified
+                paragraphStyle.lineBreakMode = this.nativeTextViewProtected.lineBreakMode;
+            }
+            dict.set(NSParagraphStyleAttributeName, paragraphStyle);
+        } else if (isTextView) {
+            const paragraphStyle = NSMutableParagraphStyle.alloc().init();
+            paragraphStyle.alignment = this.nativeTextViewProtected.textAlignment;
+            dict.set(NSParagraphStyleAttributeName, paragraphStyle);
+        }
+        const source = getTransformedText(isNullOrUndefined(this.text) ? '' : `${this.text}`, this.textTransform);
+        if (dict.size > 0 || isTextView) {
+            if (isTextView && this.nativeTextViewProtected.font) {
+                // UITextView's font seems to change inside.
+                dict.set(NSFontAttributeName, this.nativeTextViewProtected.font);
+            }
+            const result = NSMutableAttributedString.alloc().initWithString(source);
+            result.setAttributesRange(dict as any, {
+                location: 0,
+                length: source.length,
+            });
+            if (this.nativeTextViewProtected instanceof UIButton) {
+                this.nativeTextViewProtected.setAttributedTitleForState(result, 0 /* Normal */);
+            } else {
+                this.nativeTextViewProtected.attributedText = result;
+            }
+        } else {
+            if (this.nativeTextViewProtected instanceof UIButton) {
+                // Clear attributedText or title won't be affected.
+                this.nativeTextViewProtected.setAttributedTitleForState(null, 0 /* Normal */);
+                this.nativeTextViewProtected.setTitleForState(source, 0 /* Normal */);
+            } else {
+                // Clear attributedText or text won't be affected.
+                this.nativeTextViewProtected.attributedText = undefined;
+                this.nativeTextViewProtected.text = source;
+            }
+        }
+        if (!style.color && majorVersion >= 13 && UIColor.labelColor) {
+            (this as any)._setColor(UIColor.labelColor);
         }
     }
     [paddingTopProperty.getDefault](): Length {
