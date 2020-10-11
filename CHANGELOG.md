@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.49](https://github.com/Akylas/nativescript-label/compare/v1.0.48...v1.0.49) (2020-10-11)
+
+
+### Bug Fixes
+
+* ios fix wrong color on text change ([7a18519](https://github.com/Akylas/nativescript-label/commit/7a18519246e1dea390c4abc42755226b2e3ac76a))
+
+
+
+
+
 ## [1.0.48](https://github.com/Akylas/nativescript-label/compare/v1.0.47...v1.0.48) (2020-10-10)
 
 **Note:** Version bump only for package @nativescript-community/ui-label
