@@ -451,10 +451,12 @@ export class Label extends LabelBase {
             dict.set(NSParagraphStyleAttributeName, paragraphStyle);
         }
         const source = getTransformedText(isNullOrUndefined(this.text) ? '' : `${this.text}`, this.textTransform);
-        if (dict.size > 0 || isTextView) {
-            if (isTextView && this.nativeTextViewProtected.font) {
-                // UITextView's font seems to change inside.
+        if (dict.size > 0) {
+            if (this.nativeTextViewProtected.font) {
                 dict.set(NSFontAttributeName, this.nativeTextViewProtected.font);
+            }
+            if (style.color) {
+                dict.set(NSForegroundColorAttributeName, style.color.ios);
             }
             const result = NSMutableAttributedString.alloc().initWithString(source);
             result.setAttributesRange(dict as any, {
