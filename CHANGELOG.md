@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.50](https://github.com/Akylas/nativescript-label/compare/v1.0.49...v1.0.50) (2020-10-21)
+
+
+### Bug Fixes
+
+* ios letterSpacing was breaking other attributes ([953b90a](https://github.com/Akylas/nativescript-label/commit/953b90aed0d850919ce012ce5c74de81da0ae4a0))
+
+
+
+
+
 ## [1.0.49](https://github.com/Akylas/nativescript-label/compare/v1.0.48...v1.0.49) (2020-10-11)
 
 
