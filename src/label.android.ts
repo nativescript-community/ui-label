@@ -105,7 +105,6 @@ function initializeClickableSpan(): void {
         }
         onClick(view: android.view.View): void {
             const owner = this.owner.get();
-            console.log('onClick', view, owner);
             if (owner) {
                 owner._emit(Span.linkTapEvent);
             }
