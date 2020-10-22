@@ -228,6 +228,8 @@ export class Label extends LabelBase {
         }
     }
 
+
+    // @ts-ignore
     get ios(): UITextView {
         return this.nativeViewProtected;
     }
