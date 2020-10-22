@@ -10,6 +10,7 @@ import {
     Observable,
     Property,
     PropertyChangeData,
+    Span,
     View,
     ViewBase,
     booleanConverter,
@@ -80,6 +81,44 @@ const formattedTextProperty = new Property<Label, FormattedString>({
     valueChanged: onFormattedTextPropertyChanged,
 });
 export const htmlProperty = new Property<Label, string>({ name: 'html', defaultValue: null, affectsLayout: true });
+
+
+type ClickableSpan = new (owner: Span) => android.text.style.ClickableSpan;
+
+// eslint-disable-next-line no-redeclare
+let ClickableSpan: ClickableSpan;
+
+function initializeClickableSpan(): void {
+    if (ClickableSpan) {
+        return;
+    }
+
+    @NativeClass
+    class ClickableSpanImpl extends android.text.style.ClickableSpan {
+        owner: WeakRef<Span>;
+
+        constructor(owner: Span) {
+            super();
+            this.owner = new WeakRef(owner);
+
+            return global.__native(this);
+        }
+        onClick(view: android.view.View): void {
+            const owner = this.owner.get();
+            console.log('onClick', view, owner);
+            if (owner) {
+                owner._emit(Span.linkTapEvent);
+            }
+            view.clearFocus();
+            view.invalidate();
+        }
+        updateDrawState(tp: android.text.TextPaint): void {
+            // don't style as link
+        }
+    }
+
+    ClickableSpan = ClickableSpanImpl;
+}
 
 @CSSType('HTMLLabel')
 abstract class LabelBase extends View implements LabelViewDefinition {
@@ -183,6 +222,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
 export class Label extends LabelBase {
     nativeViewProtected: android.widget.TextView;
     handleFontSize = true;
+    private _defaultMovementMethod: android.text.method.MovementMethod;
     get nativeTextViewProtected() {
         return this.nativeViewProtected;
     }
@@ -406,7 +446,38 @@ export class Label extends LabelBase {
     }
     @profile
     createSpannableStringBuilder() {
-        return createNativeAttributedString(this.formattedText);
+        const formattedText = this.formattedText;
+        const result = createNativeAttributedString(formattedText);
+        let indexSearch = 0;
+        let str: string ;
+        formattedText.spans.forEach(s=>{
+            if (s.tappable) {
+                if (!str) {
+                    str = formattedText.toString();
+                    this._setTappableState(true);
+                }
+                initializeClickableSpan();
+                const text = s.text;
+                const start  = str.indexOf(text, indexSearch);
+                if (start !== -1) {
+                    indexSearch = start + text.length;
+                    result.setSpan(new ClickableSpan(s), start, indexSearch, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+            }
+        });
+        return result;
+    }
+    _tappable = false;
+    _setTappableState(tappable: boolean) {
+        if (this._tappable !== tappable) {
+            this._tappable = tappable;
+            if (this._tappable) {
+                this.nativeViewProtected.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
+                this.nativeViewProtected.setHighlightColor(null);
+            } else {
+                this.nativeViewProtected.setMovementMethod(this._defaultMovementMethod);
+            }
+        }
     }
 
     @profile
