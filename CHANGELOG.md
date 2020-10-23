@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.51](https://github.com/Akylas/nativescript-label/compare/v1.0.50...v1.0.51) (2020-10-23)
+
+
+### Bug Fixes
+
+* clickable span support ([64e600e](https://github.com/Akylas/nativescript-label/commit/64e600e3640a60396fd8d10495b5cf9e60b6e664))
+
+
+
+
+
 ## [1.0.50](https://github.com/Akylas/nativescript-label/compare/v1.0.49...v1.0.50) (2020-10-21)
 
 
