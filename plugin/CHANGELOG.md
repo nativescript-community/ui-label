@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.52](https://github.com/Akylas/nativescript-label/compare/v1.0.51...v1.0.52) (2020-10-23)
+
+
+### Bug Fixes
+
+* support latest text plugin ([2d200bc](https://github.com/Akylas/nativescript-label/commit/2d200bc0243338eb1752701f3fbd8e106491e72b))
+
+
+
+
+
 ## [1.0.51](https://github.com/Akylas/nativescript-label/compare/v1.0.50...v1.0.51) (2020-10-23)
 
 **Note:** Version bump only for package @nativescript-community/ui-label
