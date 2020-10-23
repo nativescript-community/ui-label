@@ -1,7 +1,9 @@
 ﻿import {
+    LightFormattedString,
     VerticalTextAlignment,
     createNativeAttributedString,
     cssProperty,
+    overrideSpanAndFormattedStringEnabled,
     verticalTextAlignmentProperty,
 } from '@nativescript-community/text';
 import {
@@ -128,8 +130,9 @@ abstract class LabelBase extends View implements LabelViewDefinition {
 
     public _isSingleLine: boolean;
     public text: string;
-    public formattedText: FormattedString;
     public spannableStringBuilder: globalAndroid.text.SpannableStringBuilder;
+    //@ts-ignore
+    formattedText: FormattedString;
 
     get nativeTextViewProtected() {
         return this.nativeViewProtected;
@@ -190,14 +193,21 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     public _addChildFromBuilder(name: string, value: any): void {
         if (name === CHILD_SPAN) {
             if (!this.formattedText) {
-                const formattedText = new FormattedString();
+                let formattedText: FormattedString;
+                if (overrideSpanAndFormattedStringEnabled) {
+                    formattedText = new LightFormattedString() as any;
+                } else {
+                    formattedText = new FormattedString();
+                }
                 formattedText.spans.push(value);
                 this.formattedText = formattedText;
+                (formattedText as any).parent = this;
             } else {
                 this.formattedText.spans.push(value);
             }
         } else if (name === CHILD_FORMATTED_TEXT || name === CHILD_FORMATTED_STRING) {
             this.formattedText = value;
+            value.parent = this;
         }
     }
 
@@ -205,13 +215,13 @@ abstract class LabelBase extends View implements LabelViewDefinition {
         this.requestLayout();
     }
 
-    // without this spans class wont work :s
-    eachChild(callback: (child: ViewBase) => boolean): void {
-        const text = this.formattedText;
-        if (text) {
-            callback(text);
-        }
-    }
+    // // without this spans class wont work :s
+    // eachChild(callback: (child: ViewBase) => boolean): void {
+    //     const text = this.formattedText;
+    //     if (text) {
+    //         callback(text);
+    //     }
+    // }
 
     abstract _setNativeText(reset?: boolean): void;
 
@@ -446,7 +456,7 @@ export class Label extends LabelBase {
     @profile
     createSpannableStringBuilder() {
         const formattedText = this.formattedText;
-        const result = createNativeAttributedString(formattedText);
+        const result = createNativeAttributedString(formattedText as any);
         let indexSearch = 0;
         let str: string ;
         formattedText.spans.forEach(s=>{
@@ -578,16 +588,20 @@ formattedTextProperty.register(Label);
 function onFormattedTextPropertyChanged(textBase: Label, oldValue: FormattedString, newValue: FormattedString) {
     if (oldValue) {
         oldValue.off(Observable.propertyChangeEvent, textBase._onFormattedTextContentsChanged, textBase);
-        textBase._removeView(oldValue);
+        if (oldValue instanceof FormattedString){
+            textBase._removeView(oldValue);
+        }
     }
 
     if (newValue) {
-        const oldParent = newValue.parent;
         // In case formattedString is attached to new TextBase
-        if (oldParent) {
-            oldParent._removeView(newValue);
+        if (newValue instanceof FormattedString){
+            const oldParent = newValue.parent;
+            if (oldParent) {
+                oldParent._removeView(newValue);
+            }
+            textBase._addView(newValue);
         }
-        textBase._addView(newValue);
         newValue.on(Observable.propertyChangeEvent, textBase._onFormattedTextContentsChanged, textBase);
     }
 }
