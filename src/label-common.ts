@@ -1,11 +1,14 @@
 import {
     CSSType,
+    ChangedData,
     Color,
     CssProperty,
     FormattedString,
     InheritedCssProperty,
     Observable,
+    ObservableArray,
     Property,
+    PropertyChangeData,
     Span,
     Style,
     Label as TNLabel,
@@ -13,11 +16,12 @@ import {
     makeParser,
     makeValidator,
 } from '@nativescript/core';
-import { dip } from '@nativescript/core/ui/core/view';
-import { TextAlignment } from '@nativescript/core/ui/text-base';
+import { View, dip } from '@nativescript/core/ui/core/view';
+import { TextAlignment, TextDecoration } from '@nativescript/core/ui/text-base';
 import { layout } from '@nativescript/core/utils/utils';
 import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
-import { VerticalTextAlignment, cssProperty } from '@nativescript-community/text';
+import { LightFormattedString, VerticalTextAlignment, cssProperty } from '@nativescript-community/text';
+import { FontStyle, FontWeight } from '@nativescript/core/ui/styling/font';
 
 declare module '@nativescript/core/ui/text-base/formatted-string' {
     interface FormattedString {
@@ -25,32 +29,18 @@ declare module '@nativescript/core/ui/text-base/formatted-string' {
         removePropertyChangeHandler(span: Span);
     }
 }
-// FormattedString.prototype.onPropertyChange = function(data: PropertyChangeData) {
-//     this.notifyPropertyChange(data.propertyName, this);
-// }
-FormattedString.prototype.addPropertyChangeHandler = function (span: Span) {
-    span.on(Observable.propertyChangeEvent, this.onPropertyChange, this);
-    // const style = span.style;
-    // style.on('fontFamilyChange', this.onPropertyChange, this);
-    // style.on('fontSizeChange', this.onPropertyChange, this);
-    // style.on('fontStyleChange', this.onPropertyChange, this);
-    // style.on('fontWeightChange', this.onPropertyChange, this);
-    // style.on('textDecorationChange', this.onPropertyChange, this);
-    // style.on('colorChange', this.onPropertyChange, this);
-};
-FormattedString.prototype.removePropertyChangeHandler = function (span: Span) {
-    span.off(Observable.propertyChangeEvent, this.onPropertyChange, this);
-    // const style = span.style;
-    // style.off('fontFamilyChange', this.onPropertyChange, this);
-    // style.off('fontSizeChange', this.onPropertyChange, this);
-    // style.off('fontStyleChange', this.onPropertyChange, this);
-    // style.off('fontWeightChange', this.onPropertyChange, this);
-    // style.off('textDecorationChange', this.onPropertyChange, this);
-    // style.off('colorChange', this.onPropertyChange, this);
-};
-// FormattedString.prototype.eachChild = function(callback: (child: ViewBase) => boolean): void {
-//     this.spans.forEach((v, i, arr) => callback(v));
+
+const CHILD_SPAN = 'Span';
+const CHILD_FORMATTED_TEXT = 'formattedText';
+const CHILD_FORMATTED_STRING = 'FormattedString';
+// FormattedString.prototype.addPropertyChangeHandler = function (span: Span) {
+//     span.on(Observable.propertyChangeEvent, this.onPropertyChange, this);
 // };
+// FormattedString.prototype.removePropertyChangeHandler = function (span: Span) {
+//     span.off(Observable.propertyChangeEvent, this.onPropertyChange, this);
+// };
+
+
 
 export const needFormattedStringComputation = function (
     target: any,
@@ -74,6 +64,8 @@ export abstract class LabelBase extends TNLabel implements LabelViewDefinition {
     @cssProperty verticalTextAlignment: VerticalTextAlignment;
     @cssProperty lineBreak: LineBreak;
     html: string;
+    //@ts-ignore
+    formattedText: FormattedString;
 
     _canChangeText = true;
     _needFormattedStringComputation = false;
