@@ -75,6 +75,11 @@ declare module '@nativescript/core/ui/core/view-base' {
         _androidView: any;
     }
 }
+declare module '@nativescript/core/ui/text-base' {
+    interface TextBase {
+        _setTappableState(tappable: boolean);
+    }
+}
 
 const textProperty = new Property<Label, string>({ name: 'text', defaultValue: '', affectsLayout: true });
 const formattedTextProperty = new Property<Label, FormattedString>({
@@ -97,12 +102,11 @@ function initializeClickableSpan(): void {
 
     @NativeClass
     class ClickableSpanImpl extends android.text.style.ClickableSpan {
-        owner: WeakRef<Span>;
+        owner: WeakRef<Span >;
 
         constructor(owner: Span) {
             super();
             this.owner = new WeakRef(owner);
-
             return global.__native(this);
         }
         onClick(view: android.view.View): void {
@@ -110,6 +114,7 @@ function initializeClickableSpan(): void {
             if (owner) {
                 owner._emit(Span.linkTapEvent);
             }
+
             view.clearFocus();
             view.invalidate();
         }
@@ -121,11 +126,55 @@ function initializeClickableSpan(): void {
     ClickableSpan = ClickableSpanImpl;
 }
 
+type URLClickableSpan = new (url: string, owner: Label) => android.text.style.URLSpan;
+
+// eslint-disable-next-line no-redeclare
+let URLClickableSpan: URLClickableSpan;
+
+function initializeURLClickableSpan(): void {
+    if (URLClickableSpan) {
+        return;
+    }
+
+    @NativeClass
+    class URLClickableSpanImpl extends android.text.style.URLSpan {
+        owner: WeakRef<Label>;
+        constructor(url: string, owner: Label) {
+            super(url);
+            this.owner = new WeakRef(owner);
+
+            return global.__native(this);
+        }
+        onClick(view: android.view.View): void {
+            const owner = this.owner.get();
+            if (owner) {
+                owner.notify({eventName:Span.linkTapEvent, object:owner, link:this.getURL()});
+            }
+
+            view.clearFocus();
+            view.invalidate();
+        }
+        updateDrawState(tp: android.text.TextPaint): void {
+            const owner = this.owner.get();
+            if (!owner || owner.linkUnderline !== false) {
+                super.updateDrawState(tp);
+            }
+            if (owner && owner.linkColor) {
+                tp.setColor(owner.linkColor.android);
+            }
+        }
+    }
+
+    URLClickableSpan = URLClickableSpanImpl;
+}
+
 @CSSType('HTMLLabel')
 abstract class LabelBase extends View implements LabelViewDefinition {
     @cssProperty maxLines: string | number;
     @cssProperty autoFontSize: boolean;
     @cssProperty verticalTextAlignment: VerticalTextAlignment;
+    @cssProperty linkColor: Color;
+    @cssProperty linkUnderline: boolean;
     public html: string;
 
     public _isSingleLine: boolean;
@@ -136,6 +185,10 @@ abstract class LabelBase extends View implements LabelViewDefinition {
 
     get nativeTextViewProtected() {
         return this.nativeViewProtected;
+    }
+
+    _setTappableState(value: boolean) {
+
     }
 
     @cssProperty fontFamily: string;
@@ -451,7 +504,22 @@ export class Label extends LabelBase {
 
     @profile
     createHTMLString() {
-        return createNativeAttributedString({ text: this.html });
+        const result = createNativeAttributedString({ text: this.html }) as android.text.SpannableStringBuilder;
+        const urlSpan = result.getSpans(0, result.length(), android.text.style.URLSpan.class);
+        if (urlSpan.length > 0) {
+            this._setTappableState(true);
+            initializeURLClickableSpan();
+            for (let index = 0; index < urlSpan.length; index++) {
+                const span = urlSpan[index];
+                const text = span.getURL();
+                const start = result.getSpanStart(span);
+                const end = result.getSpanEnd(span);
+                result.removeSpan(span);
+                result.setSpan(new URLClickableSpan(text, this), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+
+        }
+        return result;
     }
     @profile
     createSpannableStringBuilder() {

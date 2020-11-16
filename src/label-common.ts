@@ -63,6 +63,8 @@ export abstract class LabelBase extends TNLabel implements LabelViewDefinition {
     @cssProperty autoFontSize: boolean;
     @cssProperty verticalTextAlignment: VerticalTextAlignment;
     @cssProperty lineBreak: LineBreak;
+    @cssProperty linkColor: Color;
+    @cssProperty linkUnderline: boolean;
     html: string;
     //@ts-ignore
     formattedText: FormattedString;
@@ -95,6 +97,19 @@ export const lineBreakProperty = new CssProperty<Style, string>({
     cssName: 'line-break',
 });
 lineBreakProperty.register(Style);
+export const linkColorProperty = new CssProperty<Style, Color>({
+    name: 'linkColor',
+    cssName: 'link-color',
+    valueConverter: (v) => new Color(v),
+});
+linkColorProperty.register(Style);
+
+export const linkUnderlineProperty = new CssProperty<Style, boolean>({
+    name: 'linkUnderline',
+    cssName: 'link-underline',
+    valueConverter: booleanConverter,
+});
+linkUnderlineProperty.register(Style);
 
 export const autoFontSizeProperty = new CssProperty<Style, boolean>({
     name: 'autoFontSize',
