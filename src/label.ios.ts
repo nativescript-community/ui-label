@@ -27,6 +27,8 @@ import {
     LabelBase,
     htmlProperty,
     lineBreakProperty,
+    linkColorProperty,
+    linkUnderlineProperty,
     maxLinesProperty,
     needFormattedStringComputation,
     textShadowProperty,
@@ -96,6 +98,30 @@ function whiteSpaceToLineBreakMode(value: WhiteSpace) {
     }
 }
 
+
+
+@NativeClass
+class LabelUITextViewDelegateImpl extends NSObject implements UITextViewDelegate {
+    public static ObjCProtocols = [UITextViewDelegate];
+
+    private _owner: WeakRef<Label>;
+
+    public static initWithOwner(owner: WeakRef<Label>): LabelUITextViewDelegateImpl {
+        const impl = LabelUITextViewDelegateImpl.new() as LabelUITextViewDelegateImpl;
+        impl._owner = owner;
+
+        return impl;
+    }
+
+    textViewShouldInteractWithURLInRangeInteraction?(textView: UITextView, URL: NSURL, characterRange: NSRange, interaction: UITextItemInteraction) {
+        const owner = this._owner.get();
+        if (owner) {
+            return owner.textViewShouldInteractWithURLInRangeInteraction(textView, URL, characterRange, interaction);
+        }
+        return false;
+    }
+}
+
 @NativeClass
 class ObserverClass extends NSObject {
     _owner: WeakRef<Label>;
@@ -115,6 +141,7 @@ export class Label extends LabelBase {
     nativeViewProtected: UITextView;
     nativeTextViewProtected: UITextView;
     attributedString: NSMutableAttributedString;
+    private _delegate: LabelUITextViewDelegateImpl;
     static DTCORETEXT_INIT = false;
     constructor() {
         super();
@@ -145,6 +172,7 @@ export class Label extends LabelBase {
 
     public initNativeView() {
         super.initNativeView();
+        this._delegate = LabelUITextViewDelegateImpl.initWithOwner(new WeakRef(this));
         this._observer = ObserverClass.alloc().init();
         this._observer['_owner'] = new WeakRef(this);
         this.nativeViewProtected.addObserverForKeyPathOptionsContext(
@@ -162,11 +190,25 @@ export class Label extends LabelBase {
         // }
     }
     public disposeNativeView() {
+        this._delegate = null;
         super.disposeNativeView();
+        if (this._htmlTapGestureRecognizer) {
+            this.nativeViewProtected.removeGestureRecognizer(this._htmlTapGestureRecognizer);
+            this._htmlTapGestureRecognizer = null;
+        }
         if (this._observer) {
             this.nativeViewProtected.removeObserverForKeyPath(this._observer, 'contentSize');
             this._observer = null;
         }
+    }
+    public onLoaded() {
+        super.onLoaded();
+        this.nativeTextViewProtected.delegate = this._delegate;
+    }
+
+    public onUnloaded() {
+        this.nativeTextViewProtected.delegate = null;
+        super.onUnloaded();
     }
     computeTextHeight(size: CGSize) {
         const tv = this.nativeTextViewProtected;
@@ -347,16 +389,23 @@ export class Label extends LabelBase {
             this.setMeasuredDimension(widthAndState, heightAndState);
         }
     }
+    _htmlTappable = false;
+    _htmlTapGestureRecognizer;
+
+    textViewShouldInteractWithURLInRangeInteraction?(textView: UITextView, URL: NSURL, characterRange: NSRange, interaction: UITextItemInteraction) {
+        this.notify({eventName:'linkTap', object:this, link:URL.toString()});
+        return false;
+    }
 
     updateHTMLString() {
         if (!this.html) {
+            this.nativeTextViewProtected.selectable = false;
             this.attributedString = null;
         } else {
             const font = this.nativeViewProtected.font;
             const fontSize = this.fontSize || font.pointSize;
-            const familyName = this.style.fontFamily || this.style.fontInternal.fontFamily || font.familyName;
-
-            this.attributedString = createNativeAttributedString({
+            const familyName = this.style.fontFamily || (this.style.fontInternal && this.style.fontInternal.fontFamily) || font.familyName;
+            const result = createNativeAttributedString({
                 text: this.html,
                 fontSize,
                 familyName,
@@ -364,7 +413,19 @@ export class Label extends LabelBase {
                 letterSpacing: this.letterSpacing,
                 lineHeight: this.lineHeight,
                 textAlignment: this.nativeTextViewProtected.textAlignment,
+            }) as NSMutableAttributedString;
+            // if (this.linkColor) {
+                // this.nativeTextViewProtected.linkTextAttributes = null;
+            // const color =this.linkColor.ios;
+            let hasLink = false;
+            result.enumerateAttributeInRangeOptionsUsingBlock(NSLinkAttributeName, { location: 0, length: result.length }, 0, (attributes: NSDictionary<any, any>, range, stop) => {
+                hasLink = true;
             });
+            this.nativeTextViewProtected.selectable = hasLink;
+            // }
+
+            this.attributedString = result;
+
 
             this._requestLayoutOnTextChanged();
         }
@@ -378,6 +439,39 @@ export class Label extends LabelBase {
         const nativeView = this.nativeTextViewProtected;
         nativeView.textColor = color;
         // }
+    }
+    [linkColorProperty.setNative](value: Color | UIColor) {
+        const color = value instanceof Color ? value.ios : value;
+        const nativeView = this.nativeTextViewProtected;
+        let attributes = nativeView.linkTextAttributes;
+        if (!(attributes instanceof NSMutableDictionary)) {
+            attributes = NSMutableDictionary.new();
+        }
+        attributes.setValueForKey(color, NSForegroundColorAttributeName);
+        if(this.linkUnderline !== false) {
+            attributes.setValueForKey(color, NSUnderlineColorAttributeName);
+        } else {
+            attributes.setValueForKey(UIColor.clearColor, NSUnderlineColorAttributeName);
+
+        }
+        nativeView.linkTextAttributes = attributes;
+    }
+    [linkUnderlineProperty.setNative](value: boolean) {
+        const nativeView = this.nativeTextViewProtected;
+        let attributes =  nativeView.linkTextAttributes as NSMutableDictionary<any, any>;
+        if (!(attributes instanceof NSMutableDictionary)) {
+            attributes = NSMutableDictionary.new();
+        }
+        if (value) {
+            if (this.linkColor) {
+                attributes.setValueForKey(this.linkColor.ios, NSUnderlineColorAttributeName);
+            } else {
+                attributes.removeObjectForKey(NSUnderlineColorAttributeName);
+            }
+        } else{
+            attributes.setValueForKey(UIColor.clearColor, NSUnderlineColorAttributeName);
+        }
+        nativeView.linkTextAttributes = attributes;
     }
     @needFormattedStringComputation
     [htmlProperty.setNative](value: string) {
