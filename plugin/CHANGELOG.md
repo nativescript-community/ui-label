@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.54](https://github.com/Akylas/nativescript-label/compare/v1.0.53...v1.0.54) (2020-11-16)
+
+**Note:** Version bump only for package @nativescript-community/ui-label
+
+
+
+
+
 ## [1.0.53](https://github.com/Akylas/nativescript-label/compare/v1.0.52...v1.0.53) (2020-10-29)
 
 
