@@ -1,7 +1,7 @@
 {
     "name": "@nativescript-community/ui-label",
     "version": "1.0.54",
-    "description": "Nativescript label implementation supporting HTML",
+    "description": "Alternative to the built-in NativeScript Label but with better performance and additional features such as HTML rendering and more.",
     "main": "./label",
     "sideEffects": false,
     "typings": "./label.d.ts",
@@ -15,7 +15,8 @@
         "NativeScript",
         "JavaScript",
         "Android",
-        "iOS"
+        "iOS",
+        "Vue"
     ],
     "author": {
         "name": "Martin Guillon",
@@ -24,8 +25,11 @@
     "bugs": {
         "url": "https://github.com/nativescript-community/ui-label/issues"
     },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nativescript-community/ui-label"
+    },
     "license": "Apache-2.0",
-    "homepage": "https://github.com/nativescript-community/ui-label",
     "readmeFilename": "README.md",
     "dependencies": {
         "@nativescript-community/text": "^1.3.6"
