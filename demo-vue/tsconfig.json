@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "es5",
+        "target": "es2017",
         "module": "esnext",
         "moduleResolution": "node",
         "removeComments": false,
@@ -14,14 +14,35 @@
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "noImplicitUseStrict": true,
-        "lib": ["es6", "dom", "es2015.iterable"],
+        "lib": [
+            "es6",
+            "dom",
+            "es2015.iterable",
+            "es2017"
+        ],
         "baseUrl": ".",
+        "types":["vue"],
         "paths": {
-            "~/*": ["app/*"],
-            "nativescript-vue": ["./node_modules/nativescript-akylas-vue"],
-            "*": ["./node_modules/@nativescript/core/*", "./node_modules/*"]
+            "~/*": [
+                "app/*"
+            ],
+            "nativescript-vue": [
+                "./node_modules/nativescript-akylas-vue"
+            ],
+            "*": [
+                "./node_modules/@nativescript/core/*",
+                "./node_modules/*"
+            ]
         }
     },
-    "include": ["app/**/*", "references.d.ts"],
-    "exclude": ["node_modules", "platforms", "**/angular"]
+    "include": [
+        "app/**/*",
+        "vue-shims.d.ts",
+        "references.d.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "platforms",
+        "**/angular"
+    ]
 }

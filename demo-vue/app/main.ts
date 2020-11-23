@@ -1,6 +1,6 @@
 import Vue from 'nativescript-vue';
 
-Vue.registerElement('HTMLLabel', () => require('nativescript-htmllabel').Label);
+Vue.registerElement('HTMLLabel', () => require('@nativescript-community/ui-label').Label);
 import * as views from './views/index';
 
 Vue.component('Home', views.Home);
