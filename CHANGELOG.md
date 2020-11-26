@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.58](https://github.com/Akylas/nativescript-label/compare/v1.0.57...v1.0.58) (2020-11-26)
+
+
+### Bug Fixes
+
+* ios fix for padding and verticalAlignment ([46d95af](https://github.com/Akylas/nativescript-label/commit/46d95af8ce02acb3231bc89ea59c49147d424743))
+
+
+
+
+
 ## [1.0.57](https://github.com/Akylas/nativescript-label/compare/v1.0.56...v1.0.57) (2020-11-23)
 
 
