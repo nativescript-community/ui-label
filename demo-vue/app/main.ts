@@ -6,7 +6,6 @@ import * as views from './views/index';
 Vue.component('Home', views.Home);
 
 Vue.config.silent = false;
-
 new Vue({
     template: `
       <Frame>
@@ -14,3 +13,5 @@ new Vue({
       </Frame>
     `
 }).$start();
+
+
