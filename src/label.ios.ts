@@ -227,7 +227,7 @@ export class Label extends LabelBase {
     updateVerticalAlignment() {
         const tv = this.nativeTextViewProtected;
         const inset = this.nativeViewProtected.textContainerInset;
-        const top = layout.toDeviceIndependentPixels(this.effectivePaddingTop + this.effectiveBorderTopWidth);
+        const top = inset.top;
         switch (this.verticalTextAlignment) {
             case 'initial': // not supported
             case 'top':
@@ -242,7 +242,7 @@ export class Label extends LabelBase {
             case 'middle':
             case 'center': {
                 const height = this.computeTextHeight(CGSizeMake(tv.bounds.size.width, 10000));
-                let topCorrect = (tv.bounds.size.height - height * tv.zoomScale) / 2.0;
+                let topCorrect = (tv.bounds.size.height + inset.top - inset.bottom - height * tv.zoomScale) / 2.0;
                 topCorrect = topCorrect < 0.0 ? 0.0 : topCorrect;
                 // tv.contentOffset = CGPointMake(0, -topCorrect);
                 this.nativeViewProtected.textContainerInset = {
@@ -256,7 +256,7 @@ export class Label extends LabelBase {
 
             case 'bottom': {
                 const height = this.computeTextHeight(CGSizeMake(tv.bounds.size.width, 10000));
-                let bottomCorrect = tv.bounds.size.height - height * tv.zoomScale;
+                let bottomCorrect = tv.bounds.size.height - inset.bottom - height * tv.zoomScale;
                 bottomCorrect = bottomCorrect < 0.0 ? 0.0 : bottomCorrect;
                 // tv.contentOffset = CGPointMake(0, -bottomCorrect);
                 this.nativeViewProtected.textContainerInset = {
