@@ -227,7 +227,7 @@ export class Label extends LabelBase {
     updateVerticalAlignment() {
         const tv = this.nativeTextViewProtected;
         const inset = this.nativeViewProtected.textContainerInset;
-        const top = inset.top;
+        const top = layout.toDeviceIndependentPixels(this.effectivePaddingTop + this.effectiveBorderTopWidth);
         switch (this.verticalTextAlignment) {
             case 'initial': // not supported
             case 'top':
@@ -242,9 +242,9 @@ export class Label extends LabelBase {
             case 'middle':
             case 'center': {
                 const height = this.computeTextHeight(CGSizeMake(tv.bounds.size.width, 10000));
-                let topCorrect = (tv.bounds.size.height + inset.top - inset.bottom - height * tv.zoomScale) / 2.0;
+                const bottom = layout.toDeviceIndependentPixels(this.effectivePaddingBottom + this.effectiveBorderBottomWidth);
+                let topCorrect = (tv.bounds.size.height - bottom - height * tv.zoomScale) / 2.0;
                 topCorrect = topCorrect < 0.0 ? 0.0 : topCorrect;
-                // tv.contentOffset = CGPointMake(0, -topCorrect);
                 this.nativeViewProtected.textContainerInset = {
                     top: top + topCorrect,
                     left: inset.left,
@@ -256,9 +256,9 @@ export class Label extends LabelBase {
 
             case 'bottom': {
                 const height = this.computeTextHeight(CGSizeMake(tv.bounds.size.width, 10000));
-                let bottomCorrect = tv.bounds.size.height - inset.bottom - height * tv.zoomScale;
+                const bottom = layout.toDeviceIndependentPixels(this.effectivePaddingBottom + this.effectiveBorderBottomWidth);
+                let bottomCorrect = tv.bounds.size.height - bottom - height * tv.zoomScale;
                 bottomCorrect = bottomCorrect < 0.0 ? 0.0 : bottomCorrect;
-                // tv.contentOffset = CGPointMake(0, -bottomCorrect);
                 this.nativeViewProtected.textContainerInset = {
                     top: top + bottomCorrect,
                     left: inset.left,
