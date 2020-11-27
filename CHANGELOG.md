@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.60](https://github.com/Akylas/nativescript-label/compare/v1.0.59...v1.0.60) (2020-11-27)
+
+
+### Bug Fixes
+
+* ios fix after last commit on vertical text alignment ([9621856](https://github.com/Akylas/nativescript-label/commit/9621856d7f90e79d4e8c6bbaab6f820e2c89d2cb))
+
+
+
+
+
 ## [1.0.59](https://github.com/Akylas/nativescript-label/compare/v1.0.58...v1.0.59) (2020-11-26)
 
 **Note:** Version bump only for package @nativescript-community/ui-label
