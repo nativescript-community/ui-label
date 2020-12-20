@@ -92,6 +92,31 @@ export const htmlProperty = new Property<Label, string>({ name: 'html', defaultV
 
 type ClickableSpan = new (owner: Span) => android.text.style.ClickableSpan;
 
+function getHorizontalGravity(textAlignment: TextAlignment) {
+    switch (textAlignment) {
+        case 'initial':
+        case 'left':
+            return  8388611; //Gravity.START
+        case 'center':
+            return 1; //Gravity.CENTER_HORIZONTAL
+        case 'right':
+            return 8388613; //Gravity.END
+    }
+}
+function getVerticalGravity(textAlignment: VerticalTextAlignment) {
+    switch (textAlignment) {
+        case 'initial':
+        case 'top':
+            return 48; //Gravity.TOP
+        case 'middle':
+        case 'center':
+            return 16; //Gravity.CENTER_VERTICAL
+
+        case 'bottom':
+            return 80; //Gravity.BOTTOM
+    }
+}
+
 // eslint-disable-next-line no-redeclare
 let ClickableSpan: ClickableSpan;
 
@@ -297,10 +322,6 @@ export class Label extends LabelBase {
         return new TextView(this._context);
     }
 
-    @needFormattedStringComputation
-    [htmlProperty.setNative](value: string) {
-        this._setNativeText();
-    }
 
     [maxLinesProperty.setNative](value: number | string) {
         // this.nativeViewProtected.setMinLines(1);
@@ -360,57 +381,33 @@ export class Label extends LabelBase {
     }
 
     [verticalTextAlignmentProperty.setNative](value: VerticalTextAlignment) {
-        const horizontalGravity = this.nativeTextViewProtected.getGravity() & android.view.Gravity.HORIZONTAL_GRAVITY_MASK;
-        switch (value) {
-            case 'initial':
-            case 'top':
-                this.nativeTextViewProtected.setGravity(android.view.Gravity.TOP | horizontalGravity);
-                break;
-            case 'middle':
-            case 'center':
-                this.nativeTextViewProtected.setGravity(android.view.Gravity.CENTER_VERTICAL | horizontalGravity);
-                break;
-
-            case 'bottom':
-                this.nativeTextViewProtected.setGravity(android.view.Gravity.BOTTOM | horizontalGravity);
-                break;
-        }
+        const view = this.nativeTextViewProtected;
+        view.setGravity(getHorizontalGravity(this.textAlignment) | getVerticalGravity(value));
     }
 
     [textProperty.getDefault](): symbol | number {
         return resetSymbol;
     }
 
-    @needFormattedStringComputation
     [textProperty.setNative](value: string | number | symbol) {
         this._setNativeText();
     }
 
-    @needFormattedStringComputation
     [formattedTextProperty.setNative](value: FormattedString) {
         this._setNativeText();
     }
 
-    @needFormattedStringComputation
+    [htmlProperty.setNative](value: string) {
+        this._setNativeText();
+    }
+
     [textTransformProperty.setNative](value: TextTransform) {
         this._setNativeText();
     }
+
     [textAlignmentProperty.setNative](value: TextAlignment) {
-        const verticalGravity = this.nativeTextViewProtected.getGravity() & android.view.Gravity.VERTICAL_GRAVITY_MASK;
-        switch (value) {
-            case 'initial':
-            case 'left':
-                this.nativeTextViewProtected.setGravity(android.view.Gravity.START | verticalGravity);
-                break;
-
-            case 'center':
-                this.nativeTextViewProtected.setGravity(android.view.Gravity.CENTER_HORIZONTAL | verticalGravity);
-                break;
-
-            case 'right':
-                this.nativeTextViewProtected.setGravity(android.view.Gravity.END | verticalGravity);
-                break;
-        }
+        const view = this.nativeTextViewProtected;
+        view.setGravity(getHorizontalGravity(value) | getVerticalGravity(this.verticalTextAlignment));
     }
 
     [colorProperty.setNative](value: Color | android.content.res.ColorStateList) {
@@ -559,6 +556,10 @@ export class Label extends LabelBase {
 
     @profile
     _setNativeText(reset: boolean = false): void {
+        if (!this._canChangeText) {
+            this._needFormattedStringComputation = true;
+            return;
+        }
         if (reset) {
             this.nativeTextViewProtected.setText(null);
             return;
