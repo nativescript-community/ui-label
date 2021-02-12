@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/Akylas/nativescript-label/compare/v1.0.61...v1.1.0) (2021-02-12)
+
+
+### Features
+
+* better handle of span verticalAlignment ([e9cf77d](https://github.com/Akylas/nativescript-label/commit/e9cf77d9406ce4588adcd2ed8b535406d000da1d))
+
+
+
+
+
 ## [1.0.61](https://github.com/Akylas/nativescript-label/compare/v1.0.60...v1.0.61) (2020-12-20)
 
 
