@@ -1,5 +1,5 @@
-import { VerticalTextAlignment, createNativeAttributedString, verticalTextAlignmentProperty } from '@nativescript-community/text';
-import { Color, View } from '@nativescript/core';
+import { VerticalTextAlignment, computeBaseLineOffset, createNativeAttributedString, verticalTextAlignmentProperty } from '@nativescript-community/text';
+import { Color, Font, FormattedString, Span, View } from '@nativescript/core';
 import {
     Length,
     borderBottomWidthProperty,
@@ -14,12 +14,15 @@ import {
 } from '@nativescript/core/ui/styling/style-properties';
 import {
     TextAlignment,
+    TextBase,
+    TextDecoration,
     TextTransform,
     WhiteSpace,
     letterSpacingProperty,
+    textDecorationProperty,
     whiteSpaceProperty,
 } from '@nativescript/core/ui/text-base';
-import { lineHeightProperty } from '@nativescript/core/ui/text-base/text-base-common';
+import { getClosestPropertyValue, lineHeightProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import { isNullOrUndefined, isString } from '@nativescript/core/utils/types';
 import { iOSNativeHelper, layout } from '@nativescript/core/utils/utils';
 import { TextShadow } from './label';
@@ -50,6 +53,8 @@ declare module '@nativescript/core/ui/text-base' {
     interface TextBase {
         _requestLayoutOnTextChanged();
         _setNativeText();
+        createMutableStringForSpan?(span, text): NSMutableAttributedString;
+        createNSMutableAttributedString?(formattedString: FormattedString): NSMutableAttributedString;
         // createNSMutableAttributedString(formattedString: FormattedString);
     }
 }
@@ -578,6 +583,68 @@ export class Label extends LabelBase {
         if (!style.color && majorVersion >= 13 && UIColor.labelColor) {
             (this as any)._setColor(UIColor.labelColor);
         }
+    }
+    currentMaxFontSize = 0;
+
+    createNSMutableAttributedString(formattedString: FormattedString): NSMutableAttributedString {
+        // we need to store the max Font size to pass it to createMutableStringForSpan
+        const length = formattedString.spans.length;
+        let maxFontSize = formattedString.style?.fontSize || this?.style.fontSize || 0;
+        for (let i = 0; i < length; i++) {
+            const s = formattedString.spans.getItem(i);
+            if (s.style.fontSize) {
+                maxFontSize = Math.max(maxFontSize, s.style.fontSize);
+            }
+        }
+        this.currentMaxFontSize = maxFontSize;
+        return super.createNSMutableAttributedString(formattedString);
+    }
+    createMutableStringForSpan(span: Span, text: string): NSMutableAttributedString {
+        const viewFont = this.nativeTextViewProtected.font;
+        const attrDict: { key: string; value: any } = {} as any;
+        const style = span.style;
+
+        let align = style.verticalAlignment || (span.parent as FormattedString).style.verticalAlignment ;
+        if (!align || align === 'stretch' ) {
+            align = this.verticalTextAlignment as any;
+        }
+        const font = new Font(style.fontFamily, style.fontSize, style.fontStyle, style.fontWeight);
+        const iosFont = font.getUIFont(viewFont);
+
+        attrDict[NSFontAttributeName] = iosFont;
+        if (span.color) {
+            const color = span.color instanceof Color ? span.color : new Color(span.color as any);
+            attrDict[NSForegroundColorAttributeName] = color.ios;
+        }
+
+        // We don't use isSet function here because defaultValue for backgroundColor is null.
+        const backgroundColor: Color = (style.backgroundColor || (span.parent as FormattedString).backgroundColor || (span.parent.parent as TextBase).backgroundColor) as Color;
+        if (backgroundColor) {
+            const color = backgroundColor instanceof Color ? backgroundColor : new Color(backgroundColor);
+            attrDict[NSBackgroundColorAttributeName] = color.ios;
+        }
+
+        const textDecoration: TextDecoration = getClosestPropertyValue(textDecorationProperty, span);
+
+        if (textDecoration) {
+            const underline = textDecoration.indexOf('underline') !== -1;
+            if (underline) {
+                attrDict[NSUnderlineStyleAttributeName] = underline;
+            }
+
+            const strikethrough = textDecoration.indexOf('line-through') !== -1;
+            if (strikethrough) {
+                attrDict[NSStrikethroughStyleAttributeName] = strikethrough;
+            }
+        }
+
+        if (align && align !== 'stretch') {
+            if (iosFont) {
+                attrDict[NSBaselineOffsetAttributeName] = -computeBaseLineOffset(align, -iosFont.ascender, -iosFont.descender, -iosFont.ascender, -iosFont.descender, iosFont.pointSize, this.currentMaxFontSize);
+            }
+        }
+
+        return NSMutableAttributedString.alloc().initWithStringAttributes(text, attrDict as any);
     }
     [paddingTopProperty.getDefault](): Length {
         return {
