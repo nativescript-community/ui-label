@@ -248,7 +248,7 @@ export class Label extends LabelBase {
             case 'center': {
                 const height = this.computeTextHeight(CGSizeMake(tv.bounds.size.width, 10000));
                 const bottom = layout.toDeviceIndependentPixels(this.effectivePaddingBottom + this.effectiveBorderBottomWidth);
-                let topCorrect = (tv.bounds.size.height - bottom - height * tv.zoomScale) / 2.0;
+                let topCorrect = (tv.bounds.size.height - top - bottom - height * tv.zoomScale) / 2.0;
                 topCorrect = topCorrect < 0.0 ? 0.0 : topCorrect;
                 this.nativeViewProtected.textContainerInset = {
                     top: top + topCorrect,
@@ -618,7 +618,7 @@ export class Label extends LabelBase {
         }
 
         // We don't use isSet function here because defaultValue for backgroundColor is null.
-        const backgroundColor: Color = (style.backgroundColor || (span.parent as FormattedString).backgroundColor || (span.parent.parent as TextBase).backgroundColor) as Color;
+        const backgroundColor: Color = (style.backgroundColor || (span.parent as FormattedString).backgroundColor);
         if (backgroundColor) {
             const color = backgroundColor instanceof Color ? backgroundColor : new Color(backgroundColor);
             attrDict[NSBackgroundColorAttributeName] = color.ios;
