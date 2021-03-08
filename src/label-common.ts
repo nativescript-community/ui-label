@@ -1,38 +1,30 @@
+import { VerticalTextAlignment, cssProperty, init } from '@nativescript-community/text';
 import {
-    CSSType,
-    ChangedData,
-    Color,
-    CssProperty,
-    FormattedString,
-    InheritedCssProperty,
-    Observable,
-    ObservableArray,
+    CSSType, Color,
+    CssProperty, FormattedString,
     Property,
-    PropertyChangeData,
-    Span,
-    Style,
+    Span, Style,
     Label as TNLabel,
-    booleanConverter,
-    makeParser,
-    makeValidator,
+    booleanConverter
 } from '@nativescript/core';
-import { View, dip } from '@nativescript/core/ui/core/view';
-import { TextAlignment, TextDecoration } from '@nativescript/core/ui/text-base';
+import { dip } from '@nativescript/core/ui/core/view';
 import { layout } from '@nativescript/core/utils/utils';
 import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
-import { LightFormattedString, VerticalTextAlignment, cssProperty } from '@nativescript-community/text';
-import { FontStyle, FontWeight } from '@nativescript/core/ui/styling/font';
 
-declare module '@nativescript/core/ui/text-base/formatted-string' {
-    interface FormattedString {
-        addPropertyChangeHandler(span: Span);
-        removePropertyChangeHandler(span: Span);
-    }
-}
+// declare module '@nativescript/core/ui/text-base/formatted-string' {
+//     interface FormattedString {
+//         addPropertyChangeHandler(span: Span);
+//         removePropertyChangeHandler(span: Span);
+//     }
+// }
 
-const CHILD_SPAN = 'Span';
-const CHILD_FORMATTED_TEXT = 'formattedText';
-const CHILD_FORMATTED_STRING = 'FormattedString';
+
+// init text to ensure font overrides are called
+init();
+
+// const CHILD_SPAN = 'Span';
+// const CHILD_FORMATTED_TEXT = 'formattedText';
+// const CHILD_FORMATTED_STRING = 'FormattedString';
 // FormattedString.prototype.addPropertyChangeHandler = function (span: Span) {
 //     span.on(Observable.propertyChangeEvent, this.onPropertyChange, this);
 // };
