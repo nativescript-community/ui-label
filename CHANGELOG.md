@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.4](https://github.com/Akylas/nativescript-label/compare/v1.1.3...v1.1.4) (2021-03-13)
+
+
+### Bug Fixes
+
+* **android:** ellipsing fix ([a1339a5](https://github.com/Akylas/nativescript-label/commit/a1339a57f5812945dc689fde81673034d261995a))
+
+
+
+
+
 ## [1.1.3](https://github.com/Akylas/nativescript-label/compare/v1.1.2...v1.1.3) (2021-03-13)
 
 
