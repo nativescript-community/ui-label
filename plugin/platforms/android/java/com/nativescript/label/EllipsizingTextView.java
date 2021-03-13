@@ -32,7 +32,7 @@ public class EllipsizingTextView extends AppCompatTextView {
     private boolean needsEllipsing = false;
     private boolean needsResizing = false;
     private boolean singleline = false;
-    private boolean readyToEllipsize = false;
+    private boolean readyToEllipsize = true;
     private CharSequence fullText = null;
     private int maxLines = 0;
     private float lineSpacingMultiplier = 1.0f;
@@ -97,11 +97,13 @@ public class EllipsizingTextView extends AppCompatTextView {
         int hm = View.MeasureSpec.getMode(heightMeasureSpec);
         if (hm == 0)
             h = 100000;
+            // Log.d("JS", "EllipsizingTextView onMeasure" + " " +   hm + " " +  w + " " + needsEllipsize);
 
         if ((hm == View.MeasureSpec.AT_MOST || hm == View.MeasureSpec.UNSPECIFIED)
                 && (fullText == null || fullText.length() == 0)) {
             heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.EXACTLY);
         } else if (w > 0) {
+            // Log.d("JS", "EllipsizingTextView onMeasure" + " " +   needsResizing + " " +  (w != lastMeasuredWidth || h != lastMeasuredHeight) + " " + needsEllipsize+ " " + readyToEllipsize+ " " + needsEllipsing);
             if (needsResizing) {
                 refitText(this.getText().toString(), w);
             }
@@ -399,6 +401,7 @@ public class EllipsizingTextView extends AppCompatTextView {
 
     @Override
     public void setEllipsize(TextUtils.TruncateAt where) {
+        // Log.d("JS", "EllipsizingTextView setEllipsize" + " " +   where);
         // log("EllipsizingTextView setEllipsize");
         super.setEllipsize(where);
         ellipsize = where;
@@ -504,7 +507,7 @@ public class EllipsizingTextView extends AppCompatTextView {
     }
 
     private void ellipseText(int width, int height) {
-        // log("EllipsizingTextView ellipseText");
+        // Log.d("JS", "EllipsizingTextView ellipseText" + " " +   width + " " +  height + " " + needsEllipsize);
         if (!needsEllipsize || needsEllipsing == false || (width <= 0) || (height <= 0))
             return;
         // if (width == lastEllipsizeWidth && height == lastEllipsizeHeight)
