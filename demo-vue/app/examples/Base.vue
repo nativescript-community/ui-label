@@ -3,11 +3,9 @@
         <ActionBar :title="title">
             <NavigationButton text="Back" android.systemIcon="ic_menu_back" @tap="onNavigationButtonTap"></NavigationButton>
         </ActionBar>
-        <ListView :items="items">
+        <ListView :items="items" rowHeight="80">
             <v-template>
-                <StackLayout>
-                    <HTMLLabel fontSize="50" fontFamily="Cabin Sketch,res/cabinsketch" width="100%" paddingTop="5" color="black" textWrap="true" :html="item.text" verticalAlignment="top" :color="getRandomColor()" />
-                </StackLayout>
+                    <HTMLLabel height="80" fontSize="20" fontFamily="Cabin Sketch,res/cabinsketch" width="100%" paddingTop="5" color="black" textWrap="true" :html="item.text" verticalAlignment="top" :color="getRandomColor()" lineBreak="end" />
             </v-template>
         </ListView>
     </Page>
