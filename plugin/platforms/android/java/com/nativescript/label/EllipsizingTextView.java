@@ -27,7 +27,7 @@ public class EllipsizingTextView extends AppCompatTextView {
     final static String TAG = "EllipsizingTextView";
 
     private TextUtils.TruncateAt ellipsize = null;
-    private TextUtils.TruncateAt multiLineEllipsize = null;
+    // private TextUtils.TruncateAt multiLineEllipsize = null;
     private boolean isEllipsized = false;
     private boolean needsEllipsing = false;
     private boolean needsResizing = false;
@@ -380,7 +380,7 @@ public class EllipsizingTextView extends AppCompatTextView {
 
     private void updateShouldEllipsize() {
         // log("EllipsizingTextView updateShouldEllipsize");
-        needsEllipsize = (ellipsize != null || multiLineEllipsize != null) && fullText != null && fullText.length() > 0;
+        needsEllipsize = (ellipsize != null) && fullText != null && fullText.length() > 0;
 
     }
 
@@ -418,16 +418,16 @@ public class EllipsizingTextView extends AppCompatTextView {
         }
     }
 
-    public void setMultiLineEllipsize(TextUtils.TruncateAt where) {
-        // log("EllipsizingTextView setMultiLineEllipsize");
-        multiLineEllipsize = where;
-        updateShouldEllipsize();
-        updateEllipsize();
-    }
+    // public void setMultiLineEllipsize(TextUtils.TruncateAt where) {
+    //     // log("EllipsizingTextView setMultiLineEllipsize");
+    //     multiLineEllipsize = where;
+    //     updateShouldEllipsize();
+    //     updateEllipsize();
+    // }
 
-    public TextUtils.TruncateAt getMultiLineEllipsize() {
-        return multiLineEllipsize;
-    }
+    // public TextUtils.TruncateAt getMultiLineEllipsize() {
+    //     return multiLineEllipsize;
+    // }
 
     private void refitText(String text, int textWidth) {
         // log("EllipsizingTextView refitText");
@@ -520,7 +520,7 @@ public class EllipsizingTextView extends AppCompatTextView {
 
         if (fullText instanceof Spanned) {
             SpannableStringBuilder htmlWorkingText = new SpannableStringBuilder(fullText);
-            if (this.singleline == false && multiLineEllipsize != null) {
+            if (this.singleline == false) {
                 SpannableStringBuilder newText = new SpannableStringBuilder();
                 String str = htmlWorkingText.toString();
                 String[] separated = str.split("\n");
@@ -554,7 +554,7 @@ public class EllipsizingTextView extends AppCompatTextView {
 
                         CharSequence lastLine = newText.subSequence(newStart, newStart + lineSpanned.length());
                         if (createWorkingLayout(lastLine, width).getLineCount() > 1)
-                            lastLine = getEllipsedTextForOneLine(lastLine, multiLineEllipsize, width);
+                            lastLine = getEllipsedTextForOneLine(lastLine, ellipsize, width);
 
                         newText.replace(newStart, newStart + lineSpanned.length(), lastLine);
                     }
@@ -564,7 +564,7 @@ public class EllipsizingTextView extends AppCompatTextView {
                     newStart = newText.length();
                 }
                 workingText = newText;
-            } else {
+            } else{
                 Layout layout = createWorkingLayout(workingText, width);
                 int linesCount = getLinesCount(layout, height);
                 if (layout.getLineCount() > linesCount && ellipsize != null) {
@@ -584,7 +584,7 @@ public class EllipsizingTextView extends AppCompatTextView {
                 }
             }
         } else {
-            if (this.singleline == false && multiLineEllipsize != null) {
+            if (this.singleline == false) {
                 String str = workingText.toString();
                 String newText = new String();
                 String[] separated = str.split("\n");
@@ -592,7 +592,7 @@ public class EllipsizingTextView extends AppCompatTextView {
                     String linestr = separated[i];
                     if (linestr.length() > 0) {
                         if (createWorkingLayout(linestr, width).getLineCount() > 1)
-                            newText += getEllipsedTextForOneLine(linestr, multiLineEllipsize, width);
+                            newText += getEllipsedTextForOneLine(linestr, ellipsize, width);
                         else
                             newText += linestr;
                     }
