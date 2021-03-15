@@ -7,5 +7,6 @@ dependencies {
 
 	implementation "androidx.appcompat:appcompat:$androidXAppCompat"
 	implementation "androidx.core:core:$androidxVersion"
+    implementation "androidx.annotation:annotation:1.1.0"
     // compile 'com.lsjwzh.widget:FastTextView:1.2.20'
 }

@@ -1,249 +1,137 @@
 package com.nativescript.label;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.os.Parcel;
 import android.text.Layout;
-import android.text.Selection;
+import android.text.Layout.Alignment;
 import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.StaticLayout;
-import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.TextUtils.TruncateAt;
+import android.text.style.ForegroundColorSpan;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 
+/**
+ * A {@link android.widget.TextView} that ellipsizes more intelligently.
+ * This class supports ellipsizing multiline text through setting {@code android:ellipsize}
+ * and {@code android:maxLines}.
+ * <p/>
+ * Note: {@link android.text.TextUtils.TruncateAt#MARQUEE} ellipsizing type is not supported.
+ * <p>
+ * 学习戚继光，一边儿读别人的源码，一边儿做笔记
+ */
 public class EllipsizingTextView extends AppCompatTextView {
-    final static String TAG = "EllipsizingTextView";
+    public static final int ELLIPSIZE_ALPHA = 0x88;
+    private SpannableString ELLIPSIS = new SpannableString("\u2026");
 
-    private TextUtils.TruncateAt ellipsize = null;
-    // private TextUtils.TruncateAt multiLineEllipsize = null;
-    private boolean isEllipsized = false;
-    private boolean needsEllipsing = false;
-    private boolean needsResizing = false;
-    private boolean singleline = false;
-    private boolean readyToEllipsize = true;
-    private CharSequence fullText = null;
-    private int maxLines = 0;
-    private float lineSpacingMultiplier = 1.0f;
-    private float lineAdditionalVerticalPadding = 0.0f;
+    private static final Pattern DEFAULT_END_PUNCTUATION
+            = Pattern.compile("[\\.!?,;:\u2026]*$", Pattern.DOTALL);
+
+    private final List<EllipsizeListener> mEllipsizeListeners = new ArrayList<>();
+
+    private EllipsizeStrategy mEllipsizeStrategy;
+
+    private boolean isEllipsized;
+
+    //In order to be the reset method only needs to be called once
+    private boolean isStale;
+
+    //The entry used to determine the call setText () is RESETTEXT or otherwhere call, this practice is cool.
+    private boolean programmaticChange;
+
+    //text
+    private CharSequence mFullText;
+    private int mMaxLines;
+
+    //The line spacing, this point is considered, great.
+    private float mLineSpacingMult = 1.0f;
+    private float mLineAddVertPad = 0.0f;
+
+
+    private boolean wordWrap = true;
     private float minTextSize = 20;
     private float maxTextSize = 30;
 
-    float lastEllipsizeWidth = -1;
-    float lastEllipsizeHeight = -1;
-    private boolean frozen = false;
-    private int[] lockedCompoundPadding;
-
-    private float strokeWidth = 0;
-    private Integer strokeColor = null;
-    // private Paint.Join strokeJoin = Paint.Join.MITER;
-    private float strokeMiter = 10;
-    // private float minimumFontSize = -1;
-    // private float autoshrinkSetFontSize = -1;
-    private boolean wordWrap = true;
-    private boolean initialized = false;
-
-    int lastMeasuredWidth = -1;
-    int lastMeasuredHeight = -1;
-
-    private final static String ELLIPSIZE_CHAR = "...";
-    private boolean needsEllipsize = false;
+    /**
+     * The end punctuation which will be removed when appending {@link #ELLIPSIS}.
+     */
+    private Pattern mEndPunctPattern;
 
     public EllipsizingTextView(Context context) {
-        super(context);
+        this(context, null);
+    }
+
+
+    public EllipsizingTextView(Context context, AttributeSet attrs) {
+        this(context, attrs, android.R.attr.textViewStyle);
+    }
+
+
+    public EllipsizingTextView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        TypedArray a = context.obtainStyledAttributes(attrs,
+                new int[]{android.R.attr.maxLines, android.R.attr.ellipsize}, defStyle, 0);
+        setMaxLines(a.getInt(0, Integer.MAX_VALUE));
+        a.recycle();
+        setEndPunctuationPattern(DEFAULT_END_PUNCTUATION);
         maxTextSize = this.getTextSize();
         if (maxTextSize < 35) {
             maxTextSize = 30;
         }
         super.setSingleLine(false);
-        initialized = true;
+    }
+
+    public void setEndPunctuationPattern(Pattern pattern) {
+        mEndPunctPattern = pattern;
+    }
+
+    @SuppressWarnings("unused")
+    public void addEllipsizeListener(@NonNull EllipsizeListener listener) {
+        mEllipsizeListeners.add(listener);
+    }
+
+    @SuppressWarnings("unused")
+    public void removeEllipsizeListener(@NonNull EllipsizeListener listener) {
+        mEllipsizeListeners.remove(listener);
+    }
+
+    @SuppressWarnings("unused")
+    public boolean isEllipsized() {
+        return isEllipsized;
+    }
+
+    /**
+     * @return The maximum number of lines displayed in this {@link android.widget.TextView}.
+     */
+    public int getMaxLines() {
+        return mMaxLines;
     }
 
     @Override
-    public void onDraw(Canvas canvas) {
-        if (strokeColor != null && strokeWidth > 0) {
-            freeze();
-            int restoreColor = this.getCurrentTextColor();
-            TextPaint paint = this.getPaint();
-            paint.setStyle(Paint.Style.STROKE);
-            // paint.setStrokeJoin(strokeJoin);
-            paint.setStrokeMiter(strokeMiter);
-            this.setTextColor(strokeColor);
-            paint.setStrokeWidth(strokeWidth * 2); // because the stroke is centered and not outside
-            super.onDraw(canvas);
-            paint.setStyle(Paint.Style.FILL);
-            this.setTextColor(restoreColor);
-            unfreeze();
-        }
-        super.onDraw(canvas);
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int w = View.MeasureSpec.getSize(widthMeasureSpec);
-        // int wm = MeasureSpec.getMode(widthMeasureSpec);
-        int h = View.MeasureSpec.getSize(heightMeasureSpec);
-        int hm = View.MeasureSpec.getMode(heightMeasureSpec);
-        if (hm == 0)
-            h = 100000;
-            // Log.d("JS", "EllipsizingTextView onMeasure" + " " +   hm + " " +  w + " " + needsEllipsize);
-
-        if ((hm == View.MeasureSpec.AT_MOST || hm == View.MeasureSpec.UNSPECIFIED)
-                && (fullText == null || fullText.length() == 0)) {
-            heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.EXACTLY);
-        } else if (w > 0) {
-            // Log.d("JS", "EllipsizingTextView onMeasure" + " " +   needsResizing + " " +  (w != lastMeasuredWidth || h != lastMeasuredHeight) + " " + needsEllipsize+ " " + readyToEllipsize+ " " + needsEllipsing);
-            if (needsResizing) {
-                refitText(this.getText().toString(), w);
-            }
-
-            if (w != lastMeasuredWidth || h != lastMeasuredHeight) {
-                updateEllipsize(w - getPaddingLeft() - getPaddingRight(), h - getPaddingTop() - getPaddingBottom());
-            } else {
-                if (needsEllipsize && readyToEllipsize == true && needsEllipsing == true) {
-                    ellipseText(w - getPaddingLeft() - getPaddingRight(), h - getPaddingTop() - getPaddingBottom());
-                }
-            }
-            lastMeasuredWidth = w;
-            lastMeasuredHeight = h;
-
-            final boolean autoSize = false;
-            // Only allow label to exceed the size of parent when it's size behavior with
-            // wordwrap disabled
-            if (!wordWrap && autoSize) {
-
-                widthMeasureSpec = MeasureSpec.makeMeasureSpec(w, MeasureSpec.UNSPECIFIED);
-                heightMeasureSpec = MeasureSpec.makeMeasureSpec(h, MeasureSpec.UNSPECIFIED);
-            }
-        }
-
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-
-    // @Override
-    // public boolean onTouchEvent(MotionEvent event) {
-    //     TextView textView = (TextView) this;
-    //     Object text = textView.getText();
-    //     // For html texts, we will manually detect url clicks.
-    //     if (text instanceof CharSequence) {
-    //         CharSequence spanned = (CharSequence) text;
-    //         Spannable buffer = Spannable.Factory.getInstance().newSpannable(spanned.subSequence(0, spanned.length()));
-
-    //         int action = event.getAction();
-
-    //         if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_DOWN) {
-    //             int x = (int) event.getX();
-    //             int y = (int) event.getY();
-
-    //             x -= textView.getTotalPaddingLeft();
-    //             y -= textView.getTotalPaddingTop();
-
-    //             x += textView.getScrollX();
-    //             y += textView.getScrollY();
-
-    //             Layout layout = textView.getLayout();
-    //             int line = layout.getLineForVertical(y);
-    //             int off = layout.getOffsetForHorizontal(line, x);
-
-    //             ClickableSpan[] link = buffer.getSpans(off, off, ClickableSpan.class);
-
-    //             if (link.length != 0) {
-    //                 ClickableSpan cSpan = link[0];
-    //                 if (action == MotionEvent.ACTION_UP) {
-    //                     // TODO: trigger click event
-    //                     //
-    //                 } else if (action == MotionEvent.ACTION_DOWN) {
-    //                     Selection.setSelection(buffer, buffer.getSpanStart(cSpan), buffer.getSpanEnd(cSpan));
-    //                 }
-    //             }
-    //         }
-
-    //     }
-
-    //     return super.onTouchEvent(event);
-    // }
-
-    // Keep these things locked while onDraw in processing
-    public void freeze() {
-        lockedCompoundPadding = new int[] { getCompoundPaddingLeft(), getCompoundPaddingRight(),
-                getCompoundPaddingTop(), getCompoundPaddingBottom() };
-        frozen = true;
-    }
-
-    public void unfreeze() {
-        frozen = false;
-    }
-
-    @Override
-    public void requestLayout() {
-        if (!frozen) {
-            super.requestLayout();
-        }
-    }
-
-    @Override
-    public void postInvalidate() {
-        if (!frozen) {
-            super.postInvalidate();
-        }
-    }
-
-    @Override
-    public void postInvalidate(int left, int top, int right, int bottom) {
-        if (!frozen) {
-            super.postInvalidate(left, top, right, bottom);
-        }
-    }
-
-    @Override
-    public void invalidate() {
-        if (!frozen) {
-            super.invalidate();
-        }
-    }
-
-    @Override
-    public void invalidate(Rect rect) {
-        if (!frozen)
-            super.invalidate(rect);
-    }
-
-    @Override
-    public void invalidate(int l, int t, int r, int b) {
-        if (!frozen) {
-            super.invalidate(l, t, r, b);
-        }
-    }
-
-    @Override
-    public int getCompoundPaddingLeft() {
-        return !frozen ? super.getCompoundPaddingLeft() : lockedCompoundPadding[0];
-    }
-
-    @Override
-    public int getCompoundPaddingRight() {
-        return !frozen ? super.getCompoundPaddingRight() : lockedCompoundPadding[1];
-    }
-
-    @Override
-    public int getCompoundPaddingTop() {
-        return !frozen ? super.getCompoundPaddingTop() : lockedCompoundPadding[2];
-    }
-
-    @Override
-    public int getCompoundPaddingBottom() {
-        return !frozen ? super.getCompoundPaddingBottom() : lockedCompoundPadding[3];
+    public void setMaxLines(int maxLines) {
+        super.setMaxLines(maxLines);
+        // super.setMaxLines((maxLines == 0) ? Integer.MAX_VALUE : maxLines);
+        // if (maxLines == Integer.MAX_VALUE) {
+        //     maxLines = 0;
+        // }
+        // // super.setMaxLines((maxLines == 0) ? Integer.MAX_VALUE : maxLines);
+        mMaxLines = maxLines;
+        isStale = true;
     }
 
     public float getMinTextSize() {
@@ -262,412 +150,348 @@ public class EllipsizingTextView extends AppCompatTextView {
         this.maxTextSize = minTextSize;
     }
 
-    public boolean isEllipsized() {
-        return isEllipsized;
-    }
-
-    public void setReadyToEllipsize(Boolean value) {
-        readyToEllipsize = value;
-        // if (readyToEllipsize == true)
-        // updateEllipsize();
-    }
-
-    @Override
-    public void setMaxLines(int maxLines) {
-        // log("EllipsizingTextView setMaxLines");
-        super.setMaxLines((maxLines == 0) ? Integer.MAX_VALUE : maxLines);
-        if (maxLines == Integer.MAX_VALUE) {
-            maxLines = 0;
-        }
-        this.maxLines = maxLines;
-        updateEllipsize();
-    }
-
-    public void updateEllipsize(int width, int height) {
-        // log("EllipsizingTextView updateEllipsize");
-        if (needsEllipsize) {
-            needsEllipsing = true;
-            if (readyToEllipsize == true) {
-                ellipseText(width, height);
-            }
-        }
-    }
-
-    public void updateEllipsize() {
-        // log("EllipsizingTextView updateEllipsize " + needsEllipsize);
-        if (needsEllipsize) {
-            needsEllipsing = true;
-            if (readyToEllipsize == true) {
-                ellipseText(getMeasuredWidth(), getMeasuredHeight());
-            }
-        }
-    }
-
-    public int getMaxLines() {
-        return maxLines;
+    /**
+     * Determines if the last fully visible line is being ellipsized.
+     *
+     * @return {@code true} if the last fully visible line is being ellipsized;
+     * otherwise, returns {@code false}.
+     */
+    public boolean ellipsizingLastFullyVisibleLine() {
+        return mMaxLines == Integer.MAX_VALUE;
     }
 
     @Override
     public void setLineSpacing(float add, float mult) {
-        // log("EllipsizingTextView setLineSpacing");
-        this.lineAdditionalVerticalPadding = add;
-        this.lineSpacingMultiplier = mult;
+        mLineAddVertPad = add;
+        mLineSpacingMult = mult;
         super.setLineSpacing(add, mult);
-        updateEllipsize();
     }
-
-    @Override
-    public void setTypeface(Typeface tf, int style) {
-        // log("EllipsizingTextView setTypeface");
-        super.setTypeface(tf, style);
-        updateEllipsize();
-    }
-
-    private void log(final String message) {
-        Log.d(TAG, message);
-    }
-
-    @Override
-    public void setTextSize(int unit, float size) {
-        // log("EllipsizingTextView setTextSize");
-        super.setTextSize(unit, size);
-        updateEllipsize();
-    }
-
-    // protected void makeLinkClickable(SpannableStringBuilder strBuilder, final
-    // URLSpan span) {
-    // int start = strBuilder.getSpanStart(span);
-    // int end = strBuilder.getSpanEnd(span);
-    // int flags = strBuilder.getSpanFlags(span);
-    // TiLinkSpan clickable = new TiLinkSpan(span.getURL());
-    // strBuilder.setSpan(clickable, start, end, flags);
-    // strBuilder.removeSpan(span);
-    // }
-
-    // private boolean linkifying = false;
 
     @Override
     public void setText(CharSequence text, BufferType type) {
-        // first set the super text so that linkifyIfEnabled
-        // can read the value
-        // final boolean textChanged = text != this.getText();
-        // log("EllipsizingTextView setText '" + text + "' " );
+        if (!programmaticChange) {//Distribution source
+            mFullText = text instanceof Spanned ? (Spanned) text : text;
+            isStale = true;
+        }
         super.setText(text, type);
-        // if (!linkifying && autoLink != 16) {
-        // linkifying = true;
-        // TiUIHelper.linkifyIfEnabled(this, autoLink);
-        // text = super.getText();
-        // linkifying = false;
-        // }
-        // if (text instanceof Spannable) {
-        // SpannableStringBuilder strBuilder = (SpannableStringBuilder) ((text
-        // instanceof SpannableStringBuilder)
-        // ? text
-        // : new SpannableStringBuilder(text));
-        // URLSpan[] span = strBuilder.getSpans(0, text.length(), URLSpan.class);
-        // for (int i = span.length - 1; i >= 0; i--) {
-        // makeLinkClickable(strBuilder, span[i]);
-        // }
-        // text = strBuilder;
-        // super.setText(text, type);
-        // }
-        // if (textChanged) {
-        fullText = text;
-        updateShouldEllipsize();
-        updateEllipsize();
-        // }
-    }
-
-    private void updateShouldEllipsize() {
-        // log("EllipsizingTextView updateShouldEllipsize");
-        needsEllipsize = (ellipsize != null) && fullText != null && fullText.length() > 0;
-
     }
 
     @Override
-    public void setSingleLine(boolean singleLine) {
-        // log("EllipsizingTextView setSingleLine");
-        if (this.singleline == singleLine)
-            return;
-        this.singleline = singleLine;
-        if (this.maxLines == 1 && singleLine == false) {
-            // we were at maxLines==1 and singleLine==true
-            // it s actually the same thing now so let s not change anything
-        } else {
-            super.setSingleLine(singleLine);
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int w = View.MeasureSpec.getSize(widthMeasureSpec);
+        // int wm = MeasureSpec.getMode(widthMeasureSpec);
+        int h = View.MeasureSpec.getSize(heightMeasureSpec);
+        int hm = View.MeasureSpec.getMode(heightMeasureSpec);
+        if (hm == 0)
+            h = 100000;
+        if ((hm == View.MeasureSpec.AT_MOST || hm == View.MeasureSpec.UNSPECIFIED)
+                && (mFullText == null || mFullText.length() == 0)) {
+            heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.EXACTLY);
         }
-        updateEllipsize();
+
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        if (ellipsizingLastFullyVisibleLine()) {//Rigorous, learning
+            isStale = true;
+        }
     }
 
     @Override
-    public void setEllipsize(TextUtils.TruncateAt where) {
-        // Log.d("JS", "EllipsizingTextView setEllipsize" + " " +   where);
-        // log("EllipsizingTextView setEllipsize");
-        super.setEllipsize(where);
-        ellipsize = where;
-        updateShouldEllipsize();
-        updateEllipsize();
+    public void setPadding(int left, int top, int right, int bottom) {
+        super.setPadding(left, top, right, bottom);
+        if (ellipsizingLastFullyVisibleLine()) {//Rigorous, learning
+            isStale = true;
+        }
     }
 
     @Override
-    protected void onTextChanged(final CharSequence text, final int start, final int before, final int after) {
-        // log("EllipsizingTextView onTextChanged " + needsResizing);
-        super.onTextChanged(text, start, before, after);
-        if (needsResizing) {
-            refitText(this.getText().toString(), this.getWidth());
+    protected void onDraw(@NonNull Canvas canvas) {
+        if (isStale) {
+            resetText();
         }
+        super.onDraw(canvas);
     }
 
-    // public void setMultiLineEllipsize(TextUtils.TruncateAt where) {
-    //     // log("EllipsizingTextView setMultiLineEllipsize");
-    //     multiLineEllipsize = where;
-    //     updateShouldEllipsize();
-    //     updateEllipsize();
-    // }
-
-    // public TextUtils.TruncateAt getMultiLineEllipsize() {
-    //     return multiLineEllipsize;
-    // }
-
-    private void refitText(String text, int textWidth) {
-        // log("EllipsizingTextView refitText");
-        if (textWidth > 0) {
-            int availableWidth = textWidth - this.getPaddingLeft() - this.getPaddingRight();
-            float trySize = maxTextSize;
-
-            this.setTextSize(TypedValue.COMPLEX_UNIT_PX, trySize);
-            while ((trySize > minTextSize) && (this.getPaint().measureText(text) > availableWidth)) {
-                trySize -= 1;
-                if (trySize <= minTextSize) {
-                    trySize = minTextSize;
-                    break;
-                }
-                this.setTextSize(TypedValue.COMPLEX_UNIT_PX, trySize);
-            }
-            this.setTextSize(TypedValue.COMPLEX_UNIT_PX, trySize);
-        }
-    }
-
-    private CharSequence strimText(CharSequence text) {
-        // log("EllipsizingTextView strimText");
-        int strimEnd = text.toString().trim().length();
-        if (strimEnd != text.length()) {
-            return text.subSequence(0, strimEnd);
-        }
-        return text;
-    }
-
-    private CharSequence getEllipsedTextForOneLine(CharSequence text, TextUtils.TruncateAt where, int width) {
-        // log("EllipsizingTextView getEllipsedTextForOneLine");
-        CharSequence newText = strimText(text);
-        int length = ELLIPSIZE_CHAR.length();
-        if (where == TextUtils.TruncateAt.START || where == TextUtils.TruncateAt.END) {
-            if (where == TextUtils.TruncateAt.START) {
-                newText = TextUtils.concat(ELLIPSIZE_CHAR, newText);
-            } else if (where == TextUtils.TruncateAt.END) {
-                newText = TextUtils.concat(newText, ELLIPSIZE_CHAR);
-            }
-            newText = TextUtils.ellipsize(newText, getPaint(), width, where);
-            if (newText.length() <= length)
-                return newText;
-            String textStr = newText.toString();
-            if (where == TextUtils.TruncateAt.START && !textStr.startsWith(ELLIPSIZE_CHAR)) {
-                newText = TextUtils.concat(ELLIPSIZE_CHAR, newText.subSequence(length, textStr.length()));
-            } else if (where == TextUtils.TruncateAt.END && !textStr.endsWith(ELLIPSIZE_CHAR)) {
-                newText = TextUtils.concat(newText.subSequence(0, textStr.length() - length), ELLIPSIZE_CHAR);
-            }
-        } else {
-            CharSequence newTextLeft = TextUtils.ellipsize(newText, getPaint(), width / 2, TextUtils.TruncateAt.END);
-            CharSequence newTextRight = TextUtils.ellipsize(newText, getPaint(), width / 2, TextUtils.TruncateAt.START);
-            String textLeftStr = newTextLeft.toString();
-            String textRightStr = newTextRight.toString();
-            if (textLeftStr.length() == 0
-                    || (textLeftStr.length() + textRightStr.length() == newText.toString().length()))
-                return newText;
-            if (!textLeftStr.endsWith(ELLIPSIZE_CHAR)) {
-                newTextLeft = TextUtils.concat(ELLIPSIZE_CHAR, newTextLeft.subSequence(length, textLeftStr.length()));
-            }
-            if (textRightStr.startsWith(ELLIPSIZE_CHAR)) {
-                newTextRight = (CharSequence) newTextRight.subSequence(length, newTextRight.length());
-            }
-            newText = TextUtils.concat(newTextLeft, newTextRight);
-        }
-        return newText;
-
-    }
-
-    // @SuppressLint("NewApi")
-    private Object duplicateSpan(Object span) {
-        Parcel p = Parcel.obtain();
-        p.writeValue(span);
-        p.setDataPosition(0);
-        Object result = p.readValue(span.getClass().getClassLoader());
-        p.recycle();
-        return result;
-    }
-
-    private void ellipseText(int width, int height) {
-        // Log.d("JS", "EllipsizingTextView ellipseText" + " " +   width + " " +  height + " " + needsEllipsize);
-        if (!needsEllipsize || needsEllipsing == false || (width <= 0) || (height <= 0))
-            return;
-        // if (width == lastEllipsizeWidth && height == lastEllipsizeHeight)
-        // {
-        // needsEllipsing = false;
-        // return;
-        // }
+    /**
+     * Sets the ellipsized text if appropriate.
+     */
+    private void resetText() {
+        int maxLines = getMaxLines();
+        CharSequence workingText = mFullText;
         boolean ellipsized = false;
-        CharSequence workingText = fullText;
 
-        if (fullText instanceof Spanned) {
-            SpannableStringBuilder htmlWorkingText = new SpannableStringBuilder(fullText);
-            if (this.singleline == false) {
-                SpannableStringBuilder newText = new SpannableStringBuilder();
-                String str = htmlWorkingText.toString();
-                String[] separated = str.split("\n");
-                int start = 0;
-                int newStart = 0;
-                for (int i = 0; i < separated.length; i++) {
-                    String linestr = separated[i];
-                    int end = start + linestr.length();
-                    if (linestr.length() > 0) {
-                        SpannableStringBuilder lineSpanned = (SpannableStringBuilder) htmlWorkingText.subSequence(start,
-                                end);
-                        Object[] spans = lineSpanned.getSpans(0, lineSpanned.length(), Object.class);
-
-                        // this is a trick to get the Spans for the last line to be used in
-                        // getEllipsedTextForOneLine
-                        // we append,setSpans, getlastline with spans, ellipse, replace last line with
-                        // last line ellipsized
-                        newText.append(lineSpanned.toString());
-                        for (int j = 0; j < spans.length; j++) {
-                            int start2 = htmlWorkingText.getSpanStart(spans[j]);
-                            int end2 = htmlWorkingText.getSpanEnd(spans[j]);
-                            int mystart = newStart + Math.max(0, start2 - start);
-                            int spanlengthonline = Math.min(end2, start + linestr.length()) - Math.max(start2, start);
-                            int myend = Math.min(mystart + spanlengthonline, newStart + lineSpanned.length());
-                            int flags = htmlWorkingText.getSpanFlags(spans[j]);
-                            if (myend > mystart) {
-                                Object newSpan = duplicateSpan(spans[j]);
-                                newText.setSpan(newSpan, mystart, myend, flags);
-                            }
-                        }
-
-                        CharSequence lastLine = newText.subSequence(newStart, newStart + lineSpanned.length());
-                        if (createWorkingLayout(lastLine, width).getLineCount() > 1)
-                            lastLine = getEllipsedTextForOneLine(lastLine, ellipsize, width);
-
-                        newText.replace(newStart, newStart + lineSpanned.length(), lastLine);
-                    }
-                    if (i < (separated.length - 1))
-                        newText.append('\n');
-                    start = end + 1;
-                    newStart = newText.length();
-                }
-                workingText = newText;
-            } else{
-                Layout layout = createWorkingLayout(workingText, width);
-                int linesCount = getLinesCount(layout, height);
-                if (layout.getLineCount() > linesCount && ellipsize != null) {
-                    if (linesCount >= 2) {
-                        int start2 = layout.getLineStart(linesCount - 1);
-                        int end1 = layout.getLineEnd(linesCount - 2);
-                        int end2 = layout.getLineEnd(linesCount - 1);
-                        SpannableStringBuilder newText = new SpannableStringBuilder();
-                        newText.append(fullText.subSequence(0, end1));
-                        // We have more lines of text than we are allowed to display.
-                        newText.append(getEllipsedTextForOneLine(fullText.subSequence(start2, end2), ellipsize, width));
-                        workingText = newText;
-                    } else {
-                        workingText = getEllipsedTextForOneLine(
-                                fullText.subSequence(0, layout.getLineEnd(linesCount - 1)), ellipsize, width);
-                    }
-                }
-            }
-        } else {
-            if (this.singleline == false) {
-                String str = workingText.toString();
-                String newText = new String();
-                String[] separated = str.split("\n");
-                for (int i = 0; i < separated.length; i++) {
-                    String linestr = separated[i];
-                    if (linestr.length() > 0) {
-                        if (createWorkingLayout(linestr, width).getLineCount() > 1)
-                            newText += getEllipsedTextForOneLine(linestr, ellipsize, width);
-                        else
-                            newText += linestr;
-                    }
-                    if (i < (separated.length - 1))
-                        newText += '\n';
-                }
-                workingText = newText;
-            } else {
-                Layout layout = createWorkingLayout(workingText, width);
-                int linesCount = getLinesCount(layout, height);
-                if (layout.getLineCount() > linesCount && ellipsize != null) {
-                    if (linesCount >= 2) {
-                        int start2 = layout.getLineStart(linesCount - 1);
-                        int end1 = layout.getLineEnd(linesCount - 2);
-                        int end2 = layout.getLineEnd(linesCount - 1);
-                        SpannableStringBuilder newText = new SpannableStringBuilder();
-                        newText.append(fullText.subSequence(0, end1));
-                        // We have more lines of text than we are allowed to display.
-                        newText.append(getEllipsedTextForOneLine(fullText.subSequence(start2, end2), ellipsize, width));
-                        workingText = newText;
-                    } else {
-                        workingText = getEllipsedTextForOneLine(
-                                fullText.subSequence(0, layout.getLineEnd(linesCount - 1)), ellipsize, width);
-                    }
-
-                }
-            }
+        if (maxLines != -1) {
+            if (mEllipsizeStrategy == null) setEllipsize(null);
+            workingText = mEllipsizeStrategy.processText(mFullText);
+            ellipsized = !mEllipsizeStrategy.isInLayout(mFullText);
         }
 
-        if (!workingText.equals(getText())) {
+        if (!workingText.equals(getText())) {//Avoid useless operations
+            programmaticChange = true;
             try {
-                super.setText(workingText, TextView.BufferType.SPANNABLE);
+                setText(workingText);
             } finally {
-                ellipsized = true;
-
+                programmaticChange = false;
             }
         }
-        needsEllipsing = false;
-        lastEllipsizeWidth = width;
-        lastEllipsizeHeight = height;
+
+        isStale = false;//Switch status
+
+        //Notification listener
         if (ellipsized != isEllipsized) {
             isEllipsized = ellipsized;
+            for (EllipsizeListener listener : mEllipsizeListeners) {
+                listener.ellipsizeStateChanged(ellipsized);
+            }
         }
     }
 
     /**
-     * Get how many lines of text we are allowed to display.
+     * Causes words in the text that are longer than the view is wide to be ellipsized
+     * instead of broken in the middle. Use {@code null} to turn off ellipsizing.
+     * <p/>
+     * Note: Method does nothing for {@link android.text.TextUtils.TruncateAt#MARQUEE}
+     * ellipsizing type.
+     *
+     * @param where part of text to ellipsize
      */
-    private int getLinesCount(Layout layout, int height) {
-        // log("EllipsizingTextView getLinesCount");
-        int fullyVisibleLinesCount = getFullyVisibleLinesCount(layout, height);
-        if (fullyVisibleLinesCount == -1) {
-            return fullyVisibleLinesCount = 1;
+    @Override
+    public void setEllipsize(TruncateAt where) {
+        if (where == null) {
+            mEllipsizeStrategy = new EllipsizeNoneStrategy();
+            return;
         }
-        return (maxLines == 0) ? fullyVisibleLinesCount : Math.min(maxLines, fullyVisibleLinesCount);
+
+        switch (where) {
+            case END:
+                mEllipsizeStrategy = new EllipsizeEndStrategy();
+                break;
+            case START:
+                mEllipsizeStrategy = new EllipsizeStartStrategy();
+                break;
+            case MIDDLE:
+                mEllipsizeStrategy = new EllipsizeMiddleStrategy();
+                break;
+            case MARQUEE:
+            default:
+                mEllipsizeStrategy = new EllipsizeNoneStrategy();
+                break;
+        }
     }
 
     /**
-     * Get how many lines of text we can display so their full height is visible.
+     * A listener that notifies when the ellipsize state has changed.
      */
-    private int getFullyVisibleLinesCount(Layout layout, int height) {
-        // log("EllipsizingTextView getFullyVisibleLinesCount");
-        int totalLines = layout.getLineCount();
-        int index = totalLines - 1;
-        int lineHeight = layout.getLineBottom(index);
-        while (lineHeight > height) {
-            index -= 1;
-            lineHeight = layout.getLineBottom(index);
-        }
-        return index + 1;
+    public interface EllipsizeListener {
+        void ellipsizeStateChanged(boolean ellipsized);
     }
 
-    private Layout createWorkingLayout(CharSequence workingText, int width) {
-        // log("EllipsizingTextView createWorkingLayout");
-        return new StaticLayout(workingText, getPaint(), width, Layout.Alignment.ALIGN_NORMAL, lineSpacingMultiplier,
-                lineAdditionalVerticalPadding, false /* includepad */);
+    /**
+     * A base class for an ellipsize strategy.
+     */
+    private abstract class EllipsizeStrategy {
+        /**
+         * Returns ellipsized text if the text does not fit inside of the layout;
+         * otherwise, returns the full text.
+         *
+         * @param text text to process
+         * @return Ellipsized text if the text does not fit inside of the layout;
+         * otherwise, returns the full text.
+         */
+        public CharSequence processText(CharSequence text) {
+            return !isInLayout(text) ? createEllipsizedText(text) : text;
+        }
+
+        /**
+         * Determines if the text fits inside of the layout.
+         *
+         * @param text text to fit
+         * @return {@code true} if the text fits inside of the layout;
+         * otherwise, returns {@code false}.
+         */
+        public boolean isInLayout(CharSequence text) {
+            Layout layout = createWorkingLayout(text);
+            return layout.getLineCount() <= getLinesCount();
+        }
+
+        /**
+         * Creates a working layout with the given text.
+         *
+         * @param workingText text to create layout with
+         * @return {@link android.text.Layout} with the given text.
+         */
+        protected Layout createWorkingLayout(CharSequence workingText) {
+            return new StaticLayout(workingText, getPaint(),
+                    getWidth() - getCompoundPaddingLeft() - getCompoundPaddingRight(),
+                    Alignment.ALIGN_NORMAL, mLineSpacingMult,
+                    mLineAddVertPad, false /* includepad */);
+        }
+
+        /**
+         * Get how many lines of text we are allowed to display.
+         */
+        protected int getLinesCount() {
+            if (ellipsizingLastFullyVisibleLine()) {
+                int fullyVisibleLinesCount = getFullyVisibleLinesCount();
+                return fullyVisibleLinesCount == -1 ? 1 : fullyVisibleLinesCount;
+            } else {
+                return mMaxLines;
+            }
+        }
+
+        /**
+         * Get how many lines of text we can display so their full height is visible.
+         */
+        protected int getFullyVisibleLinesCount() {
+            Layout layout = createWorkingLayout("");
+            int height = getHeight() - getCompoundPaddingTop() - getCompoundPaddingBottom();
+            int lineHeight = layout.getLineBottom(0);
+            return height / lineHeight;
+        }
+
+        /**
+         * Creates ellipsized text from the given text.
+         *
+         * @param fullText text to ellipsize
+         * @return Ellipsized text
+         */
+        protected abstract CharSequence createEllipsizedText(CharSequence fullText);
+    }
+
+    /**
+     * An {@link EllipsizingTextView.EllipsizeStrategy} that
+     * does not ellipsize text.
+     */
+    private class EllipsizeNoneStrategy extends EllipsizeStrategy {
+        @Override
+        protected CharSequence createEllipsizedText(CharSequence fullText) {
+            return fullText;
+        }
+    }
+
+    /**
+     * An {@link EllipsizingTextView.EllipsizeStrategy} that
+     * ellipsizes text at the end.
+     */
+    private class EllipsizeEndStrategy extends EllipsizeStrategy {
+        @Override
+        protected CharSequence createEllipsizedText(CharSequence fullText) {
+            Layout layout = createWorkingLayout(fullText);
+            int lineCount = layout.getLineCount();
+            int lastLineIndex = Math.min(mMaxLines - 1, lineCount -1);
+            int cutOffIndex = layout.getLineEnd(lastLineIndex);
+            int textLength = fullText.length();
+            int cutOffLength = textLength - cutOffIndex;
+            if (cutOffLength < ELLIPSIS.length()) cutOffLength = ELLIPSIS.length();
+
+            //True to display text
+            CharSequence workingText = TextUtils.substring(fullText, 0, textLength - cutOffLength).trim();
+
+
+            final int lastLineStart = layout.getLineStart(lastLineIndex);
+            final CharSequence remainder = TextUtils.ellipsize(fullText.subSequence(lastLineStart,
+                    fullText.length()), getPaint(), getWidth(), TextUtils.TruncateAt.END);
+
+            //seems to be handling corner case when there is still too many chars
+            while (!isInLayout(TextUtils.concat(stripEndPunctuation(workingText), ELLIPSIS))) {
+                workingText = workingText.subSequence(0, workingText.length() - 1);
+        
+            }
+
+            //first we copy the text
+            workingText = TextUtils.concat(stripEndPunctuation(workingText), ELLIPSIS);
+            SpannableStringBuilder dest = new SpannableStringBuilder(workingText);
+
+            //then we apply spans if necessary
+            if (fullText instanceof Spanned) {
+                TextUtils.copySpansFrom((Spanned) fullText, 0, workingText.length(), null, dest, 0);
+            }
+            return dest;
+        }
+
+        /**
+         * Strips the end punctuation from a given text according to {@link #mEndPunctPattern}.
+         *
+         * @param workingText text to strip end punctuation from
+         * @return Text without end punctuation.
+         */
+        public String stripEndPunctuation(CharSequence workingText) {
+            return mEndPunctPattern.matcher(workingText).replaceFirst("");
+        }
+    }
+
+    /**
+     * An {@link EllipsizingTextView.EllipsizeStrategy} that
+     * ellipsizes text at the start.
+     */
+    private class EllipsizeStartStrategy extends EllipsizeStrategy {
+        @Override
+        protected CharSequence createEllipsizedText(CharSequence fullText) {
+            Layout layout = createWorkingLayout(fullText);
+            int cutOffIndex = layout.getLineEnd(mMaxLines - 1);
+            int textLength = fullText.length();
+            int cutOffLength = textLength - cutOffIndex;
+            if (cutOffLength < ELLIPSIS.length()) cutOffLength = ELLIPSIS.length();
+            CharSequence workingText = TextUtils.substring(fullText, cutOffLength, textLength).trim();
+
+            while (!isInLayout(TextUtils.concat(ELLIPSIS, workingText))) {
+                int firstSpace = TextUtils.indexOf(workingText, ' ');
+                if (firstSpace == -1) {
+                    break;
+                }
+                workingText = TextUtils.substring(workingText, firstSpace, workingText.length()).trim();
+            }
+
+            workingText = TextUtils.concat(ELLIPSIS, workingText);
+            SpannableStringBuilder dest = new SpannableStringBuilder(workingText);
+
+            if (fullText instanceof Spanned) {
+                TextUtils.copySpansFrom((Spanned) fullText, textLength - workingText.length(),
+                        textLength, null, dest, 0);
+            }
+            return dest;
+        }
+    }
+
+    /**
+     * An {@link EllipsizingTextView.EllipsizeStrategy} that
+     * ellipsizes text in the middle.
+     */
+    private class EllipsizeMiddleStrategy extends EllipsizeStrategy {
+        @Override
+        protected CharSequence createEllipsizedText(CharSequence fullText) {
+            Layout layout = createWorkingLayout(fullText);
+            int cutOffIndex = layout.getLineEnd(mMaxLines - 1);
+            int textLength = fullText.length();
+            int cutOffLength = textLength - cutOffIndex;
+            if (cutOffLength < ELLIPSIS.length()) cutOffLength = ELLIPSIS.length();
+            cutOffLength += cutOffIndex % 2;    // Make it even.
+            String firstPart = TextUtils.substring(
+                    fullText, 0, textLength / 2 - cutOffLength / 2).trim();
+            String secondPart = TextUtils.substring(
+                    fullText, textLength / 2 + cutOffLength / 2, textLength).trim();
+
+            while (!isInLayout(TextUtils.concat(firstPart, ELLIPSIS, secondPart))) {
+                int lastSpaceFirstPart = firstPart.lastIndexOf(' ');
+                int firstSpaceSecondPart = secondPart.indexOf(' ');
+                if (lastSpaceFirstPart == -1 || firstSpaceSecondPart == -1) break;
+                firstPart = firstPart.substring(0, lastSpaceFirstPart).trim();
+                secondPart = secondPart.substring(firstSpaceSecondPart, secondPart.length()).trim();
+            }
+
+            SpannableStringBuilder firstDest = new SpannableStringBuilder(firstPart);
+            SpannableStringBuilder secondDest = new SpannableStringBuilder(secondPart);
+
+            if (fullText instanceof Spanned) {
+                TextUtils.copySpansFrom((Spanned) fullText, 0, firstPart.length(),
+                        null, firstDest, 0);
+                TextUtils.copySpansFrom((Spanned) fullText, textLength - secondPart.length(),
+                        textLength, null, secondDest, 0);
+            }
+            return TextUtils.concat(firstDest, ELLIPSIS, secondDest);
+        }
     }
 }
