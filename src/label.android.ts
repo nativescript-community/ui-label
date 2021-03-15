@@ -44,13 +44,13 @@ import {
 import { lineHeightProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import { layout } from '@nativescript/core/utils/utils';
 import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
-import { lineBreakProperty, maxLinesProperty, needFormattedStringComputation, textShadowProperty } from './label-common';
+import { autoFontSizeProperty, lineBreakProperty, maxLinesProperty, needFormattedStringComputation, textShadowProperty } from './label-common';
 
 export { enableIOSDTCoreText, createNativeAttributedString } from '@nativescript-community/text';
 
 export * from './label-common';
 
-let TextView: typeof android.widget.TextView;
+let TextView: typeof com.nativescript.label.EllipsizingTextView;
 
 const CHILD_SPAN = 'Span';
 const CHILD_FORMATTED_TEXT = 'formattedText';
@@ -307,7 +307,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
 }
 
 export class Label extends LabelBase {
-    nativeViewProtected: android.widget.TextView;
+    nativeViewProtected: com.nativescript.label.EllipsizingTextView;
     handleFontSize = true;
     private _defaultMovementMethod: android.text.method.MovementMethod;
     get nativeTextViewProtected() {
@@ -317,7 +317,7 @@ export class Label extends LabelBase {
     @profile
     public createNativeView() {
         if (!TextView) {
-            TextView = (com as any).nativescript.label.EllipsizingTextView;
+            TextView = androidx.appcompat.widget.AppCompatTextView;
         }
         return new TextView(this._context);
     }
@@ -326,7 +326,7 @@ export class Label extends LabelBase {
     [maxLinesProperty.setNative](value: number | string) {
         // this.nativeViewProtected.setMinLines(1);
         if (!value || value === 'none') {
-            this.nativeViewProtected.setMaxLines(-1);
+            this.nativeViewProtected.setMaxLines(Number.MAX_SAFE_INTEGER);
         } else {
             this.nativeViewProtected.setMaxLines(typeof value === 'string' ? parseInt(value, 10) : value);
         }
@@ -497,6 +497,14 @@ export class Label extends LabelBase {
             this.nativeTextViewProtected,
             Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderLeftWidth, 0)
         );
+    }
+
+    [autoFontSizeProperty.setNative](value: boolean) {
+        if (value) {
+            androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(this.nativeView, 10, 200, 1, android.util.TypedValue.COMPLEX_UNIT_DIP);
+        } else {
+            androidx.core.widget.TextViewCompat.setAutoSizeTextTypeWithDefaults(this.nativeView, androidx.core.widget.TextViewCompat.AUTO_SIZE_TEXT_TYPE_NONE);
+        }
     }
 
     @profile

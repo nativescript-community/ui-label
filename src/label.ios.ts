@@ -7,6 +7,7 @@ import {
     borderRightWidthProperty,
     borderTopWidthProperty,
     colorProperty,
+    fontInternalProperty,
     paddingBottomProperty,
     paddingLeftProperty,
     paddingRightProperty,
@@ -28,6 +29,7 @@ import { iOSNativeHelper, layout } from '@nativescript/core/utils/utils';
 import { TextShadow } from './label';
 import {
     LabelBase,
+    autoFontSizeProperty,
     htmlProperty,
     lineBreakProperty,
     linkColorProperty,
@@ -125,6 +127,13 @@ class LabelUITextViewDelegateImpl extends NSObject implements UITextViewDelegate
         }
         return false;
     }
+    textViewDidChange?(textView: UITextView) {
+        const owner = this._owner.get();
+        if (owner) {
+            owner.textViewDidChange(textView);
+        }
+    }
+
 }
 
 @NativeClass
@@ -788,16 +797,52 @@ export class Label extends LabelBase {
             nativeView.textContainer.lineBreakMode = whiteSpaceToLineBreakMode(value);
         }
     }
-    // [autoFontSizeProperty.getDefault](): boolean {
-    //     return this.nativeViewProtected.adjustsFontSizeToFitWidth;
-    // }
-    // [maxLinesProperty.setNative](value: number | string) {
-    //     if (value === 'none') {
-    //         this.nativeViewProtected.textContainer.maximumNumberOfLines = 0;
-    //     } else {
-    //         this.nativeViewProtected.textContainer.maximumNumberOfLines = value as number;
-    //     }
-    // }
+
+    textViewDidChange(textView: UITextView) {
+        if (this.autoFontSize) {
+            if (!textView.text  || textView.text.length === 0 || CGSizeEqualToSize(textView.bounds.size , CGSizeZero)) {
+                return;
+            }
+
+            const textViewSize = textView.frame.size;
+            const fixedWidth = textViewSize.width;
+
+            const fontSize = this.style.fontSize || 17;
+            let expectFont: UIFont = (this.style.fontInternal || Font.default).getUIFont(UIFont.systemFontOfSize(fontSize));
+            textView.font = expectFont;
+            let expectSize = textView.sizeThatFits(CGSizeMake(fixedWidth, Number.MAX_SAFE_INTEGER));
+            if (expectSize.height > textViewSize.height) {
+                while (expectSize.height > textViewSize.height) {
+                    expectFont = expectFont.fontWithSize(expectFont.pointSize - 1);
+                    expectSize = textView.sizeThatFits(CGSizeMake(fixedWidth, Number.MAX_SAFE_INTEGER));
+                    textView.font = expectFont;
+                }
+            }
+            else {
+                while (expectSize.height < textViewSize.height) {
+                    expectFont = expectFont.fontWithSize(expectFont.pointSize + 1);
+                    expectSize = textView.sizeThatFits(CGSizeMake(fixedWidth, Number.MAX_SAFE_INTEGER));
+                    textView.font = expectFont;
+                }
+            }
+        }
+    }
+    _onSizeChanged(): void {
+        const nativeView = this.nativeViewProtected;
+        if (!nativeView) {
+            return;
+        }
+        if (this.autoFontSize && this.text) {
+            this.textViewDidChange(nativeView);
+        }
+    }
+    [autoFontSizeProperty.setNative](value: boolean) {
+        if (value && this.text) {
+            this.textViewDidChange(this.nativeTextViewProtected);
+        } else {
+            this[fontInternalProperty.setNative](this.style.font);
+        }
+    }
 
     [verticalTextAlignmentProperty.setNative](value: VerticalTextAlignment) {
         this.updateVerticalAlignment();
