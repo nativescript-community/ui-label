@@ -3,7 +3,7 @@
     "license": "SEE LICENSE IN LICENSE.md",
     "readme": "README.md",
     "dependencies": {
-        "@nativescript-community/text": "1.4.6",
+        "@nativescript-community/text": "1.4.8",
         "@nativescript-community/ui-label": "../plugin",
         "@nativescript/core": "7.3.0",
         "@nativescript/webpack": "4.1.0",

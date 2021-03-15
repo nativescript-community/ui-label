@@ -1,5 +1,6 @@
 import BaseDemo, { title as BaseDemoTitle } from './Base.vue';
 import VerticalAlignment, { title as VerticalAlignmentTitle } from './VerticalAlignment.vue';
+import AutoSize from './AutoSize.vue';
 
 export const getExamples = () => [
     {
@@ -8,5 +9,8 @@ export const getExamples = () => [
     },{
         title: VerticalAlignmentTitle,
         component: VerticalAlignment
+    },{
+        title: 'autoSize',
+        component: AutoSize
     }
 ];
