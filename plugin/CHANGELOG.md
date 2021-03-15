@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.5](https://github.com/nativescript-community/ui-label/compare/v1.1.4...v1.1.5) (2021-03-15)
+
+
+### Bug Fixes
+
+* **android:** ellipsing fix ([28ecba1](https://github.com/nativescript-community/ui-label/commit/28ecba1c019cdd4c805bff151223c7652c07f367))
+
+
+
+
+
 ## [1.1.4](https://github.com/nativescript-community/ui-label/compare/v1.1.3...v1.1.4) (2021-03-13)
 
 
