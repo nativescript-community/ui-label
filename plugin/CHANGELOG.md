@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.6](https://github.com/nativescript-community/ui-label/compare/v1.1.5...v1.1.6) (2021-03-16)
+
+
+### Bug Fixes
+
+* **ios:** support fontWeight in html text ([114b439](https://github.com/nativescript-community/ui-label/commit/114b439a80742d8a4317364242c6f44b81dc7ed1))
+
+
+
+
+
 ## [1.1.5](https://github.com/nativescript-community/ui-label/compare/v1.1.4...v1.1.5) (2021-03-15)
 
 
