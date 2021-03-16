@@ -77,7 +77,7 @@ export abstract class LabelBase extends TNLabel implements LabelViewDefinition {
 }
 
 // TODO: Can we use Label.ios optimization for affectsLayout???
-export const htmlProperty = new Property<LabelBase, string>({ name: 'html', defaultValue: null, affectsLayout: true });
+export const htmlProperty = new Property<LabelBase, string>({ name: 'html', defaultValue: null, affectsLayout: global.isAndroid });
 htmlProperty.register(LabelBase);
 
 export const maxLinesProperty = new CssProperty<Style, number>({

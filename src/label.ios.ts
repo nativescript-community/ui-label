@@ -447,11 +447,11 @@ export class Label extends LabelBase {
             this.attributedString = result;
 
 
-            this._requestLayoutOnTextChanged();
         }
         if (this.nativeViewProtected) {
             this.nativeViewProtected.attributedText = this.attributedString;
         }
+        this._requestLayoutOnTextChanged();
     }
     [colorProperty.setNative](value: Color | UIColor) {
         const color = value instanceof Color ? value.ios : value;
