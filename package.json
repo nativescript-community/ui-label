@@ -57,7 +57,7 @@
         "@angular/router": "~10.1.0",
         "@commitlint/cli": "^11.0.0",
         "@commitlint/config-conventional": "^11.0.0",
-        "@nativescript-community/text": "^1.4.8",
+        "@nativescript-community/text": "^1.4.9",
         "@nativescript/angular": "10.1.0",
         "@nativescript/core": "7.2.1",
         "@nativescript/types-android": "7.2.0",
