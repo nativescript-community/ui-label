@@ -841,6 +841,7 @@ export class Label extends LabelBase {
         if (!nativeView) {
             return;
         }
+        super._onSizeChanged();
         if (this.autoFontSize && this.text) {
             this.textViewDidChange(nativeView);
         }
