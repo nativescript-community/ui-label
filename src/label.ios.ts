@@ -418,11 +418,13 @@ export class Label extends LabelBase {
         } else {
             const font = this.nativeViewProtected.font;
             const fontSize = this.fontSize || font.pointSize;
+            const fontWeight = this.style.fontWeight;
             const familyName = this.style.fontFamily || (this.style.fontInternal && this.style.fontInternal.fontFamily) || font.familyName;
             const result = createNativeAttributedString({
                 text: this.html,
                 fontSize,
                 familyName,
+                fontWeight,
                 color: this.color,
                 letterSpacing: this.letterSpacing,
                 lineHeight: this.lineHeight,
