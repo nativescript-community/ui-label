@@ -36,6 +36,7 @@ import {
     linkUnderlineProperty,
     maxLinesProperty,
     needFormattedStringComputation,
+    selectableProperty,
     textShadowProperty,
 } from './label-common';
 
@@ -413,7 +414,7 @@ export class Label extends LabelBase {
 
     updateHTMLString() {
         if (!this.html) {
-            this.nativeTextViewProtected.selectable = false;
+            this.nativeTextViewProtected.selectable = this.selectable === true;
             this.attributedString = null;
         } else {
             const font = this.nativeViewProtected.font;
@@ -434,10 +435,13 @@ export class Label extends LabelBase {
                 // this.nativeTextViewProtected.linkTextAttributes = null;
             // const color =this.linkColor.ios;
             let hasLink = false;
-            result.enumerateAttributeInRangeOptionsUsingBlock(NSLinkAttributeName, { location: 0, length: result.length }, 0, (attributes: NSDictionary<any, any>, range, stop) => {
-                hasLink = true;
+            result.enumerateAttributeInRangeOptionsUsingBlock(NSLinkAttributeName, { location: 0, length: result.length }, 0, (value, range: NSRange, stop) => {
+                hasLink = hasLink || (!!value && range.length > 0);
+                if (hasLink) {
+                    stop[0] = true;
+                }
             });
-            this.nativeTextViewProtected.selectable = hasLink;
+            this.nativeTextViewProtected.selectable = this.selectable === true || hasLink;
             // }
 
             this.attributedString = result;
@@ -471,6 +475,9 @@ export class Label extends LabelBase {
 
         }
         nativeView.linkTextAttributes = attributes;
+    }
+    [selectableProperty.setNative](value: boolean) {
+        this.nativeTextViewProtected.selectable = value;
     }
     [linkUnderlineProperty.setNative](value: boolean) {
         const nativeView = this.nativeTextViewProtected;
