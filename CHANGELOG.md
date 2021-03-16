@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.7](https://github.com/Akylas/nativescript-label/compare/v1.1.6...v1.1.7) (2021-03-16)
+
+
+### Bug Fixes
+
+* **ios:** ensure labels with html measure correctly in list views ([4314d3f](https://github.com/Akylas/nativescript-label/commit/4314d3f1da1b29bd02fb3980a47e515fe59c8dcc))
+
+
+
+
+
 ## [1.1.6](https://github.com/Akylas/nativescript-label/compare/v1.1.5...v1.1.6) (2021-03-16)
 
 
