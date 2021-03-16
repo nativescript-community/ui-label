@@ -57,6 +57,7 @@ export abstract class LabelBase extends TNLabel implements LabelViewDefinition {
     @cssProperty lineBreak: LineBreak;
     @cssProperty linkColor: Color;
     @cssProperty linkUnderline: boolean;
+    @cssProperty selectable: boolean;
     html: string;
     //@ts-ignore
     formattedText: FormattedString;
@@ -102,6 +103,13 @@ export const linkUnderlineProperty = new CssProperty<Style, boolean>({
     valueConverter: booleanConverter,
 });
 linkUnderlineProperty.register(Style);
+
+export const selectableProperty = new CssProperty<Style, boolean>({
+    name: 'selectable',
+    cssName: 'selectable',
+    valueConverter: booleanConverter,
+});
+selectableProperty.register(Style);
 
 export const autoFontSizeProperty = new CssProperty<Style, boolean>({
     name: 'autoFontSize',

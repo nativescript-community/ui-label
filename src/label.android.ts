@@ -44,7 +44,7 @@ import {
 import { lineHeightProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import { layout } from '@nativescript/core/utils/utils';
 import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
-import { autoFontSizeProperty, lineBreakProperty, maxLinesProperty, needFormattedStringComputation, textShadowProperty } from './label-common';
+import { autoFontSizeProperty, lineBreakProperty, maxLinesProperty, needFormattedStringComputation, selectableProperty, textShadowProperty } from './label-common';
 
 export { enableIOSDTCoreText, createNativeAttributedString } from '@nativescript-community/text';
 
@@ -201,6 +201,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     @cssProperty linkColor: Color;
     @cssProperty linkUnderline: boolean;
     public html: string;
+    @cssProperty selectable: boolean;
 
     public _isSingleLine: boolean;
     public text: string;
@@ -505,6 +506,10 @@ export class Label extends LabelBase {
         } else {
             androidx.core.widget.TextViewCompat.setAutoSizeTextTypeWithDefaults(this.nativeView, androidx.core.widget.TextViewCompat.AUTO_SIZE_TEXT_TYPE_NONE);
         }
+    }
+
+    [selectableProperty.setNative](value: boolean) {
+        this.nativeTextViewProtected.setTextIsSelectable(value);
     }
 
     @profile
