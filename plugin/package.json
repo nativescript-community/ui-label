@@ -1,6 +1,6 @@
 {
     "name": "@nativescript-community/ui-label",
-    "version": "1.1.7",
+    "version": "1.1.8",
     "description": "Alternative to the built-in NativeScript Label but with better performance and additional features such as HTML rendering and more.",
     "main": "./label",
     "sideEffects": false,
