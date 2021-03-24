@@ -240,6 +240,9 @@ export class Label extends LabelBase {
         ).height;
     }
     updateVerticalAlignment() {
+        if (!this.text) {
+            return;
+        }
         const tv = this.nativeTextViewProtected;
         const inset = this.nativeViewProtected.textContainerInset;
         const top = layout.toDeviceIndependentPixels(this.effectivePaddingTop + this.effectiveBorderTopWidth);
@@ -815,6 +818,7 @@ export class Label extends LabelBase {
 
             const textViewSize = textView.frame.size;
             const fixedWidth = textViewSize.width;
+            let changed = false;
 
             const fontSize = this.style.fontSize || 17;
             let expectFont: UIFont = (this.style.fontInternal || Font.default).getUIFont(UIFont.systemFontOfSize(fontSize));
@@ -825,6 +829,7 @@ export class Label extends LabelBase {
                     expectFont = expectFont.fontWithSize(expectFont.pointSize - 1);
                     expectSize = textView.sizeThatFits(CGSizeMake(fixedWidth, Number.MAX_SAFE_INTEGER));
                     textView.font = expectFont;
+                    changed = true;
                 }
             }
             else {
@@ -832,7 +837,11 @@ export class Label extends LabelBase {
                     expectFont = expectFont.fontWithSize(expectFont.pointSize + 1);
                     expectSize = textView.sizeThatFits(CGSizeMake(fixedWidth, Number.MAX_SAFE_INTEGER));
                     textView.font = expectFont;
+                    changed = true;
                 }
+            }
+            if (changed) {
+                this.updateVerticalAlignment();
             }
         }
     }
@@ -850,7 +859,7 @@ export class Label extends LabelBase {
         if (value && this.text) {
             this.textViewDidChange(this.nativeTextViewProtected);
         } else {
-            this[fontInternalProperty.setNative](this.style.font);
+            this[fontInternalProperty.setNative](this.style.fontInternal);
         }
     }
 
