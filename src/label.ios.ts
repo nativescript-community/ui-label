@@ -145,7 +145,7 @@ class ObserverClass extends NSObject {
         if (path === 'contentSize') {
             const owner = this._owner && this._owner.get();
             if (owner) {
-                owner.updateVerticalAlignment();
+                owner.updateTextContainerInset();
             }
         }
     }
@@ -239,49 +239,61 @@ export class Label extends LabelBase {
             tv.textContainer.lineBreakMode
         ).height;
     }
-    updateVerticalAlignment() {
+    
+    updateTextContainerInset(applyVerticalTextAlignment = true) {
         if (!this.text) {
             return;
         }
         const tv = this.nativeTextViewProtected;
-        const inset = this.nativeViewProtected.textContainerInset;
         const top = layout.toDeviceIndependentPixels(this.effectivePaddingTop + this.effectiveBorderTopWidth);
+        const right = layout.toDeviceIndependentPixels(this.effectivePaddingRight + this.effectiveBorderRightWidth);
+        const bottom = layout.toDeviceIndependentPixels(this.effectivePaddingBottom + this.effectiveBorderBottomWidth);
+        const left = layout.toDeviceIndependentPixels(this.effectivePaddingLeft + this.effectiveBorderLeftWidth);
+        
+        if (!applyVerticalTextAlignment) {
+            this.nativeViewProtected.textContainerInset = {
+                top,
+                left,
+                bottom,
+                right,
+            };
+            return;
+        }
         switch (this.verticalTextAlignment) {
+            case undefined: // not supported
             case 'initial': // not supported
             case 'top':
                 this.nativeViewProtected.textContainerInset = {
                     top,
-                    left: inset.left,
-                    bottom: inset.bottom,
-                    right: inset.right,
+                    left,
+                    bottom,
+                    right,
                 };
                 break;
 
             case 'middle':
             case 'center': {
                 const height = this.computeTextHeight(CGSizeMake(tv.bounds.size.width, 10000));
-                const bottom = layout.toDeviceIndependentPixels(this.effectivePaddingBottom + this.effectiveBorderBottomWidth);
                 let topCorrect = (tv.bounds.size.height - top - bottom - height * tv.zoomScale) / 2.0;
                 topCorrect = topCorrect < 0.0 ? 0.0 : topCorrect;
                 this.nativeViewProtected.textContainerInset = {
                     top: top + topCorrect,
-                    left: inset.left,
-                    bottom: inset.bottom,
-                    right: inset.right,
+                    left,
+                    bottom,
+                    right,
                 };
                 break;
             }
 
             case 'bottom': {
                 const height = this.computeTextHeight(CGSizeMake(tv.bounds.size.width, 10000));
-                const bottom = layout.toDeviceIndependentPixels(this.effectivePaddingBottom + this.effectiveBorderBottomWidth);
                 let bottomCorrect = tv.bounds.size.height - bottom - height * tv.zoomScale;
                 bottomCorrect = bottomCorrect < 0.0 ? 0.0 : bottomCorrect;
                 this.nativeViewProtected.textContainerInset = {
                     top: top + bottomCorrect,
-                    left: inset.left,
-                    bottom: inset.bottom,
-                    right: inset.right,
+                    left,
+                    bottom,
+                    right,
                 };
                 break;
             }
@@ -387,7 +399,7 @@ export class Label extends LabelBase {
         super._requestLayoutOnTextChanged();
     }
     public onMeasure(widthMeasureSpec: number, heightMeasureSpec: number): void {
-        const nativeView = this.nativeViewProtected;
+        const nativeView = this.nativeTextViewProtected;
         if (nativeView) {
             const width = layout.getMeasureSpecSize(widthMeasureSpec);
             const widthMode = layout.getMeasureSpecMode(widthMeasureSpec);
@@ -395,9 +407,15 @@ export class Label extends LabelBase {
             const height = layout.getMeasureSpecSize(heightMeasureSpec);
             const heightMode = layout.getMeasureSpecMode(heightMeasureSpec);
 
+            if (this.autoFontSize) {
+                this.textViewDidChange(nativeView, Math.floor(layout.toDeviceIndependentPixels(width)));
+
+            }
+
             const desiredSize = layout.measureNativeView(nativeView, width, widthMode, height, heightMode);
 
             const labelWidth = widthMode === layout.AT_MOST ? Math.min(desiredSize.width, width) : desiredSize.width;
+            // const labelHeight = heightMode === layout.AT_MOST ? Math.min(desiredSize.height, height) : desiredSize.height;
             const measureWidth = Math.max(labelWidth, this.effectiveMinWidth);
             const measureHeight = Math.max(desiredSize.height, this.effectiveMinHeight);
 
@@ -674,14 +692,8 @@ export class Label extends LabelBase {
         };
     }
     [paddingTopProperty.setNative](value: Length) {
-        const inset = this.nativeViewProtected.textContainerInset;
-        const top = layout.toDeviceIndependentPixels(this.effectivePaddingTop + this.effectiveBorderTopWidth);
-        this.nativeViewProtected.textContainerInset = {
-            top,
-            left: inset.left,
-            bottom: inset.bottom,
-            right: inset.right,
-        };
+        this.updateTextContainerInset();
+
     }
 
     [paddingRightProperty.getDefault](): Length {
@@ -691,14 +703,7 @@ export class Label extends LabelBase {
         };
     }
     [paddingRightProperty.setNative](value: Length) {
-        const inset = this.nativeViewProtected.textContainerInset;
-        const right = layout.toDeviceIndependentPixels(this.effectivePaddingRight + this.effectiveBorderRightWidth);
-        this.nativeViewProtected.textContainerInset = {
-            top: inset.top,
-            left: inset.left,
-            bottom: inset.bottom,
-            right,
-        };
+        this.updateTextContainerInset();
     }
 
     [paddingBottomProperty.getDefault](): Length {
@@ -708,14 +713,7 @@ export class Label extends LabelBase {
         };
     }
     [paddingBottomProperty.setNative](value: Length) {
-        const inset = this.nativeViewProtected.textContainerInset;
-        const bottom = layout.toDeviceIndependentPixels(this.effectivePaddingBottom + this.effectiveBorderBottomWidth);
-        this.nativeViewProtected.textContainerInset = {
-            top: inset.top,
-            left: inset.left,
-            bottom,
-            right: inset.right,
-        };
+        this.updateTextContainerInset();
     }
     [paddingLeftProperty.getDefault](): Length {
         return {
@@ -724,14 +722,8 @@ export class Label extends LabelBase {
         };
     }
     [paddingLeftProperty.setNative](value: Length) {
-        const inset = this.nativeViewProtected.textContainerInset;
-        const left = layout.toDeviceIndependentPixels(this.effectivePaddingLeft + this.effectiveBorderLeftWidth);
-        this.nativeViewProtected.textContainerInset = {
-            top: inset.top,
-            left,
-            bottom: inset.bottom,
-            right: inset.right,
-        };
+        this.updateTextContainerInset();
+
     }
 
     [borderTopWidthProperty.getDefault](): Length {
@@ -741,9 +733,8 @@ export class Label extends LabelBase {
         };
     }
     [borderTopWidthProperty.setNative](value: Length) {
-        const inset = this.nativeTextViewProtected.textContainerInset;
-        const top = layout.toDeviceIndependentPixels(this.effectivePaddingTop + this.effectiveBorderTopWidth);
-        this.nativeTextViewProtected.textContainerInset = { top, left: inset.left, bottom: inset.bottom, right: inset.right };
+        this.updateTextContainerInset();
+
     }
 
     [borderRightWidthProperty.getDefault](): Length {
@@ -753,9 +744,8 @@ export class Label extends LabelBase {
         };
     }
     [borderRightWidthProperty.setNative](value: Length) {
-        const inset = this.nativeTextViewProtected.textContainerInset;
-        const right = layout.toDeviceIndependentPixels(this.effectivePaddingRight + this.effectiveBorderRightWidth);
-        this.nativeTextViewProtected.textContainerInset = { top: inset.top, left: inset.left, bottom: inset.bottom, right };
+        this.updateTextContainerInset();
+
     }
 
     [borderBottomWidthProperty.getDefault](): Length {
@@ -765,9 +755,8 @@ export class Label extends LabelBase {
         };
     }
     [borderBottomWidthProperty.setNative](value: Length) {
-        const inset = this.nativeTextViewProtected.textContainerInset;
-        const bottom = layout.toDeviceIndependentPixels(this.effectivePaddingBottom + this.effectiveBorderBottomWidth);
-        this.nativeTextViewProtected.textContainerInset = { top: inset.top, left: inset.left, bottom, right: inset.right };
+        this.updateTextContainerInset();
+
     }
 
     [borderLeftWidthProperty.getDefault](): Length {
@@ -777,9 +766,8 @@ export class Label extends LabelBase {
         };
     }
     [borderLeftWidthProperty.setNative](value: Length) {
-        const inset = this.nativeTextViewProtected.textContainerInset;
-        const left = layout.toDeviceIndependentPixels(this.effectivePaddingLeft + this.effectiveBorderLeftWidth);
-        this.nativeTextViewProtected.textContainerInset = { top: inset.top, left, bottom: inset.bottom, right: inset.right };
+        this.updateTextContainerInset();
+
     }
 
     [maxLinesProperty.setNative](value: number | string) {
@@ -810,51 +798,63 @@ export class Label extends LabelBase {
         }
     }
 
-    textViewDidChange(textView: UITextView) {
+    textViewDidChange(textView: UITextView, width?) {
         if (this.autoFontSize) {
             if (!textView.text  || textView.text.length === 0 || CGSizeEqualToSize(textView.bounds.size , CGSizeZero)) {
                 return;
             }
 
+            // we need to reset verticalTextAlignment or computation will be wrong
+            this.updateTextContainerInset(false);
             const textViewSize = textView.frame.size;
-            const fixedWidth = textViewSize.width;
-            let changed = false;
+            const fixedWidth = width || textViewSize.width;
 
             const fontSize = this.style.fontSize || 17;
             let expectFont: UIFont = (this.style.fontInternal || Font.default).getUIFont(UIFont.systemFontOfSize(fontSize));
+            //first reset the font size
             textView.font = expectFont;
             let expectSize = textView.sizeThatFits(CGSizeMake(fixedWidth, Number.MAX_SAFE_INTEGER));
             if (expectSize.height > textViewSize.height) {
-                while (expectSize.height > textViewSize.height) {
-                    expectFont = expectFont.fontWithSize(expectFont.pointSize - 1);
+                while (expectSize.height > textViewSize.height && ( expectFont.pointSize > (this.minFontSize || 12))) {
+                    const newFont = expectFont.fontWithSize(expectFont.pointSize - 1);
+                    textView.font = newFont;
                     expectSize = textView.sizeThatFits(CGSizeMake(fixedWidth, Number.MAX_SAFE_INTEGER));
-                    textView.font = expectFont;
-                    changed = true;
+                    if (expectSize.height >= textViewSize.height) {
+                        expectFont = newFont;
+                    } else {
+                        textView.font = expectFont;
+                        break;
+                    }
                 }
             }
             else {
-                while (expectSize.height < textViewSize.height) {
-                    expectFont = expectFont.fontWithSize(expectFont.pointSize + 1);
+
+                while (expectSize.height < textViewSize.height && (expectFont.pointSize < (this.maxFontSize || 200))) {
+                    const newFont = expectFont.fontWithSize(expectFont.pointSize + 1);
+                    textView.font = newFont;
                     expectSize = textView.sizeThatFits(CGSizeMake(fixedWidth, Number.MAX_SAFE_INTEGER));
-                    textView.font = expectFont;
-                    changed = true;
+
+                    if (expectSize.height <= textViewSize.height) {
+                        expectFont = newFont;
+                    } else {
+                        textView.font = expectFont;
+                        break;
+                    }
                 }
             }
-            if (changed) {
-                this.updateVerticalAlignment();
-            }
+            this.updateTextContainerInset();
         }
     }
-    _onSizeChanged(): void {
-        const nativeView = this.nativeViewProtected;
-        if (!nativeView) {
-            return;
-        }
-        super._onSizeChanged();
-        if (this.autoFontSize && this.text) {
-            this.textViewDidChange(nativeView);
-        }
-    }
+    // _onSizeChanged(): void {
+    //     const nativeView = this.nativeViewProtected;
+    //     if (!nativeView) {
+    //         return;
+    //     }
+    //     super._onSizeChanged();
+    //     // if (this.autoFontSize && this.text) {
+    //     //     this.textViewDidChange(nativeView);
+    //     // }
+    // }
     [autoFontSizeProperty.setNative](value: boolean) {
         if (value && this.text) {
             this.textViewDidChange(this.nativeTextViewProtected);
@@ -864,6 +864,6 @@ export class Label extends LabelBase {
     }
 
     [verticalTextAlignmentProperty.setNative](value: VerticalTextAlignment) {
-        this.updateVerticalAlignment();
+        this.updateTextContainerInset();
     }
 }

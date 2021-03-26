@@ -197,6 +197,8 @@ function initializeURLClickableSpan(): void {
 abstract class LabelBase extends View implements LabelViewDefinition {
     @cssProperty maxLines: string | number;
     @cssProperty autoFontSize: boolean;
+    @cssProperty minFontSize: number;
+    @cssProperty maxFontSize: number;
     @cssProperty verticalTextAlignment: VerticalTextAlignment;
     @cssProperty linkColor: Color;
     @cssProperty linkUnderline: boolean;
@@ -502,7 +504,7 @@ export class Label extends LabelBase {
 
     [autoFontSizeProperty.setNative](value: boolean) {
         if (value) {
-            androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(this.nativeView, 10, 200, 1, android.util.TypedValue.COMPLEX_UNIT_DIP);
+            androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(this.nativeView, this.minFontSize || 10, this.maxFontSize || 200, 1, android.util.TypedValue.COMPLEX_UNIT_DIP);
         } else {
             androidx.core.widget.TextViewCompat.setAutoSizeTextTypeWithDefaults(this.nativeView, androidx.core.widget.TextViewCompat.AUTO_SIZE_TEXT_TYPE_NONE);
         }
