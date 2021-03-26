@@ -1,4 +1,9 @@
-import { VerticalTextAlignment, computeBaseLineOffset, createNativeAttributedString, verticalTextAlignmentProperty } from '@nativescript-community/text';
+import {
+    VerticalTextAlignment,
+    computeBaseLineOffset,
+    createNativeAttributedString,
+    verticalTextAlignmentProperty
+} from '@nativescript-community/text';
 import { Color, Font, FormattedString, Span, View } from '@nativescript/core';
 import {
     Length,
@@ -11,7 +16,7 @@ import {
     paddingBottomProperty,
     paddingLeftProperty,
     paddingRightProperty,
-    paddingTopProperty,
+    paddingTopProperty
 } from '@nativescript/core/ui/styling/style-properties';
 import {
     TextAlignment,
@@ -21,7 +26,7 @@ import {
     WhiteSpace,
     letterSpacingProperty,
     textDecorationProperty,
-    whiteSpaceProperty,
+    whiteSpaceProperty
 } from '@nativescript/core/ui/text-base';
 import { getClosestPropertyValue, lineHeightProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import { isNullOrUndefined, isString } from '@nativescript/core/utils/types';
@@ -37,7 +42,7 @@ import {
     maxLinesProperty,
     needFormattedStringComputation,
     selectableProperty,
-    textShadowProperty,
+    textShadowProperty
 } from './label-common';
 
 export { enableIOSDTCoreText, createNativeAttributedString } from '@nativescript-community/text';
@@ -49,7 +54,7 @@ enum FixedSize {
     NONE = 0,
     WIDTH = 1,
     HEIGHT = 2,
-    BOTH = 3,
+    BOTH = 3
 }
 
 declare module '@nativescript/core/ui/text-base' {
@@ -106,8 +111,6 @@ function whiteSpaceToLineBreakMode(value: WhiteSpace) {
     }
 }
 
-
-
 @NativeClass
 class LabelUITextViewDelegateImpl extends NSObject implements UITextViewDelegate {
     public static ObjCProtocols = [UITextViewDelegate];
@@ -121,7 +124,12 @@ class LabelUITextViewDelegateImpl extends NSObject implements UITextViewDelegate
         return impl;
     }
 
-    textViewShouldInteractWithURLInRangeInteraction?(textView: UITextView, URL: NSURL, characterRange: NSRange, interaction: UITextItemInteraction) {
+    textViewShouldInteractWithURLInRangeInteraction?(
+        textView: UITextView,
+        URL: NSURL,
+        characterRange: NSRange,
+        interaction: UITextItemInteraction
+    ) {
         const owner = this._owner.get();
         if (owner) {
             return owner.textViewShouldInteractWithURLInRangeInteraction(textView, URL, characterRange, interaction);
@@ -134,7 +142,6 @@ class LabelUITextViewDelegateImpl extends NSObject implements UITextViewDelegate
             owner.textViewDidChange(textView);
         }
     }
-
 }
 
 @NativeClass
@@ -180,7 +187,7 @@ export class Label extends LabelBase {
             top: 0,
             left: 0,
             bottom: 0,
-            right: 0,
+            right: 0
         };
         return view;
     }
@@ -239,7 +246,7 @@ export class Label extends LabelBase {
             tv.textContainer.lineBreakMode
         ).height;
     }
-    
+
     updateTextContainerInset(applyVerticalTextAlignment = true) {
         if (!this.text) {
             return;
@@ -249,13 +256,13 @@ export class Label extends LabelBase {
         const right = layout.toDeviceIndependentPixels(this.effectivePaddingRight + this.effectiveBorderRightWidth);
         const bottom = layout.toDeviceIndependentPixels(this.effectivePaddingBottom + this.effectiveBorderBottomWidth);
         const left = layout.toDeviceIndependentPixels(this.effectivePaddingLeft + this.effectiveBorderLeftWidth);
-        
+
         if (!applyVerticalTextAlignment) {
             this.nativeViewProtected.textContainerInset = {
                 top,
                 left,
                 bottom,
-                right,
+                right
             };
             return;
         }
@@ -267,7 +274,7 @@ export class Label extends LabelBase {
                     top,
                     left,
                     bottom,
-                    right,
+                    right
                 };
                 break;
 
@@ -280,7 +287,7 @@ export class Label extends LabelBase {
                     top: top + topCorrect,
                     left,
                     bottom,
-                    right,
+                    right
                 };
                 break;
             }
@@ -293,13 +300,12 @@ export class Label extends LabelBase {
                     top: top + bottomCorrect,
                     left,
                     bottom,
-                    right,
+                    right
                 };
                 break;
             }
         }
     }
-
 
     // @ts-ignore
     get ios(): UITextView {
@@ -409,7 +415,6 @@ export class Label extends LabelBase {
 
             if (this.autoFontSize) {
                 this.textViewDidChange(nativeView, Math.floor(layout.toDeviceIndependentPixels(width)));
-
             }
 
             const desiredSize = layout.measureNativeView(nativeView, width, widthMode, height, heightMode);
@@ -428,8 +433,13 @@ export class Label extends LabelBase {
     _htmlTappable = false;
     _htmlTapGestureRecognizer;
 
-    textViewShouldInteractWithURLInRangeInteraction?(textView: UITextView, URL: NSURL, characterRange: NSRange, interaction: UITextItemInteraction) {
-        this.notify({eventName:'linkTap', object:this, link:URL.toString()});
+    textViewShouldInteractWithURLInRangeInteraction?(
+        textView: UITextView,
+        URL: NSURL,
+        characterRange: NSRange,
+        interaction: UITextItemInteraction
+    ) {
+        this.notify({ eventName: 'linkTap', object: this, link: URL.toString() });
         return false;
     }
 
@@ -441,7 +451,8 @@ export class Label extends LabelBase {
             const font = this.nativeViewProtected.font;
             const fontSize = this.fontSize || font.pointSize;
             const fontWeight = this.style.fontWeight;
-            const familyName = this.style.fontFamily || (this.style.fontInternal && this.style.fontInternal.fontFamily) || font.familyName;
+            const familyName =
+                this.style.fontFamily || (this.style.fontInternal && this.style.fontInternal.fontFamily) || font.familyName;
             const result = createNativeAttributedString({
                 text: this.html,
                 fontSize,
@@ -450,24 +461,27 @@ export class Label extends LabelBase {
                 color: this.color,
                 letterSpacing: this.letterSpacing,
                 lineHeight: this.lineHeight,
-                textAlignment: this.nativeTextViewProtected.textAlignment,
+                textAlignment: this.nativeTextViewProtected.textAlignment
             }) as NSMutableAttributedString;
             // if (this.linkColor) {
-                // this.nativeTextViewProtected.linkTextAttributes = null;
+            // this.nativeTextViewProtected.linkTextAttributes = null;
             // const color =this.linkColor.ios;
             let hasLink = false;
-            result.enumerateAttributeInRangeOptionsUsingBlock(NSLinkAttributeName, { location: 0, length: result.length }, 0, (value, range: NSRange, stop) => {
-                hasLink = hasLink || (!!value && range.length > 0);
-                if (hasLink) {
-                    stop[0] = true;
+            result.enumerateAttributeInRangeOptionsUsingBlock(
+                NSLinkAttributeName,
+                { location: 0, length: result.length },
+                0,
+                (value, range: NSRange, stop) => {
+                    hasLink = hasLink || (!!value && range.length > 0);
+                    if (hasLink) {
+                        stop[0] = true;
+                    }
                 }
-            });
+            );
             this.nativeTextViewProtected.selectable = this.selectable === true || hasLink;
             // }
 
             this.attributedString = result;
-
-
         }
         if (this.nativeViewProtected) {
             this.nativeViewProtected.attributedText = this.attributedString;
@@ -489,11 +503,10 @@ export class Label extends LabelBase {
             attributes = NSMutableDictionary.new();
         }
         attributes.setValueForKey(color, NSForegroundColorAttributeName);
-        if(this.linkUnderline !== false) {
+        if (this.linkUnderline !== false) {
             attributes.setValueForKey(color, NSUnderlineColorAttributeName);
         } else {
             attributes.setValueForKey(UIColor.clearColor, NSUnderlineColorAttributeName);
-
         }
         nativeView.linkTextAttributes = attributes;
     }
@@ -502,7 +515,7 @@ export class Label extends LabelBase {
     }
     [linkUnderlineProperty.setNative](value: boolean) {
         const nativeView = this.nativeTextViewProtected;
-        let attributes =  nativeView.linkTextAttributes as NSMutableDictionary<any, any>;
+        let attributes = nativeView.linkTextAttributes as NSMutableDictionary<any, any>;
         if (!(attributes instanceof NSMutableDictionary)) {
             attributes = NSMutableDictionary.new();
         }
@@ -512,7 +525,7 @@ export class Label extends LabelBase {
             } else {
                 attributes.removeObjectForKey(NSUnderlineColorAttributeName);
             }
-        } else{
+        } else {
             attributes.setValueForKey(UIColor.clearColor, NSUnderlineColorAttributeName);
         }
         nativeView.linkTextAttributes = attributes;
@@ -601,7 +614,7 @@ export class Label extends LabelBase {
             const result = NSMutableAttributedString.alloc().initWithString(source);
             result.setAttributesRange(dict as any, {
                 location: 0,
-                length: source.length,
+                length: source.length
             });
             if (this.nativeTextViewProtected instanceof UIButton) {
                 this.nativeTextViewProtected.setAttributedTitleForState(result, 0 /* Normal */);
@@ -643,8 +656,8 @@ export class Label extends LabelBase {
         const attrDict: { key: string; value: any } = {} as any;
         const style = span.style;
 
-        let align = style.verticalAlignment || (span.parent as FormattedString).style.verticalAlignment ;
-        if (!align || align === 'stretch' ) {
+        let align = style.verticalAlignment || (span.parent as FormattedString).style.verticalAlignment;
+        if (!align || align === 'stretch') {
             align = this.verticalTextAlignment as any;
         }
         const font = new Font(style.fontFamily, style.fontSize, style.fontStyle, style.fontWeight);
@@ -657,7 +670,7 @@ export class Label extends LabelBase {
         }
 
         // We don't use isSet function here because defaultValue for backgroundColor is null.
-        const backgroundColor: Color = (style.backgroundColor || (span.parent as FormattedString).backgroundColor);
+        const backgroundColor: Color = style.backgroundColor || (span.parent as FormattedString).backgroundColor;
         if (backgroundColor) {
             const color = backgroundColor instanceof Color ? backgroundColor : new Color(backgroundColor);
             attrDict[NSBackgroundColorAttributeName] = color.ios;
@@ -679,7 +692,15 @@ export class Label extends LabelBase {
 
         if (align && align !== 'stretch') {
             if (iosFont) {
-                attrDict[NSBaselineOffsetAttributeName] = -computeBaseLineOffset(align, -iosFont.ascender, -iosFont.descender, -iosFont.ascender, -iosFont.descender, iosFont.pointSize, this.currentMaxFontSize);
+                attrDict[NSBaselineOffsetAttributeName] = -computeBaseLineOffset(
+                    align,
+                    -iosFont.ascender,
+                    -iosFont.descender,
+                    -iosFont.ascender,
+                    -iosFont.descender,
+                    iosFont.pointSize,
+                    this.currentMaxFontSize
+                );
             }
         }
 
@@ -688,18 +709,17 @@ export class Label extends LabelBase {
     [paddingTopProperty.getDefault](): Length {
         return {
             value: 0,
-            unit: 'px',
+            unit: 'px'
         };
     }
     [paddingTopProperty.setNative](value: Length) {
         this.updateTextContainerInset();
-
     }
 
     [paddingRightProperty.getDefault](): Length {
         return {
             value: 0,
-            unit: 'px',
+            unit: 'px'
         };
     }
     [paddingRightProperty.setNative](value: Length) {
@@ -709,7 +729,7 @@ export class Label extends LabelBase {
     [paddingBottomProperty.getDefault](): Length {
         return {
             value: 0,
-            unit: 'px',
+            unit: 'px'
         };
     }
     [paddingBottomProperty.setNative](value: Length) {
@@ -718,56 +738,51 @@ export class Label extends LabelBase {
     [paddingLeftProperty.getDefault](): Length {
         return {
             value: 0,
-            unit: 'px',
+            unit: 'px'
         };
     }
     [paddingLeftProperty.setNative](value: Length) {
         this.updateTextContainerInset();
-
     }
 
     [borderTopWidthProperty.getDefault](): Length {
         return {
             value: 0,
-            unit: 'px',
+            unit: 'px'
         };
     }
     [borderTopWidthProperty.setNative](value: Length) {
         this.updateTextContainerInset();
-
     }
 
     [borderRightWidthProperty.getDefault](): Length {
         return {
             value: 0,
-            unit: 'px',
+            unit: 'px'
         };
     }
     [borderRightWidthProperty.setNative](value: Length) {
         this.updateTextContainerInset();
-
     }
 
     [borderBottomWidthProperty.getDefault](): Length {
         return {
             value: 0,
-            unit: 'px',
+            unit: 'px'
         };
     }
     [borderBottomWidthProperty.setNative](value: Length) {
         this.updateTextContainerInset();
-
     }
 
     [borderLeftWidthProperty.getDefault](): Length {
         return {
             value: 0,
-            unit: 'px',
+            unit: 'px'
         };
     }
     [borderLeftWidthProperty.setNative](value: Length) {
         this.updateTextContainerInset();
-
     }
 
     [maxLinesProperty.setNative](value: number | string) {
@@ -800,7 +815,7 @@ export class Label extends LabelBase {
 
     textViewDidChange(textView: UITextView, width?) {
         if (this.autoFontSize) {
-            if (!textView.text  || textView.text.length === 0 || CGSizeEqualToSize(textView.bounds.size , CGSizeZero)) {
+            if (!textView.text || textView.text.length === 0 || CGSizeEqualToSize(textView.bounds.size, CGSizeZero)) {
                 return;
             }
 
@@ -815,7 +830,7 @@ export class Label extends LabelBase {
             textView.font = expectFont;
             let expectSize = textView.sizeThatFits(CGSizeMake(fixedWidth, Number.MAX_SAFE_INTEGER));
             if (expectSize.height > textViewSize.height) {
-                while (expectSize.height > textViewSize.height && ( expectFont.pointSize > (this.minFontSize || 12))) {
+                while (expectSize.height > textViewSize.height && expectFont.pointSize > (this.minFontSize || 12)) {
                     const newFont = expectFont.fontWithSize(expectFont.pointSize - 1);
                     textView.font = newFont;
                     expectSize = textView.sizeThatFits(CGSizeMake(fixedWidth, Number.MAX_SAFE_INTEGER));
@@ -826,10 +841,8 @@ export class Label extends LabelBase {
                         break;
                     }
                 }
-            }
-            else {
-
-                while (expectSize.height < textViewSize.height && (expectFont.pointSize < (this.maxFontSize || 200))) {
+            } else {
+                while (expectSize.height < textViewSize.height && expectFont.pointSize < (this.maxFontSize || 200)) {
                     const newFont = expectFont.fontWithSize(expectFont.pointSize + 1);
                     textView.font = newFont;
                     expectSize = textView.sizeThatFits(CGSizeMake(fixedWidth, Number.MAX_SAFE_INTEGER));
