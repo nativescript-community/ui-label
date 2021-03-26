@@ -248,16 +248,15 @@ export class Label extends LabelBase {
     }
 
     updateTextContainerInset(applyVerticalTextAlignment = true) {
-        if (!this.text) {
-            return;
-        }
+        // if (!this.text) {
+        //     return;
+        // }
         const tv = this.nativeTextViewProtected;
         const top = layout.toDeviceIndependentPixels(this.effectivePaddingTop + this.effectiveBorderTopWidth);
         const right = layout.toDeviceIndependentPixels(this.effectivePaddingRight + this.effectiveBorderRightWidth);
         const bottom = layout.toDeviceIndependentPixels(this.effectivePaddingBottom + this.effectiveBorderBottomWidth);
         const left = layout.toDeviceIndependentPixels(this.effectivePaddingLeft + this.effectiveBorderLeftWidth);
-
-        if (!applyVerticalTextAlignment) {
+        if (!applyVerticalTextAlignment || !this.verticalTextAlignment) {
             this.nativeViewProtected.textContainerInset = {
                 top,
                 left,
@@ -267,7 +266,6 @@ export class Label extends LabelBase {
             return;
         }
         switch (this.verticalTextAlignment) {
-            case undefined: // not supported
             case 'initial': // not supported
             case 'top':
                 this.nativeViewProtected.textContainerInset = {
