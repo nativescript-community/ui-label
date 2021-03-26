@@ -4,7 +4,7 @@
     createNativeAttributedString,
     cssProperty,
     overrideSpanAndFormattedStringEnabled,
-    verticalTextAlignmentProperty,
+    verticalTextAlignmentProperty
 } from '@nativescript-community/text';
 import {
     CSSType,
@@ -16,7 +16,7 @@ import {
     View,
     ViewBase,
     booleanConverter,
-    profile,
+    profile
 } from '@nativescript/core';
 import { Color } from '@nativescript/core/color';
 import { Font, FontStyle, FontWeight } from '@nativescript/core/ui/styling/font';
@@ -28,7 +28,7 @@ import {
     paddingBottomProperty,
     paddingLeftProperty,
     paddingRightProperty,
-    paddingTopProperty,
+    paddingTopProperty
 } from '@nativescript/core/ui/styling/style-properties';
 import {
     TextAlignment,
@@ -39,12 +39,19 @@ import {
     textAlignmentProperty,
     textDecorationProperty,
     textTransformProperty,
-    whiteSpaceProperty,
+    whiteSpaceProperty
 } from '@nativescript/core/ui/text-base';
 import { lineHeightProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import { layout } from '@nativescript/core/utils/utils';
 import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
-import { autoFontSizeProperty, lineBreakProperty, maxLinesProperty, needFormattedStringComputation, selectableProperty, textShadowProperty } from './label-common';
+import {
+    autoFontSizeProperty,
+    lineBreakProperty,
+    maxLinesProperty,
+    needFormattedStringComputation,
+    selectableProperty,
+    textShadowProperty
+} from './label-common';
 
 export { enableIOSDTCoreText, createNativeAttributedString } from '@nativescript-community/text';
 
@@ -62,7 +69,7 @@ enum SuspendType {
     Loaded = 1 << 20,
     NativeView = 1 << 21,
     UISetup = 1 << 22,
-    IncrementalCountMask = ~((1 << 20) + (1 << 21) + (1 << 22)),
+    IncrementalCountMask = ~((1 << 20) + (1 << 21) + (1 << 22))
 }
 declare module '@nativescript/core/ui/core/view-base' {
     interface ViewBase {
@@ -85,10 +92,9 @@ const textProperty = new Property<Label, string>({ name: 'text', defaultValue: '
 const formattedTextProperty = new Property<Label, FormattedString>({
     name: 'formattedText',
     affectsLayout: true,
-    valueChanged: onFormattedTextPropertyChanged,
+    valueChanged: onFormattedTextPropertyChanged
 });
 export const htmlProperty = new Property<Label, string>({ name: 'html', defaultValue: null, affectsLayout: true });
-
 
 type ClickableSpan = new (owner: Span) => android.text.style.ClickableSpan;
 
@@ -96,7 +102,7 @@ function getHorizontalGravity(textAlignment: TextAlignment) {
     switch (textAlignment) {
         case 'initial':
         case 'left':
-            return  8388611; //Gravity.START
+            return 8388611; //Gravity.START
         case 'center':
             return 1; //Gravity.CENTER_HORIZONTAL
         case 'right':
@@ -127,7 +133,7 @@ function initializeClickableSpan(): void {
 
     @NativeClass
     class ClickableSpanImpl extends android.text.style.ClickableSpan {
-        owner: WeakRef<Span >;
+        owner: WeakRef<Span>;
 
         constructor(owner: Span) {
             super();
@@ -173,7 +179,7 @@ function initializeURLClickableSpan(): void {
         onClick(view: android.view.View): void {
             const owner = this.owner.get();
             if (owner) {
-                owner.notify({eventName:Span.linkTapEvent, object:owner, link:this.getURL()});
+                owner.notify({ eventName: Span.linkTapEvent, object: owner, link: this.getURL() });
             }
 
             view.clearFocus();
@@ -215,9 +221,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
         return this.nativeViewProtected;
     }
 
-    _setTappableState(value: boolean) {
-
-    }
+    _setTappableState(value: boolean) {}
 
     @cssProperty fontFamily: string;
     @cssProperty fontSize: number;
@@ -324,7 +328,6 @@ export class Label extends LabelBase {
         }
         return new TextView(this._context);
     }
-
 
     [maxLinesProperty.setNative](value: number | string) {
         // this.nativeViewProtected.setMinLines(1);
@@ -504,9 +507,18 @@ export class Label extends LabelBase {
 
     [autoFontSizeProperty.setNative](value: boolean) {
         if (value) {
-            androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(this.nativeView, this.minFontSize || 10, this.maxFontSize || 200, 1, android.util.TypedValue.COMPLEX_UNIT_DIP);
+            androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+                this.nativeView,
+                this.minFontSize || 10,
+                this.maxFontSize || 200,
+                1,
+                android.util.TypedValue.COMPLEX_UNIT_DIP
+            );
         } else {
-            androidx.core.widget.TextViewCompat.setAutoSizeTextTypeWithDefaults(this.nativeView, androidx.core.widget.TextViewCompat.AUTO_SIZE_TEXT_TYPE_NONE);
+            androidx.core.widget.TextViewCompat.setAutoSizeTextTypeWithDefaults(
+                this.nativeView,
+                androidx.core.widget.TextViewCompat.AUTO_SIZE_TEXT_TYPE_NONE
+            );
         }
     }
 
@@ -529,7 +541,6 @@ export class Label extends LabelBase {
                 result.removeSpan(span);
                 result.setSpan(new URLClickableSpan(text, this), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-
         }
         return result;
     }
@@ -538,8 +549,8 @@ export class Label extends LabelBase {
         const formattedText = this.formattedText;
         const result = createNativeAttributedString(formattedText as any);
         let indexSearch = 0;
-        let str: string ;
-        formattedText.spans.forEach(s=>{
+        let str: string;
+        formattedText.spans.forEach((s) => {
             if (s.tappable) {
                 if (!str) {
                     str = formattedText.toString();
@@ -547,7 +558,7 @@ export class Label extends LabelBase {
                 }
                 initializeClickableSpan();
                 const text = s.text;
-                const start  = str.indexOf(text, indexSearch);
+                const start = str.indexOf(text, indexSearch);
                 if (start !== -1) {
                     indexSearch = start + text.length;
                     result.setSpan(new ClickableSpan(s), start, indexSearch, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -672,14 +683,14 @@ formattedTextProperty.register(Label);
 function onFormattedTextPropertyChanged(textBase: Label, oldValue: FormattedString, newValue: FormattedString) {
     if (oldValue) {
         oldValue.off(Observable.propertyChangeEvent, textBase._onFormattedTextContentsChanged, textBase);
-        if (oldValue instanceof FormattedString){
+        if (oldValue instanceof FormattedString) {
             textBase._removeView(oldValue);
         }
     }
 
     if (newValue) {
         // In case formattedString is attached to new TextBase
-        if (newValue instanceof FormattedString){
+        if (newValue instanceof FormattedString) {
             const oldParent = newValue.parent;
             if (oldParent) {
                 oldParent._removeView(newValue);

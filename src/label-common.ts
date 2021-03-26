@@ -1,9 +1,12 @@
 import { VerticalTextAlignment, cssProperty, init } from '@nativescript-community/text';
 import {
-    CSSType, Color,
-    CssProperty, FormattedString,
+    CSSType,
+    Color,
+    CssProperty,
+    FormattedString,
     Property,
-    Span, Style,
+    Span,
+    Style,
     Label as TNLabel,
     booleanConverter
 } from '@nativescript/core';
@@ -18,7 +21,6 @@ import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
 //     }
 // }
 
-
 // init text to ensure font overrides are called
 init();
 
@@ -31,8 +33,6 @@ init();
 // FormattedString.prototype.removePropertyChangeHandler = function (span: Span) {
 //     span.off(Observable.propertyChangeEvent, this.onPropertyChange, this);
 // };
-
-
 
 export const needFormattedStringComputation = function (
     target: any,
@@ -80,56 +80,60 @@ export abstract class LabelBase extends TNLabel implements LabelViewDefinition {
 }
 
 // TODO: Can we use Label.ios optimization for affectsLayout???
-export const htmlProperty = new Property<LabelBase, string>({ name: 'html', defaultValue: null, affectsLayout: global.isAndroid });
+export const htmlProperty = new Property<LabelBase, string>({
+    name: 'html',
+    defaultValue: null,
+    affectsLayout: global.isAndroid
+});
 htmlProperty.register(LabelBase);
 
 export const maxLinesProperty = new CssProperty<Style, number>({
     name: 'maxLines',
-    cssName: 'max-lines',
+    cssName: 'max-lines'
 });
 maxLinesProperty.register(Style);
 export const lineBreakProperty = new CssProperty<Style, string>({
     name: 'lineBreak',
-    cssName: 'line-break',
+    cssName: 'line-break'
 });
 lineBreakProperty.register(Style);
 export const linkColorProperty = new CssProperty<Style, Color>({
     name: 'linkColor',
     cssName: 'link-color',
-    valueConverter: (v) => new Color(v),
+    valueConverter: (v) => new Color(v)
 });
 linkColorProperty.register(Style);
 
 export const linkUnderlineProperty = new CssProperty<Style, boolean>({
     name: 'linkUnderline',
     cssName: 'link-underline',
-    valueConverter: booleanConverter,
+    valueConverter: booleanConverter
 });
 linkUnderlineProperty.register(Style);
 
 export const selectableProperty = new CssProperty<Style, boolean>({
     name: 'selectable',
     cssName: 'selectable',
-    valueConverter: booleanConverter,
+    valueConverter: booleanConverter
 });
 selectableProperty.register(Style);
 
 export const autoFontSizeProperty = new CssProperty<Style, boolean>({
     name: 'autoFontSize',
     cssName: 'auto-font-size',
-    valueConverter: booleanConverter,
+    valueConverter: booleanConverter
 });
 autoFontSizeProperty.register(Style);
 export const minFontSizeProperty = new CssProperty<Style, number>({
     name: 'minFontSize',
     cssName: 'min-font-size',
-	valueConverter: (v) => parseFloat(v)
+    valueConverter: (v) => parseFloat(v)
 });
 minFontSizeProperty.register(Style);
 export const maxFontSizeProperty = new CssProperty<Style, number>({
     name: 'maxFontSize',
     cssName: 'max-font-size',
-	valueConverter: (v) => parseFloat(v)
+    valueConverter: (v) => parseFloat(v)
 });
 maxFontSizeProperty.register(Style);
 
@@ -151,8 +155,8 @@ export const textShadowProperty = new CssProperty<Style, string | TextShadow>({
             offsetX: parseDIPs(params[0]),
             offsetY: parseDIPs(params[1]),
             blurRadius: parseDIPs(params[2]),
-            color: new Color(params.slice(3).join('')),
+            color: new Color(params.slice(3).join(''))
         };
-    },
+    }
 });
 textShadowProperty.register(Style);
