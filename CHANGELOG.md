@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.10](https://github.com/Akylas/nativescript-label/compare/v1.1.9...v1.1.10) (2021-03-26)
+
+
+### Bug Fixes
+
+* **ios:** regression after last commits ([33c35e5](https://github.com/Akylas/nativescript-label/commit/33c35e5315048287fa376163051883575414a1e1))
+
+
+
+
+
 ## [1.1.9](https://github.com/Akylas/nativescript-label/compare/v1.1.8...v1.1.9) (2021-03-26)
 
 
