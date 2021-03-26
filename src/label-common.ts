@@ -62,6 +62,9 @@ export abstract class LabelBase extends TNLabel implements LabelViewDefinition {
     //@ts-ignore
     formattedText: FormattedString;
 
+    @cssProperty minFontSize: number;
+    @cssProperty maxFontSize: number;
+
     _canChangeText = true;
     _needFormattedStringComputation = false;
     public onResumeNativeUpdates(): void {
@@ -117,6 +120,18 @@ export const autoFontSizeProperty = new CssProperty<Style, boolean>({
     valueConverter: booleanConverter,
 });
 autoFontSizeProperty.register(Style);
+export const minFontSizeProperty = new CssProperty<Style, number>({
+    name: 'minFontSize',
+    cssName: 'min-font-size',
+	valueConverter: (v) => parseFloat(v)
+});
+minFontSizeProperty.register(Style);
+export const maxFontSizeProperty = new CssProperty<Style, number>({
+    name: 'maxFontSize',
+    cssName: 'max-font-size',
+	valueConverter: (v) => parseFloat(v)
+});
+maxFontSizeProperty.register(Style);
 
 function parseDIPs(value: string): dip {
     if (value.indexOf('px') !== -1) {
