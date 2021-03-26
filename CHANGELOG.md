@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.9](https://github.com/Akylas/nativescript-label/compare/v1.1.8...v1.1.9) (2021-03-26)
+
+
+### Bug Fixes
+
+* autoFontSize now can use minFontSize and maxFontSize ([ac221d4](https://github.com/Akylas/nativescript-label/commit/ac221d4175e42b654d452b133719940acc96fa2e))
+
+
+
+
+
 ## [1.1.8](https://github.com/Akylas/nativescript-label/compare/v1.1.7...v1.1.8) (2021-03-24)
 
 
