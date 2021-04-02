@@ -447,10 +447,10 @@ export class Label extends LabelBase {
             this.attributedString = null;
         } else {
             const font = this.nativeViewProtected.font;
-            const fontSize = this.fontSize || font.pointSize;
+            const fontSize = this.fontSize || font?.pointSize || 17;
             const fontWeight = this.style.fontWeight;
             const familyName =
-                this.style.fontFamily || (this.style.fontInternal && this.style.fontInternal.fontFamily) || font.familyName;
+                this.style.fontFamily || (this.style.fontInternal && this.style.fontInternal.fontFamily) || font?.familyName;
             const result = createNativeAttributedString({
                 text: this.html,
                 fontSize,
@@ -812,8 +812,9 @@ export class Label extends LabelBase {
     }
 
     textViewDidChange(textView: UITextView, width?) {
+
         if (this.autoFontSize) {
-            if (!textView.text || textView.text.length === 0 || CGSizeEqualToSize(textView.bounds.size, CGSizeZero)) {
+            if ((!textView.attributedText && !textView.text) || CGSizeEqualToSize(textView.bounds.size, CGSizeZero)) {
                 return;
             }
 
@@ -856,16 +857,16 @@ export class Label extends LabelBase {
             this.updateTextContainerInset();
         }
     }
-    // _onSizeChanged(): void {
-    //     const nativeView = this.nativeViewProtected;
-    //     if (!nativeView) {
-    //         return;
-    //     }
-    //     super._onSizeChanged();
-    //     // if (this.autoFontSize && this.text) {
-    //     //     this.textViewDidChange(nativeView);
-    //     // }
-    // }
+    _onSizeChanged(): void {
+        const nativeView = this.nativeViewProtected;
+        if (!nativeView) {
+            return;
+        }
+        super._onSizeChanged();
+        if (this.autoFontSize) {
+            this.textViewDidChange(nativeView);
+        }
+    }
     [autoFontSizeProperty.setNative](value: boolean) {
         if (value && this.text) {
             this.textViewDidChange(this.nativeTextViewProtected);
