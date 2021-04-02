@@ -6,7 +6,13 @@
         <ScrollView>
             <GridLayout width="50" height="100" backgroundColor="red" @tap="resize">
 
-            <HTMLLabel fontSize="20" textAlignment="center" color="black" text="center textAlignment, bottom verticalAlignment" autoFontSize="true"/>
+            <HTMLLabel width="100%"
+          height="50"
+          :autoFontSize="true"
+          :html="'center textAlignment, bottom verticalAlignment'"
+          minFontSize="10"
+          lineBreak="end"
+          maxFontSize="30"/>
 
         </GridLayout>
         </ScrollView>
