@@ -32,7 +32,7 @@ pod 'DTCoreText'
 -   enable it in your `app.(js|ts)` (as soon as possible)
 
 ```javascript
-require('nativescript-htmlabel').enableIOSDTCoreText();
+require('@nativescript-community/ui-label').enableIOSDTCoreText();
 ```
 
 ### Angular
