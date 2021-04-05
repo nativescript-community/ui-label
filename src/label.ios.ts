@@ -189,6 +189,8 @@ export class Label extends LabelBase {
             bottom: 0,
             right: 0
         };
+        view.textContainer.lineFragmentPadding = 0; // to remove left padding
+        // view.textContainer.lineBreakMode = NSLineBreakMode.ByCharWrapping;
         return view;
     }
 
