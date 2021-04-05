@@ -808,6 +808,13 @@ export class Label extends LabelBase {
         // only if no lineBreak
         if (!this.lineBreak) {
             nativeView.textContainer.lineBreakMode = whiteSpaceToLineBreakMode(value);
+            if (!this.maxLines) {
+                if (value === 'normal') {
+                    this.nativeViewProtected.textContainer.maximumNumberOfLines = 0;
+                } else {
+                    this.nativeViewProtected.textContainer.maximumNumberOfLines = 1;
+                }
+            }
         }
     }
 

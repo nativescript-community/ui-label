@@ -341,40 +341,37 @@ export class Label extends LabelBase {
         const nativeView = this.nativeTextViewProtected;
         switch (value) {
             case 'end':
-                // nativeView.setSingleLine(true);
                 nativeView.setEllipsize(android.text.TextUtils.TruncateAt.END);
                 break;
             case 'start':
-                // nativeView.setSingleLine(true);
                 nativeView.setEllipsize(android.text.TextUtils.TruncateAt.START);
                 break;
             case 'marquee':
-                // nativeView.setSingleLine(true);
                 nativeView.setEllipsize(android.text.TextUtils.TruncateAt.MARQUEE);
                 break;
             case 'middle':
-                // nativeView.setSingleLine(true);
                 nativeView.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);
                 break;
             case 'none':
-                // nativeView.setSingleLine(false);
                 nativeView.setEllipsize(null);
                 break;
         }
     }
 
     [whiteSpaceProperty.setNative](value: WhiteSpace) {
-        const nativeView = this.nativeTextViewProtected;
-        switch (value) {
-            case 'initial':
-            case 'normal':
-                nativeView.setSingleLine(false);
-                // nativeView.setEllipsize(null);
-                break;
-            case 'nowrap':
-                nativeView.setSingleLine(true);
-                // nativeView.setEllipsize(android.text.TextUtils.TruncateAt.END);
-                break;
+        if (!this.lineBreak) {
+            const nativeView = this.nativeTextViewProtected;
+            switch (value) {
+                case 'initial':
+                case 'normal':
+                    nativeView.setSingleLine(false);
+                    nativeView.setEllipsize(null);
+                    break;
+                case 'nowrap':
+                    nativeView.setSingleLine(true);
+                    nativeView.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                    break;
+            }
         }
     }
     [textShadowProperty.setNative](value: TextShadow) {
