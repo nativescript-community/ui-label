@@ -361,7 +361,6 @@ export class Label extends LabelBase {
     //     }
 
     //     if (style.color && dict.size > 0) {
-    //         console.log('setTextDecorationAndTransform', style.color);
     //         // dict.set(NSForegroundColorAttributeName, style.color.ios);
     //     }
 
@@ -414,7 +413,11 @@ export class Label extends LabelBase {
             const heightMode = layout.getMeasureSpecMode(heightMeasureSpec);
 
             if (this.autoFontSize) {
-                this.textViewDidChange(nativeView, Math.floor(layout.toDeviceIndependentPixels(width)));
+                this.textViewDidChange(
+                    nativeView,
+                    Math.floor(layout.toDeviceIndependentPixels(width)),
+                    Math.floor(layout.toDeviceIndependentPixels(height))
+                );
             }
 
             const desiredSize = layout.measureNativeView(nativeView, width, widthMode, height, heightMode);
@@ -820,45 +823,59 @@ export class Label extends LabelBase {
         }
     }
 
-    textViewDidChange(textView: UITextView, width?) {
-
+    textViewDidChange(textView: UITextView, width?, height?) {
         if (this.autoFontSize) {
             if ((!textView.attributedText && !textView.text) || CGSizeEqualToSize(textView.bounds.size, CGSizeZero)) {
                 return;
             }
-
+            const nbLines = textView.textContainer.maximumNumberOfLines;
             // we need to reset verticalTextAlignment or computation will be wrong
             this.updateTextContainerInset(false);
             const textViewSize = textView.frame.size;
             const fixedWidth = width || textViewSize.width;
+            const fixedHeight = height || textViewSize.height;
 
             const fontSize = this.style.fontSize || 17;
             let expectFont: UIFont = (this.style.fontInternal || Font.default).getUIFont(UIFont.systemFontOfSize(fontSize));
             //first reset the font size
             textView.font = expectFont;
-            let expectSize = textView.sizeThatFits(CGSizeMake(fixedWidth, Number.MAX_SAFE_INTEGER));
-            if (expectSize.height > textViewSize.height) {
-                while (expectSize.height > textViewSize.height && expectFont.pointSize > (this.minFontSize || 12)) {
+            let expectSize;
+            const size = () => {
+                if (nbLines === 1) {
+                    expectSize = textView.sizeThatFits(CGSizeMake(Number.MAX_SAFE_INTEGER, fixedHeight));
+                } else {
+                    expectSize = textView.sizeThatFits(CGSizeMake(fixedWidth, Number.MAX_SAFE_INTEGER));
+                }
+            };
+            size();
+            if (expectSize.height > textViewSize.height || expectSize.width > textViewSize.width) {
+                while (
+                    (expectSize.height > textViewSize.height || expectSize.width > textViewSize.width) &&
+                    expectFont.pointSize > (this.minFontSize || 12)
+                ) {
                     const newFont = expectFont.fontWithSize(expectFont.pointSize - 1);
                     textView.font = newFont;
-                    expectSize = textView.sizeThatFits(CGSizeMake(fixedWidth, Number.MAX_SAFE_INTEGER));
-                    if (expectSize.height >= textViewSize.height) {
+                    size();
+                    if (expectSize.height >= textViewSize.height || expectSize.width >= textViewSize.width) {
                         expectFont = newFont;
                     } else {
-                        textView.font = expectFont;
+                        textView.font = newFont;
                         break;
                     }
                 }
             } else {
-                while (expectSize.height < textViewSize.height && expectFont.pointSize < (this.maxFontSize || 200)) {
+                while (
+                    (expectSize.height < textViewSize.height || expectSize.width < textViewSize.width) &&
+                    expectFont.pointSize < (this.maxFontSize || 200)
+                ) {
                     const newFont = expectFont.fontWithSize(expectFont.pointSize + 1);
                     textView.font = newFont;
-                    expectSize = textView.sizeThatFits(CGSizeMake(fixedWidth, Number.MAX_SAFE_INTEGER));
+                    size();
 
-                    if (expectSize.height <= textViewSize.height) {
+                    if (expectSize.height <= textViewSize.height || expectSize.width <= textViewSize.width) {
                         expectFont = newFont;
                     } else {
-                        textView.font = expectFont;
+                        textView.font = newFont;
                         break;
                     }
                 }
