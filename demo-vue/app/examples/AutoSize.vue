@@ -4,14 +4,15 @@
             <NavigationButton text="Back" android.systemIcon="ic_menu_back" @tap="onNavigationButtonTap"></NavigationButton>
         </ActionBar>
         <ScrollView>
-            <GridLayout width="50" height="100" backgroundColor="red" @tap="resize">
+            <GridLayout columns="auto" horizontalAlignment="center" height="200" backgroundColor="red" @tap="resize">
 
-            <HTMLLabel width="100%"
-          height="50"
+            <HTMLLabel 
+            verticalAlignment="center"
+          width="50"
+          :textWrap="true"
           :autoFontSize="true"
-          :html="'center textAlignment, bottom verticalAlignment'"
-          minFontSize="10"
-          lineBreak="end"
+          text="center textAlignment, bottom verticalAlignment"
+          fontSize="10"
           maxFontSize="30"/>
 
         </GridLayout>

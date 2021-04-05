@@ -2,6 +2,7 @@
     "description": "NativeScript HTML Label Demo for Vue",
     "license": "SEE LICENSE IN LICENSE.md",
     "readme": "README.md",
+    "main":"app/main",
     "dependencies": {
         "@nativescript-community/text": "1.4.8",
         "@nativescript-community/ui-label": "../plugin",
