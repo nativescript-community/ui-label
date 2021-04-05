@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.12](https://github.com/Akylas/nativescript-label/compare/v1.1.11...v1.1.12) (2021-04-05)
+
+
+### Bug Fixes
+
+* **ios:** support autosize for 1 line labels (based on width) ([08ed0cb](https://github.com/Akylas/nativescript-label/commit/08ed0cbe94d91d9fd51b55edea1b92355dd1ea9f))
+* bring back max nblines with textWrap ([117bbad](https://github.com/Akylas/nativescript-label/commit/117bbadc2d90501df4c9abc29d663feb610d2d1b))
+* ios remove unwanted padding ([4c335fe](https://github.com/Akylas/nativescript-label/commit/4c335feb05400a84e14e6997fe34377c3a36369d))
+
+
+
+
+
 ## [1.1.11](https://github.com/Akylas/nativescript-label/compare/v1.1.10...v1.1.11) (2021-04-02)
 
 
