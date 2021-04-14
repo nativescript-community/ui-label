@@ -2,10 +2,8 @@
  * Contains the Label class, which represents a custom label widget which correctly supports html.
  */ /** */
 
-import { Color, Label as TNLabel } from '@nativescript/core';
+import { Color, CoreTypes, Label as TNLabel } from '@nativescript/core';
 import { Property } from '@nativescript/core/ui/core/properties';
-import { dip } from '@nativescript/core/ui/core/view';
-import { TextAlignment } from '@nativescript/core/ui/text-base';
 /**
  * Represents a label with html content. Use this component instead WebView when you want to show just static HTML content.
  * [iOS support](https://developer.apple.com/library/ios/documentation/UIKit/Reference/NSAttributedString_UIKit_Additions/#//apple_ref/occ/instm/NSAttributedString/initWithData:options:documentAttributes:error:)
@@ -37,9 +35,9 @@ export declare const htmlProperty: Property<Label, string>;
 export declare const verticalTextAlignmentProperty: Property<Label, VerticalTextAlignment>;
 
 export interface TextShadow {
-    offsetX: dip;
-    offsetY: dip;
-    blurRadius: dip;
+    offsetX: CoreTypes.dip;
+    offsetY: CoreTypes.dip;
+    blurRadius: CoreTypes.dip;
     color: Color;
 }
 

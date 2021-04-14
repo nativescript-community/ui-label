@@ -8,17 +8,18 @@
 } from '@nativescript-community/text';
 import {
     CSSType,
+    CoreTypes,
     FormattedString,
     Observable,
     Property,
     PropertyChangeData,
     Span,
     View,
-    ViewBase,
     booleanConverter,
     profile
 } from '@nativescript/core';
 import { Color } from '@nativescript/core/color';
+import { CSSShadow } from '@nativescript/core/ui/styling/css-shadow';
 import { Font, FontStyle, FontWeight } from '@nativescript/core/ui/styling/font';
 import {
     Length,
@@ -31,10 +32,6 @@ import {
     paddingTopProperty
 } from '@nativescript/core/ui/styling/style-properties';
 import {
-    TextAlignment,
-    TextDecoration,
-    TextTransform,
-    WhiteSpace,
     letterSpacingProperty,
     textAlignmentProperty,
     textDecorationProperty,
@@ -48,13 +45,11 @@ import {
     autoFontSizeProperty,
     lineBreakProperty,
     maxLinesProperty,
-    needFormattedStringComputation,
     selectableProperty,
     textShadowProperty
 } from './label-common';
 
-export { enableIOSDTCoreText, createNativeAttributedString } from '@nativescript-community/text';
-
+export { createNativeAttributedString, enableIOSDTCoreText } from '@nativescript-community/text';
 export * from './label-common';
 
 let TextView: typeof com.nativescript.label.EllipsizingTextView;
@@ -98,7 +93,7 @@ export const htmlProperty = new Property<Label, string>({ name: 'html', defaultV
 
 type ClickableSpan = new (owner: Span) => android.text.style.ClickableSpan;
 
-function getHorizontalGravity(textAlignment: TextAlignment) {
+function getHorizontalGravity(textAlignment: CoreTypes.TextAlignmentType) {
     switch (textAlignment) {
         case 'initial':
         case 'left':
@@ -207,6 +202,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     @cssProperty maxFontSize: number;
     @cssProperty verticalTextAlignment: VerticalTextAlignment;
     @cssProperty linkColor: Color;
+    @cssProperty textShadow: CSSShadow;
     @cssProperty linkUnderline: boolean;
     public html: string;
     @cssProperty selectable: boolean;
@@ -230,16 +226,16 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     @cssProperty letterSpacing: number;
     @cssProperty lineHeight: number;
     @cssProperty lineBreak: LineBreak;
-    @cssProperty textAlignment: TextAlignment;
-    @cssProperty textDecoration: TextDecoration;
-    @cssProperty textTransform: TextTransform;
-    @cssProperty whiteSpace: WhiteSpace;
+    @cssProperty textAlignment: CoreTypes.TextAlignmentType;
+    @cssProperty textDecoration: CoreTypes.TextDecorationType;
+    @cssProperty textTransform: CoreTypes.TextTransformType;
+    @cssProperty whiteSpace: CoreTypes.WhiteSpaceType;
 
-    @cssProperty padding: string | Length;
-    @cssProperty paddingTop: Length;
-    @cssProperty paddingRight: Length;
-    @cssProperty paddingBottom: Length;
-    @cssProperty paddingLeft: Length;
+    @cssProperty padding: string | CoreTypes.LengthType;
+    @cssProperty paddingTop: CoreTypes.LengthType;
+    @cssProperty paddingRight: CoreTypes.LengthType;
+    @cssProperty paddingBottom: CoreTypes.LengthType;
+    @cssProperty paddingLeft: CoreTypes.LengthType;
 
     // for now code is duplicated as Android version is a full rewrite
     _canChangeText = true;
@@ -358,7 +354,7 @@ export class Label extends LabelBase {
         }
     }
 
-    [whiteSpaceProperty.setNative](value: WhiteSpace) {
+    [whiteSpaceProperty.setNative](value: CoreTypes.WhiteSpaceType) {
         if (!this.lineBreak) {
             const nativeView = this.nativeTextViewProtected;
             switch (value) {
@@ -374,11 +370,21 @@ export class Label extends LabelBase {
             }
         }
     }
-    [textShadowProperty.setNative](value: TextShadow) {
+    [textShadowProperty.getDefault](value: number) {
+        return {
+            radius: this.nativeTextViewProtected.getShadowRadius(),
+            offsetX: this.nativeTextViewProtected.getShadowDx(),
+            offsetY: this.nativeTextViewProtected.getShadowDy(),
+            color: this.nativeTextViewProtected.getShadowColor()
+        };
+    }
+
+    [textShadowProperty.setNative](value: CSSShadow) {
+        // prettier-ignore
         this.nativeViewProtected.setShadowLayer(
-            layout.toDevicePixels(value.blurRadius),
-            layout.toDevicePixels(value.offsetX),
-            layout.toDevicePixels(value.offsetY),
+            Length.toDevicePixels(value.blurRadius, java.lang.Float.MIN_VALUE),
+            Length.toDevicePixels(value.offsetX, 0),
+            Length.toDevicePixels(value.offsetY, 0),
             value.color.android
         );
     }
@@ -404,11 +410,11 @@ export class Label extends LabelBase {
         this._setNativeText();
     }
 
-    [textTransformProperty.setNative](value: TextTransform) {
+    [textTransformProperty.setNative](value: CoreTypes.TextTransformType) {
         this._setNativeText();
     }
 
-    [textAlignmentProperty.setNative](value: TextAlignment) {
+    [textAlignmentProperty.setNative](value: CoreTypes.TextAlignmentType) {
         const view = this.nativeTextViewProtected;
         view.setGravity(getHorizontalGravity(value) | getVerticalGravity(this.verticalTextAlignment));
     }
@@ -436,7 +442,7 @@ export class Label extends LabelBase {
         this.nativeTextViewProtected.setTypeface(value instanceof Font ? value.getAndroidTypeface() : value);
     }
 
-    [textDecorationProperty.setNative](value: number | TextDecoration) {
+    [textDecorationProperty.setNative](value: number | CoreTypes.TextDecorationType) {
         switch (value) {
             case 'none':
                 this.nativeTextViewProtected.setPaintFlags(0);
@@ -462,40 +468,40 @@ export class Label extends LabelBase {
         org.nativescript.widgets.ViewHelper.setLetterspacing(this.nativeTextViewProtected, value);
     }
 
-    [paddingTopProperty.getDefault](): Length {
+    [paddingTopProperty.getDefault](): CoreTypes.LengthType {
         return { value: this._defaultPaddingTop, unit: 'px' };
     }
-    [paddingTopProperty.setNative](value: Length) {
+    [paddingTopProperty.setNative](value: CoreTypes.LengthType) {
         org.nativescript.widgets.ViewHelper.setPaddingTop(
             this.nativeTextViewProtected,
             Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderTopWidth, 0)
         );
     }
 
-    [paddingRightProperty.getDefault](): Length {
+    [paddingRightProperty.getDefault](): CoreTypes.LengthType {
         return { value: this._defaultPaddingRight, unit: 'px' };
     }
-    [paddingRightProperty.setNative](value: Length) {
+    [paddingRightProperty.setNative](value: CoreTypes.LengthType) {
         org.nativescript.widgets.ViewHelper.setPaddingRight(
             this.nativeTextViewProtected,
             Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderRightWidth, 0)
         );
     }
 
-    [paddingBottomProperty.getDefault](): Length {
+    [paddingBottomProperty.getDefault](): CoreTypes.LengthType {
         return { value: this._defaultPaddingBottom, unit: 'px' };
     }
-    [paddingBottomProperty.setNative](value: Length) {
+    [paddingBottomProperty.setNative](value: CoreTypes.LengthType) {
         org.nativescript.widgets.ViewHelper.setPaddingBottom(
             this.nativeTextViewProtected,
             Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderBottomWidth, 0)
         );
     }
 
-    [paddingLeftProperty.getDefault](): Length {
+    [paddingLeftProperty.getDefault](): CoreTypes.LengthType {
         return { value: this._defaultPaddingLeft, unit: 'px' };
     }
-    [paddingLeftProperty.setNative](value: Length) {
+    [paddingLeftProperty.setNative](value: CoreTypes.LengthType) {
         org.nativescript.widgets.ViewHelper.setPaddingLeft(
             this.nativeTextViewProtected,
             Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderLeftWidth, 0)
@@ -522,10 +528,31 @@ export class Label extends LabelBase {
     [selectableProperty.setNative](value: boolean) {
         this.nativeTextViewProtected.setTextIsSelectable(value);
     }
+    createFormattedTextNative(value: any) {
+        const result = createNativeAttributedString(value, this);
 
+        let indexSearch = 0;
+        let str: string;
+        value.spans.forEach((s) => {
+            if (s.tappable) {
+                if (!str) {
+                    str = value.toString();
+                    this._setTappableState(true);
+                }
+                initializeClickableSpan();
+                const text = s.text;
+                const start = str.indexOf(text, indexSearch);
+                if (start !== -1) {
+                    indexSearch = start + text.length;
+                    result.setSpan(new ClickableSpan(s), start, indexSearch, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+            }
+        });
+        return result;
+    }
     @profile
     createHTMLString() {
-        const result = createNativeAttributedString({ text: this.html }) as android.text.SpannableStringBuilder;
+        const result = createNativeAttributedString({ text: this.html }, this) as android.text.SpannableStringBuilder;
         const urlSpan = result.getSpans(0, result.length(), android.text.style.URLSpan.class);
         if (urlSpan.length > 0) {
             this._setTappableState(true);
@@ -539,29 +566,6 @@ export class Label extends LabelBase {
                 result.setSpan(new URLClickableSpan(text, this), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
-        return result;
-    }
-    @profile
-    createSpannableStringBuilder() {
-        const formattedText = this.formattedText;
-        const result = createNativeAttributedString(formattedText as any);
-        let indexSearch = 0;
-        let str: string;
-        formattedText.spans.forEach((s) => {
-            if (s.tappable) {
-                if (!str) {
-                    str = formattedText.toString();
-                    this._setTappableState(true);
-                }
-                initializeClickableSpan();
-                const text = s.text;
-                const start = str.indexOf(text, indexSearch);
-                if (start !== -1) {
-                    indexSearch = start + text.length;
-                    result.setSpan(new ClickableSpan(s), start, indexSearch, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }
-            }
-        });
         return result;
     }
     _tappable = false;
@@ -596,7 +600,7 @@ export class Label extends LabelBase {
             transformedText = this.createHTMLString();
             textProperty.nativeValueChange(this, this.html === null || this.html === undefined ? '' : this.html);
         } else if (this.formattedText) {
-            transformedText = this.createSpannableStringBuilder();
+            transformedText = this.createFormattedTextNative(this.formattedText);
             textProperty.nativeValueChange(
                 this,
                 this.formattedText === null || this.formattedText === undefined ? '' : this.formattedText.toString()
@@ -659,7 +663,7 @@ function getCapitalizedString(str: string): string {
     return newWords.join(' ');
 }
 
-export function getTransformedText(text: string, textTransform: TextTransform): string {
+export function getTransformedText(text: string, textTransform: CoreTypes.TextTransformType): string {
     switch (textTransform) {
         case 'uppercase':
             return text.toUpperCase();
