@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.13](https://github.com/Akylas/nativescript-label/compare/v1.1.12...v1.1.13) (2021-04-14)
+
+
+### Bug Fixes
+
+* NS8 and use createFormattedTextNative ([ee76186](https://github.com/Akylas/nativescript-label/commit/ee76186bf43da2fe8709856d6ae95a61f058ebe5))
+
+
+
+
+
 ## [1.1.12](https://github.com/Akylas/nativescript-label/compare/v1.1.11...v1.1.12) (2021-04-05)
 
 
