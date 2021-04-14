@@ -2,6 +2,7 @@ import { VerticalTextAlignment, cssProperty, init } from '@nativescript-communit
 import {
     CSSType,
     Color,
+    CoreTypes,
     CssProperty,
     FormattedString,
     Property,
@@ -10,7 +11,6 @@ import {
     Label as TNLabel,
     booleanConverter
 } from '@nativescript/core';
-import { dip } from '@nativescript/core/ui/core/view';
 import { layout } from '@nativescript/core/utils/utils';
 import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
 
@@ -137,7 +137,7 @@ export const maxFontSizeProperty = new CssProperty<Style, number>({
 });
 maxFontSizeProperty.register(Style);
 
-function parseDIPs(value: string): dip {
+function parseDIPs(value: string): CoreTypes.dip {
     if (value.indexOf('px') !== -1) {
         return layout.toDeviceIndependentPixels(parseFloat(value.replace('px', '').trim()));
     } else {

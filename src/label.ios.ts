@@ -4,9 +4,8 @@ import {
     createNativeAttributedString,
     verticalTextAlignmentProperty
 } from '@nativescript-community/text';
-import { Color, Font, FormattedString, Span, View } from '@nativescript/core';
+import { Color, CoreTypes, Font, FormattedString, Span, View } from '@nativescript/core';
 import {
-    Length,
     borderBottomWidthProperty,
     borderLeftWidthProperty,
     borderRightWidthProperty,
@@ -18,16 +17,7 @@ import {
     paddingRightProperty,
     paddingTopProperty
 } from '@nativescript/core/ui/styling/style-properties';
-import {
-    TextAlignment,
-    TextBase,
-    TextDecoration,
-    TextTransform,
-    WhiteSpace,
-    letterSpacingProperty,
-    textDecorationProperty,
-    whiteSpaceProperty
-} from '@nativescript/core/ui/text-base';
+import { letterSpacingProperty, textDecorationProperty, whiteSpaceProperty } from '@nativescript/core/ui/text-base';
 import { getClosestPropertyValue, lineHeightProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import { isNullOrUndefined, isString } from '@nativescript/core/utils/types';
 import { iOSNativeHelper, layout } from '@nativescript/core/utils/utils';
@@ -45,9 +35,9 @@ import {
     textShadowProperty
 } from './label-common';
 
-export { enableIOSDTCoreText, createNativeAttributedString } from '@nativescript-community/text';
-
+export { createNativeAttributedString, enableIOSDTCoreText } from '@nativescript-community/text';
 export * from './label-common';
+
 const majorVersion = iOSNativeHelper.MajorVersion;
 
 enum FixedSize {
@@ -70,7 +60,7 @@ declare module '@nativescript/core/ui/text-base' {
 function NSStringFromNSAttributedString(source: NSAttributedString | string): NSString {
     return NSString.stringWithString((source instanceof NSAttributedString && source.string) || (source as string));
 }
-export function getTransformedText(text: string, textTransform: TextTransform): string {
+export function getTransformedText(text: string, textTransform: CoreTypes.TextTransformType): string {
     if (!text || !isString(text)) {
         return '';
     }
@@ -100,7 +90,7 @@ function lineBreakToLineBreakMode(value: string) {
             return NSLineBreakMode.ByWordWrapping;
     }
 }
-function whiteSpaceToLineBreakMode(value: WhiteSpace) {
+function whiteSpaceToLineBreakMode(value: CoreTypes.WhiteSpaceType) {
     switch (value) {
         case 'initial':
         case 'normal':
@@ -456,16 +446,19 @@ export class Label extends LabelBase {
             const fontWeight = this.style.fontWeight;
             const familyName =
                 this.style.fontFamily || (this.style.fontInternal && this.style.fontInternal.fontFamily) || font?.familyName;
-            const result = createNativeAttributedString({
-                text: this.html,
-                fontSize,
-                familyName,
-                fontWeight,
-                color: this.color,
-                letterSpacing: this.letterSpacing,
-                lineHeight: this.lineHeight,
-                textAlignment: this.nativeTextViewProtected.textAlignment
-            }) as NSMutableAttributedString;
+            const result = createNativeAttributedString(
+                {
+                    text: this.html,
+                    fontSize,
+                    familyName,
+                    fontWeight,
+                    color: this.color,
+                    letterSpacing: this.letterSpacing,
+                    lineHeight: this.lineHeight,
+                    textAlignment: this.nativeTextViewProtected.textAlignment
+                },
+                this
+            ) as NSMutableAttributedString;
             // if (this.linkColor) {
             // this.nativeTextViewProtected.linkTextAttributes = null;
             // const color =this.linkColor.ios;
@@ -679,7 +672,7 @@ export class Label extends LabelBase {
             attrDict[NSBackgroundColorAttributeName] = color.ios;
         }
 
-        const textDecoration: TextDecoration = getClosestPropertyValue(textDecorationProperty, span);
+        const textDecoration: CoreTypes.TextDecorationType = getClosestPropertyValue(textDecorationProperty, span);
 
         if (textDecoration) {
             const underline = textDecoration.indexOf('underline') !== -1;
@@ -709,82 +702,82 @@ export class Label extends LabelBase {
 
         return NSMutableAttributedString.alloc().initWithStringAttributes(text, attrDict as any);
     }
-    [paddingTopProperty.getDefault](): Length {
+    [paddingTopProperty.getDefault](): CoreTypes.LengthType {
         return {
             value: 0,
             unit: 'px'
         };
     }
-    [paddingTopProperty.setNative](value: Length) {
+    [paddingTopProperty.setNative](value: CoreTypes.LengthType) {
         this.updateTextContainerInset();
     }
 
-    [paddingRightProperty.getDefault](): Length {
+    [paddingRightProperty.getDefault](): CoreTypes.LengthType {
         return {
             value: 0,
             unit: 'px'
         };
     }
-    [paddingRightProperty.setNative](value: Length) {
+    [paddingRightProperty.setNative](value: CoreTypes.LengthType) {
         this.updateTextContainerInset();
     }
 
-    [paddingBottomProperty.getDefault](): Length {
+    [paddingBottomProperty.getDefault](): CoreTypes.LengthType {
         return {
             value: 0,
             unit: 'px'
         };
     }
-    [paddingBottomProperty.setNative](value: Length) {
+    [paddingBottomProperty.setNative](value: CoreTypes.LengthType) {
         this.updateTextContainerInset();
     }
-    [paddingLeftProperty.getDefault](): Length {
+    [paddingLeftProperty.getDefault](): CoreTypes.LengthType {
         return {
             value: 0,
             unit: 'px'
         };
     }
-    [paddingLeftProperty.setNative](value: Length) {
-        this.updateTextContainerInset();
-    }
-
-    [borderTopWidthProperty.getDefault](): Length {
-        return {
-            value: 0,
-            unit: 'px'
-        };
-    }
-    [borderTopWidthProperty.setNative](value: Length) {
+    [paddingLeftProperty.setNative](value: CoreTypes.LengthType) {
         this.updateTextContainerInset();
     }
 
-    [borderRightWidthProperty.getDefault](): Length {
+    [borderTopWidthProperty.getDefault](): CoreTypes.LengthType {
         return {
             value: 0,
             unit: 'px'
         };
     }
-    [borderRightWidthProperty.setNative](value: Length) {
+    [borderTopWidthProperty.setNative](value: CoreTypes.LengthType) {
         this.updateTextContainerInset();
     }
 
-    [borderBottomWidthProperty.getDefault](): Length {
+    [borderRightWidthProperty.getDefault](): CoreTypes.LengthType {
         return {
             value: 0,
             unit: 'px'
         };
     }
-    [borderBottomWidthProperty.setNative](value: Length) {
+    [borderRightWidthProperty.setNative](value: CoreTypes.LengthType) {
         this.updateTextContainerInset();
     }
 
-    [borderLeftWidthProperty.getDefault](): Length {
+    [borderBottomWidthProperty.getDefault](): CoreTypes.LengthType {
         return {
             value: 0,
             unit: 'px'
         };
     }
-    [borderLeftWidthProperty.setNative](value: Length) {
+    [borderBottomWidthProperty.setNative](value: CoreTypes.LengthType) {
+        this.updateTextContainerInset();
+    }
+
+    [borderLeftWidthProperty.getDefault](): CoreTypes.LengthType {
+        return {
+            value: 0,
+            unit: 'px'
+        };
+    }
+    [borderLeftWidthProperty.setNative](value: CoreTypes.LengthType) {
         this.updateTextContainerInset();
     }
 
@@ -808,7 +801,7 @@ export class Label extends LabelBase {
         this.nativeTextViewProtected.layer.shouldRasterize = true;
         this.nativeTextViewProtected.layer.masksToBounds = false;
     }
-    [whiteSpaceProperty.setNative](value: WhiteSpace) {
+    [whiteSpaceProperty.setNative](value: CoreTypes.WhiteSpaceType) {
         const nativeView = this.nativeTextViewProtected;
         // only if no lineBreak
         if (!this.lineBreak) {
