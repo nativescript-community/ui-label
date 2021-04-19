@@ -401,7 +401,6 @@ export class Label extends LabelBase {
 
             const height = layout.getMeasureSpecSize(heightMeasureSpec);
             const heightMode = layout.getMeasureSpecMode(heightMeasureSpec);
-
             if (this.autoFontSize) {
                 this.textViewDidChange(
                     nativeView,
@@ -818,7 +817,10 @@ export class Label extends LabelBase {
 
     textViewDidChange(textView: UITextView, width?, height?) {
         if (this.autoFontSize) {
-            if ((!textView.attributedText && !textView.text) || CGSizeEqualToSize(textView.bounds.size, CGSizeZero)) {
+            if (
+                (!textView.attributedText && !textView.text) ||
+                (width === undefined && height === undefined && CGSizeEqualToSize(textView.bounds.size, CGSizeZero))
+            ) {
                 return;
             }
             const nbLines = textView.textContainer.maximumNumberOfLines;
