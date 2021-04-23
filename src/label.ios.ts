@@ -404,8 +404,8 @@ export class Label extends LabelBase {
             if (this.autoFontSize) {
                 this.textViewDidChange(
                     nativeView,
-                    Math.floor(layout.toDeviceIndependentPixels(width)),
-                    Math.floor(layout.toDeviceIndependentPixels(height))
+                    layout.toDeviceIndependentPixels(width),
+                    layout.toDeviceIndependentPixels(height)
                 );
             }
 
@@ -823,12 +823,16 @@ export class Label extends LabelBase {
             ) {
                 return;
             }
-            const nbLines = textView.textContainer.maximumNumberOfLines;
-            // we need to reset verticalTextAlignment or computation will be wrong
-            this.updateTextContainerInset(false);
+
             const textViewSize = textView.frame.size;
             const fixedWidth = width || textViewSize.width;
             const fixedHeight = height || textViewSize.height;
+            if (fixedWidth === 0 && fixedHeight === 0) {
+                return;
+            }
+            const nbLines = textView.textContainer.maximumNumberOfLines;
+            // we need to reset verticalTextAlignment or computation will be wrong
+            this.updateTextContainerInset(false);
 
             const fontSize = this.style.fontSize || 17;
             let expectFont: UIFont = (this.style.fontInternal || Font.default).getUIFont(UIFont.systemFontOfSize(fontSize));
@@ -843,15 +847,15 @@ export class Label extends LabelBase {
                 }
             };
             size();
-            if (expectSize.height > textViewSize.height || expectSize.width > textViewSize.width) {
+            if (expectSize.height > fixedHeight || expectSize.width > fixedWidth) {
                 while (
-                    (expectSize.height > textViewSize.height || expectSize.width > textViewSize.width) &&
+                    (expectSize.height > fixedHeight || expectSize.width > fixedWidth) &&
                     expectFont.pointSize > (this.minFontSize || 12)
                 ) {
                     const newFont = expectFont.fontWithSize(expectFont.pointSize - 1);
                     textView.font = newFont;
                     size();
-                    if (expectSize.height >= textViewSize.height || expectSize.width >= textViewSize.width) {
+                    if (expectSize.height >= fixedHeight || expectSize.width >= fixedWidth) {
                         expectFont = newFont;
                     } else {
                         textView.font = newFont;
@@ -860,14 +864,14 @@ export class Label extends LabelBase {
                 }
             } else {
                 while (
-                    (expectSize.height < textViewSize.height || expectSize.width < textViewSize.width) &&
+                    (expectSize.height < fixedHeight || expectSize.width < fixedWidth) &&
                     expectFont.pointSize < (this.maxFontSize || 200)
                 ) {
                     const newFont = expectFont.fontWithSize(expectFont.pointSize + 1);
                     textView.font = newFont;
                     size();
 
-                    if (expectSize.height <= textViewSize.height || expectSize.width <= textViewSize.width) {
+                    if (expectSize.height <= fixedHeight || expectSize.width <= fixedWidth) {
                         expectFont = newFont;
                     } else {
                         textView.font = newFont;
@@ -876,16 +880,6 @@ export class Label extends LabelBase {
                 }
             }
             this.updateTextContainerInset();
-        }
-    }
-    _onSizeChanged(): void {
-        const nativeView = this.nativeViewProtected;
-        if (!nativeView) {
-            return;
-        }
-        super._onSizeChanged();
-        if (this.autoFontSize) {
-            this.textViewDidChange(nativeView);
         }
     }
     [autoFontSizeProperty.setNative](value: boolean) {
