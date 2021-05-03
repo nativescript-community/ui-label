@@ -827,9 +827,9 @@ export class Label extends LabelBase {
             }
 
             const textViewSize = textView.frame.size;
-            const fixedWidth = width || textViewSize.width;
-            const fixedHeight = height || textViewSize.height;
-            if (fixedWidth === 0 && fixedHeight === 0) {
+            const fixedWidth = width !== undefined ? width : textViewSize.width;
+            const fixedHeight = height !== undefined ? height : textViewSize.height;
+            if (fixedWidth === 0 || fixedHeight === 0) {
                 return;
             }
             const nbLines = textView.textContainer.maximumNumberOfLines;
@@ -895,7 +895,7 @@ export class Label extends LabelBase {
         }
     }
     [autoFontSizeProperty.setNative](value: boolean) {
-        if (value && this.text) {
+        if (value && (this.text || this.html)) {
             this.textViewDidChange(this.nativeTextViewProtected);
         } else {
             this[fontInternalProperty.setNative](this.style.fontInternal);
