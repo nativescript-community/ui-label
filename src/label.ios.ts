@@ -435,13 +435,15 @@ export class Label extends LabelBase {
         return false;
     }
 
-    updateHTMLString() {
+    updateHTMLString(fontSize?: number) {
         if (!this.html) {
             this.nativeTextViewProtected.selectable = this.selectable === true;
             this.attributedString = null;
         } else {
             const font = this.nativeViewProtected.font;
-            const fontSize = this.fontSize || font?.pointSize || 17;
+            if (fontSize) {
+                fontSize = this.fontSize || font?.pointSize || 17;
+            }
             const fontWeight = this.style.fontWeight;
             const familyName =
                 this.style.fontFamily || (this.style.fontInternal && this.style.fontInternal.fontFamily) || font?.familyName;
@@ -840,6 +842,11 @@ export class Label extends LabelBase {
             textView.font = expectFont;
             let expectSize;
             const size = () => {
+                // TODO: find a better way i dont want to have
+                // to recompute html each time!
+                if (this.html) {
+                    this.updateHTMLString(textView.font.pointSize);
+                }
                 if (nbLines === 1) {
                     expectSize = textView.sizeThatFits(CGSizeMake(Number.MAX_SAFE_INTEGER, fixedHeight));
                 } else {
