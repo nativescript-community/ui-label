@@ -842,11 +842,6 @@ export class Label extends LabelBase {
             textView.font = expectFont;
             let expectSize;
             const size = () => {
-                // TODO: find a better way i dont want to have
-                // to recompute html each time!
-                if (this.html) {
-                    this.updateHTMLString(textView.font.pointSize);
-                }
                 if (nbLines === 1) {
                     expectSize = textView.sizeThatFits(CGSizeMake(Number.MAX_SAFE_INTEGER, fixedHeight));
                 } else {
@@ -861,6 +856,11 @@ export class Label extends LabelBase {
                 ) {
                     const newFont = expectFont.fontWithSize(expectFont.pointSize - 1);
                     textView.font = newFont;
+                    // TODO: find a better way i dont want to have
+                    // to recompute html each time!
+                    if (this.html) {
+                        this.updateHTMLString(newFont.pointSize);
+                    }
                     size();
                     if (expectSize.height >= fixedHeight || expectSize.width >= fixedWidth) {
                         expectFont = newFont;
@@ -876,6 +876,11 @@ export class Label extends LabelBase {
                 ) {
                     const newFont = expectFont.fontWithSize(expectFont.pointSize + 1);
                     textView.font = newFont;
+                    // TODO: find a better way i dont want to have
+                    // to recompute html each time!
+                    if (this.html) {
+                        this.updateHTMLString(newFont.pointSize);
+                    }
                     size();
 
                     if (expectSize.height <= fixedHeight || expectSize.width <= fixedWidth) {
