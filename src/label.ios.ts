@@ -441,7 +441,7 @@ export class Label extends LabelBase {
             this.attributedString = null;
         } else {
             const font = this.nativeViewProtected.font;
-            if (fontSize) {
+            if (!fontSize) {
                 fontSize = this.fontSize || font?.pointSize || 17;
             }
             const fontWeight = this.style.fontWeight;
