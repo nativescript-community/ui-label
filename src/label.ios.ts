@@ -461,23 +461,20 @@ export class Label extends LabelBase {
                 },
                 this
             ) as NSMutableAttributedString;
-            // if (this.linkColor) {
-            // this.nativeTextViewProtected.linkTextAttributes = null;
-            // const color =this.linkColor.ios;
             let hasLink = false;
-            result.enumerateAttributeInRangeOptionsUsingBlock(
-                NSLinkAttributeName,
-                { location: 0, length: result.length },
-                0,
-                (value, range: NSRange, stop) => {
-                    hasLink = hasLink || (!!value && range.length > 0);
-                    if (hasLink) {
-                        stop[0] = true;
+            result &&
+                result.enumerateAttributeInRangeOptionsUsingBlock(
+                    NSLinkAttributeName,
+                    { location: 0, length: result.length },
+                    0,
+                    (value, range: NSRange, stop) => {
+                        hasLink = hasLink || (!!value && range.length > 0);
+                        if (hasLink) {
+                            stop[0] = true;
+                        }
                     }
-                }
-            );
+                );
             this.nativeTextViewProtected.selectable = this.selectable === true || hasLink;
-            // }
 
             this.attributedString = result;
         }
