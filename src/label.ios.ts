@@ -496,7 +496,7 @@ export class Label extends LabelBase {
             attributes = NSMutableDictionary.new();
         }
         if (this.linkUnderline !== false && color) {
-            attributes.setValueForKey(color.ios , NSForegroundColorAttributeName);
+            attributes.setValueForKey(color.ios, NSForegroundColorAttributeName);
             attributes.setValueForKey(color.ios, NSUnderlineColorAttributeName);
         } else {
             attributes.setValueForKey(UIColor.clearColor, NSUnderlineColorAttributeName);
@@ -544,7 +544,10 @@ export class Label extends LabelBase {
     // }
     _setNativeText() {
         if (this.html) {
-            this.updateHTMLString();
+            // when in collectionView or pager
+            // if this is done sync while init the cell
+            // it breaks the UICollectionView :s
+            setTimeout(() => this.updateHTMLString(), 0);
         } else {
             super._setNativeText();
         }
