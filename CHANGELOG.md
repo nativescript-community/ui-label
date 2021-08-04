@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.20](https://github.com/Akylas/nativescript-label/compare/v1.1.19...v1.1.20) (2021-08-04)
+
+
+### Bug Fixes
+
+* **ios:** fix for html + collectionview/pager ([a19b3c8](https://github.com/Akylas/nativescript-label/commit/a19b3c85e837da716a877a8a98f96f2b32416aec))
+* prevent error if null ([ea52954](https://github.com/Akylas/nativescript-label/commit/ea529548bdafa9413a5435a2b857be49ff7b875f))
+
+
+
+
+
 ## [1.1.19](https://github.com/Akylas/nativescript-label/compare/v1.1.18...v1.1.19) (2021-08-04)
 
 
