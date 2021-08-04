@@ -423,8 +423,8 @@ export class Label extends LabelBase {
             this.setMeasuredDimension(widthAndState, heightAndState);
         }
     }
-    _htmlTappable = false;
-    _htmlTapGestureRecognizer;
+    // _htmlTappable = false;
+    // _htmlTapGestureRecognizer;
 
     textViewShouldInteractWithURLInRangeInteraction?(
         textView: UITextView,
