@@ -186,7 +186,11 @@ function initializeURLClickableSpan(): void {
                 super.updateDrawState(tp);
             }
             if (owner && owner.linkColor) {
-                tp.setColor(owner.linkColor.android);
+                const color =
+                    !owner.linkColor || owner.linkColor instanceof Color
+                        ? (owner.linkColor as Color)
+                        : new Color(owner.linkColor);
+                tp.setColor(color.android);
             }
         }
     }
@@ -201,7 +205,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     @cssProperty minFontSize: number;
     @cssProperty maxFontSize: number;
     @cssProperty verticalTextAlignment: VerticalTextAlignment;
-    @cssProperty linkColor: Color;
+    @cssProperty linkColor: Color | string;
     @cssProperty textShadow: CSSShadow;
     @cssProperty linkUnderline: boolean;
     public html: string;
@@ -419,11 +423,12 @@ export class Label extends LabelBase {
         view.setGravity(getHorizontalGravity(value) | getVerticalGravity(this.verticalTextAlignment));
     }
 
-    [colorProperty.setNative](value: Color | android.content.res.ColorStateList) {
-        if (value instanceof Color) {
-            this.nativeTextViewProtected.setTextColor(value.android);
+    [colorProperty.setNative](value: Color | string) {
+        const color = !value || value instanceof Color ? (value as Color) : new Color(value);
+        if (color) {
+            this.nativeTextViewProtected.setTextColor(color.android);
         } else {
-            this.nativeTextViewProtected.setTextColor(value);
+            this.nativeTextViewProtected.setTextColor(null);
         }
     }
     [fontSizeProperty.setNative](value: number | { nativeSize: number }) {

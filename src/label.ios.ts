@@ -486,23 +486,21 @@ export class Label extends LabelBase {
         }
         this._requestLayoutOnTextChanged();
     }
-    [colorProperty.setNative](value: Color | UIColor) {
-        const color = value instanceof Color ? value.ios : value;
-        // if (!this.formattedText && !this.html) {
+    [colorProperty.setNative](value: Color | string) {
+        const color = !value || value instanceof Color ? (value as Color) : new Color(value);
         const nativeView = this.nativeTextViewProtected;
-        nativeView.textColor = color;
-        // }
+        nativeView.textColor = color ? color.ios : null;
     }
-    [linkColorProperty.setNative](value: Color | UIColor) {
-        const color = value instanceof Color ? value.ios : value;
+    [linkColorProperty.setNative](value: Color | string) {
+        const color = !value || value instanceof Color ? (value as Color) : new Color(value);
         const nativeView = this.nativeTextViewProtected;
         let attributes = nativeView.linkTextAttributes;
         if (!(attributes instanceof NSMutableDictionary)) {
             attributes = NSMutableDictionary.new();
         }
-        attributes.setValueForKey(color, NSForegroundColorAttributeName);
-        if (this.linkUnderline !== false) {
-            attributes.setValueForKey(color, NSUnderlineColorAttributeName);
+        if (this.linkUnderline !== false && color) {
+            attributes.setValueForKey(color.ios , NSForegroundColorAttributeName);
+            attributes.setValueForKey(color.ios, NSUnderlineColorAttributeName);
         } else {
             attributes.setValueForKey(UIColor.clearColor, NSUnderlineColorAttributeName);
         }
@@ -518,8 +516,9 @@ export class Label extends LabelBase {
             attributes = NSMutableDictionary.new();
         }
         if (value) {
-            if (this.linkColor) {
-                attributes.setValueForKey(this.linkColor.ios, NSUnderlineColorAttributeName);
+            const color = !this.linkColor || this.linkColor instanceof Color ? this.linkColor : new Color(this.linkColor);
+            if (color) {
+                attributes.setValueForKey(color.ios, NSUnderlineColorAttributeName);
             } else {
                 attributes.removeObjectForKey(NSUnderlineColorAttributeName);
             }
@@ -607,7 +606,10 @@ export class Label extends LabelBase {
                 dict.set(NSFontAttributeName, this.nativeTextViewProtected.font);
             }
             if (style.color) {
-                dict.set(NSForegroundColorAttributeName, style.color.ios);
+                const color = !style.color || style.color instanceof Color ? style.color : new Color(style.color);
+                if (color) {
+                    dict.set(NSForegroundColorAttributeName, color.ios);
+                }
             }
             const result = NSMutableAttributedString.alloc().initWithString(source);
             result.setAttributesRange(dict as any, {
