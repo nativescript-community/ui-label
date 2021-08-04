@@ -207,10 +207,10 @@ export class Label extends LabelBase {
     public disposeNativeView() {
         this._delegate = null;
         super.disposeNativeView();
-        if (this._htmlTapGestureRecognizer) {
-            this.nativeViewProtected.removeGestureRecognizer(this._htmlTapGestureRecognizer);
-            this._htmlTapGestureRecognizer = null;
-        }
+        // if (this._htmlTapGestureRecognizer) {
+        //     this.nativeViewProtected.removeGestureRecognizer(this._htmlTapGestureRecognizer);
+        //     this._htmlTapGestureRecognizer = null;
+        // }
         if (this._observer) {
             this.nativeViewProtected.removeObserverForKeyPath(this._observer, 'contentSize');
             this._observer = null;
