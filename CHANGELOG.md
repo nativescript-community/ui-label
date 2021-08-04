@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.18](https://github.com/Akylas/nativescript-label/compare/v1.1.17...v1.1.18) (2021-08-04)
+
+
+### Bug Fixes
+
+* default link color to null ([668ec19](https://github.com/Akylas/nativescript-label/commit/668ec19f9ac960abd93c8c174c6738e3f7d93594))
+
+
+
+
+
 ## [1.1.17](https://github.com/Akylas/nativescript-label/compare/v1.1.16...v1.1.17) (2021-07-01)
 
 
