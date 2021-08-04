@@ -167,6 +167,7 @@ export class Label extends LabelBase {
         if (!view.font) {
             view.font = UIFont.systemFontOfSize(12);
         }
+        view.linkTextAttributes = NSDictionary.new();
         view.scrollEnabled = false;
         view.editable = false;
         view.selectable = false;
