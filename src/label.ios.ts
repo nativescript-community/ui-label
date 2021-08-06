@@ -2,6 +2,7 @@ import {
     VerticalTextAlignment,
     computeBaseLineOffset,
     createNativeAttributedString,
+    usingIOSDTCoreText,
     verticalTextAlignmentProperty
 } from '@nativescript-community/text';
 import { Color, CoreTypes, Font, FormattedString, Span, View } from '@nativescript/core';
@@ -436,7 +437,7 @@ export class Label extends LabelBase {
         return false;
     }
 
-    updateHTMLString(fontSize?: number) {
+    _updateHTMLString(fontSize?: number) {
         if (!this.html) {
             this.nativeTextViewProtected.selectable = this.selectable === true;
             this.attributedString = null;
@@ -482,6 +483,18 @@ export class Label extends LabelBase {
             this.nativeViewProtected.attributedText = this.attributedString;
         }
         this._requestLayoutOnTextChanged();
+    }
+    updateHTMLString(fontSize?: number) {
+        // when in collectionView or pager
+        // if this is done sync (without DTCoreText) while init the cell
+        // it breaks the UICollectionView :s
+        if (usingIOSDTCoreText()) {
+            this._updateHTMLString();
+        }else {
+            setTimeout(() => {
+                this._updateHTMLString();
+            }, 0);
+        }
     }
     [colorProperty.setNative](value: Color | string) {
         const color = !value || value instanceof Color ? (value as Color) : new Color(value);
@@ -544,10 +557,7 @@ export class Label extends LabelBase {
     // }
     _setNativeText() {
         if (this.html) {
-            // when in collectionView or pager
-            // if this is done sync while init the cell
-            // it breaks the UICollectionView :s
-            setTimeout(() => this.updateHTMLString(), 0);
+            this.updateHTMLString();
         } else {
             super._setNativeText();
         }
