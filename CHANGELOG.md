@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.22](https://github.com/Akylas/nativescript-label/compare/v1.1.21...v1.1.22) (2021-08-07)
+
+
+### Features
+
+* autoFontSizeStep ([388256e](https://github.com/Akylas/nativescript-label/commit/388256e9a531d9ce63cded54225632af1c4dc84f))
+
+
+
+
+
 ## [1.1.21](https://github.com/Akylas/nativescript-label/compare/v1.1.20...v1.1.21) (2021-08-07)
 
 
