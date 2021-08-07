@@ -202,6 +202,7 @@ function initializeURLClickableSpan(): void {
 abstract class LabelBase extends View implements LabelViewDefinition {
     @cssProperty maxLines: string | number;
     @cssProperty autoFontSize: boolean;
+    @cssProperty autoFontSizeStep: number;
     @cssProperty minFontSize: number;
     @cssProperty maxFontSize: number;
     @cssProperty verticalTextAlignment: VerticalTextAlignment;
@@ -519,7 +520,7 @@ export class Label extends LabelBase {
                 this.nativeView,
                 this.minFontSize || 10,
                 this.maxFontSize || 200,
-                1,
+                this.autoFontSizeStep || 1,
                 android.util.TypedValue.COMPLEX_UNIT_DIP
             );
         } else {
@@ -534,7 +535,7 @@ export class Label extends LabelBase {
         this.nativeTextViewProtected.setTextIsSelectable(value);
     }
     createFormattedTextNative(value: any) {
-        const result = createNativeAttributedString(value, this);
+        const result = createNativeAttributedString(value, this, this.autoFontSize);
 
         let indexSearch = 0;
         let str: string;
@@ -557,7 +558,12 @@ export class Label extends LabelBase {
     }
     @profile
     createHTMLString() {
-        const result = createNativeAttributedString({ text: this.html }, this) as android.text.SpannableStringBuilder;
+        const result = createNativeAttributedString(
+            { text: this.html },
+            this,
+            this.autoFontSize,
+            1
+        ) as android.text.SpannableStringBuilder;
         const urlSpan = result.getSpans(0, result.length(), android.text.style.URLSpan.class);
         if (urlSpan.length > 0) {
             this._setTappableState(true);
