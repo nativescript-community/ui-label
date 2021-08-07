@@ -32,6 +32,6 @@
     "license": "Apache-2.0",
     "readmeFilename": "README.md",
     "dependencies": {
-        "@nativescript-community/text": "^1.4.19"
+        "@nativescript-community/text": "^1.4.20"
     }
 }
