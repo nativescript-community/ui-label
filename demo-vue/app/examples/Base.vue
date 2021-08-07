@@ -5,7 +5,7 @@
         </ActionBar>
         <ListView :items="items" rowHeight="80">
             <v-template>
-                    <HTMLLabel height="80" fontSize="20" fontFamily="Cabin Sketch,res/cabinsketch" width="100%" paddingTop="5" color="black" textWrap="true" :html="item.text" verticalAlignment="top" :color="getRandomColor()" lineBreak="end" />
+                    <HTMLLabel height="80" fontSize="40" :autoFontSize="true" fontFamily="Cabin Sketch,res/cabinsketch" width="100%" paddingTop="5" textWrap="true" :html="item.text" verticalAlignment="top" :color="getRandomColor()" lineBreak="end" />
             </v-template>
         </ListView>
     </Page>
@@ -24,7 +24,7 @@ export default Vue.extend({
             items: [
                 {
                     text:
-                        "<b>J'évite les plats préparés</b> souvent trop salés et qui contiennent de nombreux conservateurs. Si je dois en acheter je choisis ceux dont la liste d'ingrédients est la plus courte, avec le moins de conservateurs.  "
+                        "<b>J'évite les plats préparés</b> souvent <span style=\"color:red;font-size:32\";>trop salés</span> et qui contiennent de nombreux conservateurs. Si je dois en acheter je choisis ceux dont la liste d'ingrédients est la plus courte, avec le moins de conservateurs.  "
                 },
                 {
                     text:
