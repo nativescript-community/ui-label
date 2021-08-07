@@ -9,7 +9,8 @@ import {
     Span,
     Style,
     Label as TNLabel,
-    booleanConverter
+    booleanConverter,
+    fontInternalProperty
 } from '@nativescript/core';
 import { layout } from '@nativescript/core/utils/utils';
 import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
@@ -48,11 +49,20 @@ export const needFormattedStringComputation = function (
         return originalMethod.apply(this, args);
     };
 };
+export const needFontComputation = function (target: any, propertyKey: string | Symbol, descriptor: PropertyDescriptor) {
+    const originalMethod = descriptor.value;
+    descriptor.value = function (...args: any[]) {
+        if (!this._canChangeText) {
+            this._needFontComputation = true;
+            return;
+        }
+        return originalMethod.apply(this, args);
+    };
+};
 
 @CSSType('HTMLLabel')
 export abstract class LabelBase extends TNLabel implements LabelViewDefinition {
     @cssProperty maxLines: string | number;
-    @cssProperty autoFontSize: boolean;
     @cssProperty verticalTextAlignment: VerticalTextAlignment;
     @cssProperty lineBreak: LineBreak;
     @cssProperty linkColor: Color;
@@ -62,11 +72,14 @@ export abstract class LabelBase extends TNLabel implements LabelViewDefinition {
     //@ts-ignore
     formattedText: FormattedString;
 
+    @cssProperty autoFontSize: boolean;
     @cssProperty minFontSize: number;
     @cssProperty maxFontSize: number;
+    @cssProperty autoFontSizeStep: number;
 
     _canChangeText = true;
     _needFormattedStringComputation = false;
+    _needFontComputation = false;
     public onResumeNativeUpdates(): void {
         // {N} suspends properties update on `_suspendNativeUpdates`. So we only need to do this in onResumeNativeUpdates
         this._canChangeText = false;
@@ -75,6 +88,10 @@ export abstract class LabelBase extends TNLabel implements LabelViewDefinition {
         if (this._needFormattedStringComputation) {
             this._needFormattedStringComputation = false;
             this._setNativeText();
+        }
+        if (this._needFontComputation) {
+            this._needFontComputation = false;
+            this[fontInternalProperty.setNative](this.style.fontInternal);
         }
     }
 }
@@ -124,6 +141,12 @@ export const autoFontSizeProperty = new CssProperty<Style, boolean>({
     valueConverter: booleanConverter
 });
 autoFontSizeProperty.register(Style);
+export const autoFontSizeStepProperty = new CssProperty<Style, number>({
+    name: 'autoFontSizeStep',
+    cssName: 'auto-font-size-step',
+    valueConverter: (v) => parseFloat(v)
+});
+autoFontSizeStepProperty.register(Style);
 export const minFontSizeProperty = new CssProperty<Style, number>({
     name: 'minFontSize',
     cssName: 'min-font-size',
