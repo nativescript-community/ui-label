@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.21](https://github.com/Akylas/nativescript-label/compare/v1.1.20...v1.1.21) (2021-08-07)
+
+
+### Bug Fixes
+
+* **ios:** fix crashes with html text in pager ([404c0c0](https://github.com/Akylas/nativescript-label/commit/404c0c0b41ec96e4e5bb749ec74b62d400541d35))
+
+
+
+
+
 ## [1.1.20](https://github.com/Akylas/nativescript-label/compare/v1.1.19...v1.1.20) (2021-08-04)
 
 
