@@ -578,10 +578,10 @@ export class Label extends LabelBase {
         this.needsAutoFontSize = this.autoFontSize;
         super[lineHeightProperty.setNative](value);
     }
-    @needFormattedStringComputation
-    [colorProperty.setNative](value: number) {
-        super[colorProperty.setNative](value);
-    }
+    // @needFormattedStringComputation
+    // [colorProperty.setNative](value: number) {
+    //     super[colorProperty.setNative](value);
+    // }
     [fontInternalProperty.setNative](value: any) {
         const nativeView = this.nativeTextViewProtected;
         this.fontSizeRatio = 1;
