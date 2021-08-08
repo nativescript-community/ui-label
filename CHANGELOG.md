@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.23](https://github.com/Akylas/nativescript-label/compare/v1.1.22...v1.1.23) (2021-08-08)
+
+
+### Bug Fixes
+
+* **ios:** rollback to fix color not being set ([3cab1d7](https://github.com/Akylas/nativescript-label/commit/3cab1d71e3bf9a0e9a962fd65611aa25a1be072a))
+
+
+
+
+
 ## [1.1.22](https://github.com/Akylas/nativescript-label/compare/v1.1.21...v1.1.22) (2021-08-07)
 
 
