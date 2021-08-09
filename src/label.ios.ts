@@ -412,12 +412,16 @@ export class Label extends LabelBase {
             const height = layout.getMeasureSpecSize(heightMeasureSpec);
             const heightMode = layout.getMeasureSpecMode(heightMeasureSpec);
             if (this.autoFontSize) {
-                // this.needsAutoFontSize = true;
-                this.textViewDidChange(
-                    nativeView,
-                    layout.toDeviceIndependentPixels(width),
-                    layout.toDeviceIndependentPixels(height)
-                );
+                const finiteWidth: boolean = widthMode === layout.EXACTLY;
+                const finiteHeight: boolean = heightMode === layout.EXACTLY;
+                if (!finiteWidth || !finiteHeight) {
+                    this.needsAutoFontSize = true;
+                    this.textViewDidChange(
+                        nativeView,
+                        layout.toDeviceIndependentPixels(width),
+                        layout.toDeviceIndependentPixels(height)
+                    );
+                }
             }
 
             const desiredSize = layout.measureNativeView(nativeView, width, widthMode, height, heightMode);
