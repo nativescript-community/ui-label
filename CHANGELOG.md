@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.25](https://github.com/Akylas/nativescript-label/compare/v1.1.24...v1.1.25) (2021-08-09)
+
+
+### Bug Fixes
+
+* **ios:** some autoFontSize optimisations ([1712f4f](https://github.com/Akylas/nativescript-label/commit/1712f4fb278a8dc2d0d20ab602aabfefdf2f3148))
+
+
+
+
+
 ## [1.1.24](https://github.com/Akylas/nativescript-label/compare/v1.1.23...v1.1.24) (2021-08-09)
 
 
