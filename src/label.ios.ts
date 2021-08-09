@@ -138,7 +138,7 @@ class LabelUITextViewDelegateImpl extends NSObject implements UITextViewDelegate
     textViewDidChange?(textView: UITextView) {
         const owner = this._owner.get();
         if (owner) {
-            owner.textViewDidChange(textView);
+            owner.textViewDidChange(textView, undefined, undefined, true);
         }
     }
 }
@@ -412,10 +412,9 @@ export class Label extends LabelBase {
             const height = layout.getMeasureSpecSize(heightMeasureSpec);
             const heightMode = layout.getMeasureSpecMode(heightMeasureSpec);
             if (this.autoFontSize) {
-                const finiteWidth: boolean = widthMode === layout.EXACTLY;
-                const finiteHeight: boolean = heightMode === layout.EXACTLY;
+                const finiteWidth = widthMode === layout.EXACTLY;
+                const finiteHeight = heightMode === layout.EXACTLY;
                 if (!finiteWidth || !finiteHeight) {
-                    this.needsAutoFontSize = true;
                     this.textViewDidChange(
                         nativeView,
                         layout.toDeviceIndependentPixels(width),
@@ -435,6 +434,12 @@ export class Label extends LabelBase {
             const heightAndState = View.resolveSizeAndState(measureHeight, height, heightMode, 0);
 
             this.setMeasuredDimension(widthAndState, heightAndState);
+        }
+    }
+    _onSizeChanged() {
+        super._onSizeChanged();
+        if (this.autoFontSize) {
+            this.textViewDidChange(this.nativeTextViewProtected);
         }
     }
     // _htmlTappable = false;
@@ -560,26 +565,18 @@ export class Label extends LabelBase {
     }
     @needFormattedStringComputation
     [htmlProperty.setNative](value: string) {
-        this.fontSizeRatio = 1;
-        this.needsAutoFontSize = this.autoFontSize;
         this.updateHTMLString();
     }
     @needFormattedStringComputation
     [formattedTextProperty.setNative](value: string) {
-        this.fontSizeRatio = 1;
-        this.needsAutoFontSize = this.autoFontSize;
         super[formattedTextProperty.setNative](value);
     }
     @needFormattedStringComputation
     [letterSpacingProperty.setNative](value: number) {
-        this.fontSizeRatio = 1;
-        this.needsAutoFontSize = this.autoFontSize;
         super[letterSpacingProperty.setNative](value);
     }
     @needFormattedStringComputation
     [lineHeightProperty.setNative](value: number) {
-        this.fontSizeRatio = 1;
-        this.needsAutoFontSize = this.autoFontSize;
         super[lineHeightProperty.setNative](value);
     }
     // @needFormattedStringComputation
@@ -588,8 +585,6 @@ export class Label extends LabelBase {
     // }
     [fontInternalProperty.setNative](value: any) {
         const nativeView = this.nativeTextViewProtected;
-        this.fontSizeRatio = 1;
-        this.needsAutoFontSize = this.autoFontSize;
         const newFont: UIFont = value instanceof Font ? value.getUIFont(nativeView.font) : value;
         if (!this.formattedText && !this.html) {
             nativeView.font = newFont;
@@ -914,10 +909,9 @@ export class Label extends LabelBase {
     }
 
     fontSizeRatio = 1;
-    needsAutoFontSize = false;
-    textViewDidChange(textView: UITextView, width?, height?) {
-        if (this.autoFontSize && this.needsAutoFontSize) {
-            this.needsAutoFontSize = false;
+    _lastAutoSizeKey: string;
+    textViewDidChange(textView: UITextView, width?, height?, force = false) {
+        if (textView && this.autoFontSize) {
             if (
                 (!textView.attributedText && !textView.text) ||
                 (width === undefined && height === undefined && CGSizeEqualToSize(textView.bounds.size, CGSizeZero))
@@ -926,11 +920,16 @@ export class Label extends LabelBase {
             }
 
             const textViewSize = textView.frame.size;
-            const fixedWidth = width !== undefined ? width : textViewSize.width;
-            const fixedHeight = height !== undefined ? height : textViewSize.height;
+            const fixedWidth = Math.floor(width !== undefined ? width : textViewSize.width);
+            const fixedHeight = Math.floor(height !== undefined ? height : textViewSize.height);
             if (fixedWidth === 0 || fixedHeight === 0) {
                 return;
             }
+            const autoSizeKey = fixedWidth + '_' + fixedHeight;
+            if (!force && autoSizeKey === this._lastAutoSizeKey) {
+                return;
+            }
+            this._lastAutoSizeKey = autoSizeKey;
             const nbLines = textView.textContainer.maximumNumberOfLines;
             // we need to reset verticalTextAlignment or computation will be wrong
             this.updateTextContainerInset(false);
@@ -1002,10 +1001,10 @@ export class Label extends LabelBase {
         }
     }
     [autoFontSizeProperty.setNative](value: boolean) {
-        if (value && (this.text || this.html || this.formattedText)) {
-            this.fontSizeRatio = 1;
-            this.needsAutoFontSize = true;
-            this.textViewDidChange(this.nativeTextViewProtected);
+        if (value) {
+            if (this.isLayoutValid && (this.text || this.html || this.formattedText)) {
+                this.textViewDidChange(this.nativeTextViewProtected, undefined, undefined, true);
+            }
         } else {
             this[fontInternalProperty.setNative](this.style.fontInternal);
         }
