@@ -214,7 +214,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
 
     public _isSingleLine: boolean;
     public text: string;
-    public spannableStringBuilder: globalAndroid.text.SpannableStringBuilder;
+    // public spannableStringBuilder: globalAndroid.text.SpannableStringBuilder;
     //@ts-ignore
     formattedText: FormattedString;
 
@@ -604,10 +604,7 @@ export class Label extends LabelBase {
         }
 
         let transformedText: any = null;
-        if (this.spannableStringBuilder) {
-            transformedText = this.spannableStringBuilder;
-            // textProperty.nativeValueChange(this, this.html === null || this.html === undefined ? '' : this.html);
-        } else if (this.html) {
+        if (this.html) {
             transformedText = this.createHTMLString();
             textProperty.nativeValueChange(this, this.html === null || this.html === undefined ? '' : this.html);
         } else if (this.formattedText) {
