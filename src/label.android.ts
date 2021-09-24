@@ -421,7 +421,16 @@ export class Label extends LabelBase {
 
     [textAlignmentProperty.setNative](value: CoreTypes.TextAlignmentType) {
         const view = this.nativeTextViewProtected;
-        view.setGravity(getHorizontalGravity(value) | getVerticalGravity(this.verticalTextAlignment));
+        if (android.os.Build.VERSION.SDK_INT >= 25) {
+            if ((value as any) === 'justify' && android.os.Build.VERSION.SDK_INT >= 25) {
+                view.setJustificationMode(android.text.Layout.JUSTIFICATION_MODE_INTER_WORD);
+            } else {
+                view.setJustificationMode(android.text.Layout.JUSTIFICATION_MODE_NONE);
+                view.setGravity(getHorizontalGravity(value) | getVerticalGravity(this.verticalTextAlignment));
+            }
+        } else {
+            view.setGravity(getHorizontalGravity(value) | getVerticalGravity(this.verticalTextAlignment));
+        }
     }
 
     [colorProperty.setNative](value: Color | string) {
