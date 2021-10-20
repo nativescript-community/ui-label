@@ -1,0 +1,15 @@
+{
+    "uses": [
+        "android.text.style:URLSpan*",
+        "android.text.style:ClickableSpan*",
+        "android.text:TextPaint*",
+        "android.text.method:MovementMethod*",
+        "android.text.TextUtils:TruncateAt*",
+        "android.text:Layout*",
+        "android.os:Build*",
+        "android.util:TypedValue*",
+        "android.graphics:Paint*",
+        "android.text:Spanned*",
+        "androidx.core.widget:TextViewCompat*"
+    ]
+}
