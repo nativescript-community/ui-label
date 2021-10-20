@@ -236,17 +236,8 @@ export class Label extends LabelBase {
     }
     computeTextHeight(size: CGSize) {
         const tv = this.nativeTextViewProtected;
-        const font = this.nativeViewProtected.font;
-        const text = this.formattedText || this.html ? tv.attributedText : tv.text;
-        if (text instanceof NSAttributedString) {
-            const rect = text.boundingRectWithSizeOptionsContext(size, NSStringDrawingOptions.UsesLineFragmentOrigin, null);
-            return rect.size.height;
-        }
-        return NSString.stringWithString(text).sizeWithFontConstrainedToSizeLineBreakMode(
-            font,
-            size,
-            tv.textContainer.lineBreakMode
-        ).height;
+        const result = tv.sizeThatFits(size);
+        return result.height;
     }
 
     updateTextContainerInset(applyVerticalTextAlignment = true) {
