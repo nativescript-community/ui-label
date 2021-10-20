@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/Akylas/nativescript-label/compare/v1.1.25...v1.2.0) (2021-10-20)
+
+
+### Bug Fixes
+
+* **android:** justify text alignment support ([f26d74b](https://github.com/Akylas/nativescript-label/commit/f26d74b7831052dd8188bd6cfaf1db19e01a34f4))
+* **ios:** verticalTextAligment fix in some cases ([00ae666](https://github.com/Akylas/nativescript-label/commit/00ae666f22b9a697f1fa7eb7b4c8640216dd0f0d))
+
+
+### Features
+
+* **android:** native-api-usage ([40d28dd](https://github.com/Akylas/nativescript-label/commit/40d28dd648d993f1a7d844c677e20e8dfb1d67c0))
+
+
+
+
+
 ## [1.1.25](https://github.com/Akylas/nativescript-label/compare/v1.1.24...v1.1.25) (2021-08-09)
 
 
