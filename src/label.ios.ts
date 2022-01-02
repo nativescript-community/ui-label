@@ -1,4 +1,5 @@
 import {
+    LightFormattedString,
     VerticalTextAlignment,
     computeBaseLineOffset,
     createNativeAttributedString,
@@ -60,8 +61,8 @@ declare module '@nativescript/core/ui/text-base' {
     interface TextBase {
         _requestLayoutOnTextChanged();
         _setNativeText();
-        createMutableStringForSpan?(span, text): NSMutableAttributedString;
-        createNSMutableAttributedString?(formattedString: FormattedString): NSMutableAttributedString;
+        // createMutableStringForSpan?(span, text): NSMutableAttributedString;
+        // createNSMutableAttributedString?(formattedString: FormattedString): NSMutableAttributedString;
         // createNSMutableAttributedString(formattedString: FormattedString);
     }
 }
@@ -164,13 +165,13 @@ export class Label extends LabelBase {
     attributedString: NSMutableAttributedString;
     private _delegate: LabelUITextViewDelegateImpl;
     static DTCORETEXT_INIT = false;
-    constructor() {
-        super();
-        // if (iOSUseDTCoreText && !Label.DTCORETEXT_INIT) {
-        //     Label.DTCORETEXT_INIT = true;
-        //     DTCoreTextFontDescriptor.asyncPreloadFontLookupTable();
-        // }
-    }
+    // constructor() {
+    // super();
+    // if (iOSUseDTCoreText && !Label.DTCORETEXT_INIT) {
+    //     Label.DTCORETEXT_INIT = true;
+    //     DTCoreTextFontDescriptor.asyncPreloadFontLookupTable();
+    // }
+    // }
     public createNativeView() {
         const view = UITextView.new();
         if (!view.font) {
@@ -183,13 +184,10 @@ export class Label extends LabelBase {
         view.backgroundColor = UIColor.clearColor;
         view.userInteractionEnabled = true;
         view.dataDetectorTypes = UIDataDetectorTypes.All;
-        view.textContainerInset = {
-            top: 0,
-            left: 0,
-            bottom: 0,
-            right: 0
-        };
-        view.textContainer.lineFragmentPadding = 0; // to remove left padding
+        view.textContainerInset = UIEdgeInsetsZero;
+        view.textContainer.lineFragmentPadding = 0;
+        // ignore font leading just like UILabel does
+        view.layoutManager.usesFontLeading = false;
         // view.textContainer.lineBreakMode = NSLineBreakMode.ByCharWrapping;
         return view;
     }
@@ -206,12 +204,6 @@ export class Label extends LabelBase {
             null
         );
         this.nativeViewProtected.attributedText = this.attributedString;
-        // this.htmlText = null;
-        // this.needsHTMLUpdate = false;
-        // this.updatingHTML = false;
-        // if (this.htmlText && this.needsHTMLUpdate) {
-        // this.updateHTMLString();
-        // }
     }
     public disposeNativeView() {
         this._delegate = null;
@@ -236,21 +228,33 @@ export class Label extends LabelBase {
     }
     computeTextHeight(size: CGSize) {
         const tv = this.nativeTextViewProtected;
+        const oldtextContainerInset = tv.textContainerInset;
+        tv.textContainerInset = UIEdgeInsetsZero;
+        // if (tv.attributedText) {
+        //     const result = tv.attributedText.boundingRectWithSizeOptionsContext(
+        //         size,
+        //         NSStringDrawingOptions.UsesLineFragmentOrigin | NSStringDrawingOptions.UsesFontLeading,
+        //         null
+        //     );
+        //     return Math.round(CGRectGetHeight(result));
+        // }
         const result = tv.sizeThatFits(size);
+        tv.textContainerInset = oldtextContainerInset;
         return result.height;
     }
 
     updateTextContainerInset(applyVerticalTextAlignment = true) {
-        // if (!this.text) {
-        //     return;
-        // }
         const tv = this.nativeTextViewProtected;
         const top = layout.toDeviceIndependentPixels(this.effectivePaddingTop + this.effectiveBorderTopWidth);
         const right = layout.toDeviceIndependentPixels(this.effectivePaddingRight + this.effectiveBorderRightWidth);
         const bottom = layout.toDeviceIndependentPixels(this.effectivePaddingBottom + this.effectiveBorderBottomWidth);
         const left = layout.toDeviceIndependentPixels(this.effectivePaddingLeft + this.effectiveBorderLeftWidth);
-        if (!applyVerticalTextAlignment || !this.verticalTextAlignment) {
-            this.nativeViewProtected.textContainerInset = {
+        if (
+            !applyVerticalTextAlignment ||
+            !this.verticalTextAlignment ||
+            (tv.text?.length === 0 && tv.attributedText?.length === 0)
+        ) {
+            tv.textContainerInset = {
                 top,
                 left,
                 bottom,
@@ -261,7 +265,7 @@ export class Label extends LabelBase {
         switch (this.verticalTextAlignment) {
             case 'initial': // not supported
             case 'top':
-                this.nativeViewProtected.textContainerInset = {
+                tv.textContainerInset = {
                     top,
                     left,
                     bottom,
@@ -274,7 +278,7 @@ export class Label extends LabelBase {
                 const height = this.computeTextHeight(CGSizeMake(tv.bounds.size.width, 10000));
                 let topCorrect = (tv.bounds.size.height - top - bottom - height * tv.zoomScale) / 2.0;
                 topCorrect = topCorrect < 0.0 ? 0.0 : topCorrect;
-                this.nativeViewProtected.textContainerInset = {
+                tv.textContainerInset = {
                     top: top + topCorrect,
                     left,
                     bottom,
@@ -285,9 +289,9 @@ export class Label extends LabelBase {
 
             case 'bottom': {
                 const height = this.computeTextHeight(CGSizeMake(tv.bounds.size.width, 10000));
-                let bottomCorrect = tv.bounds.size.height - bottom - height * tv.zoomScale;
+                let bottomCorrect = tv.bounds.size.height - top - bottom - height * tv.zoomScale;
                 bottomCorrect = bottomCorrect < 0.0 ? 0.0 : bottomCorrect;
-                this.nativeViewProtected.textContainerInset = {
+                tv.textContainerInset = {
                     top: top + bottomCorrect,
                     left,
                     bottom,
@@ -303,86 +307,6 @@ export class Label extends LabelBase {
         return this.nativeViewProtected;
     }
     private _fixedSize: FixedSize;
-
-    // setTextDecorationAndTransform() {
-    //     const style = this.style;
-    //     const dict = new Map<string, any>();
-    //     switch (style.textDecoration) {
-    //         case 'none':
-    //             break;
-    //         case 'underline':
-    //             // TODO: Replace deprecated `StyleSingle` with `Single` after the next typings update
-    //             dict.set(NSUnderlineStyleAttributeName, NSUnderlineStyle.Single);
-    //             break;
-    //         case 'line-through':
-    //             // TODO: Replace deprecated `StyleSingle` with `Single` after the next typings update
-    //             dict.set(NSStrikethroughStyleAttributeName, NSUnderlineStyle.Single);
-    //             break;
-    //         case 'underline line-through':
-    //             // TODO: Replace deprecated `StyleSingle` with `Single` after the next typings update
-    //             dict.set(NSUnderlineStyleAttributeName, NSUnderlineStyle.Single);
-    //             dict.set(NSStrikethroughStyleAttributeName, NSUnderlineStyle.Single);
-    //             break;
-    //         default:
-    //             throw new Error(`Invalid text decoration value: ${style.textDecoration}. Valid values are: 'none', 'underline', 'line-through', 'underline line-through'.`);
-    //     }
-
-    //     if (style.letterSpacing !== 0) {
-    //         dict.set(NSKernAttributeName, style.letterSpacing * this.nativeTextViewProtected.font.pointSize);
-    //     }
-
-    //     if (style.lineHeight || style.whiteSpace === 'nowrap' || (style['lineBreak'] && style['lineBreak'] !== 'none')) {
-    //         const paragraphStyle = NSMutableParagraphStyle.alloc().init();
-    //         paragraphStyle.minimumLineHeight = style.lineHeight;
-    //         // make sure a possible previously set text alignment setting is not lost when line height is specified
-    //         paragraphStyle.alignment = (this.nativeTextViewProtected as UITextField | UITextView | UILabel).textAlignment;
-
-    //         // make sure a possible previously set line break mode is not lost when line height is specified
-
-    //         if (style['lineBreak']) {
-    //             paragraphStyle.lineBreakMode = lineBreakToLineBreakMode(style['lineBreak']);
-    //         } else if (style.whiteSpace) {
-    //             paragraphStyle.lineBreakMode = whiteSpaceToLineBreakMode(style.whiteSpace);
-    //         }
-    //         dict.set(NSParagraphStyleAttributeName, paragraphStyle);
-    //     } else if (isTextView && this.style.textAlignment !== 'initial') {
-    //         const paragraphStyle = NSMutableParagraphStyle.alloc().init();
-    //         paragraphStyle.alignment = this.nativeTextViewProtected.textAlignment;
-    //         dict.set(NSParagraphStyleAttributeName, paragraphStyle);
-    //     }
-
-    //     if (style.color && dict.size > 0) {
-    //         // dict.set(NSForegroundColorAttributeName, style.color.ios);
-    //     }
-
-    //     const text = this.text;
-    //     const str = text === undefined || text === null ? '' : text.toString();
-    //     const source = getTransformedText(str, this.textTransform);
-    //     if (dict.size > 0) {
-    //         if (isTextView) {
-    //             // UITextView's font seems to change inside.
-    //             dict.set(NSFontAttributeName, this.nativeTextViewProtected.font);
-    //         }
-
-    //         const result = NSMutableAttributedString.alloc().initWithString(source);
-    //         result.setAttributesRange(dict as any, { location: 0, length: source.length });
-    //         if (this.nativeTextViewProtected instanceof UIButton) {
-    //             this.nativeTextViewProtected.setAttributedTitleForState(result, UIControlState.Normal);
-    //         } else {
-    //             this.nativeTextViewProtected.attributedText = result;
-    //         }
-    //     } else {
-    //         if (this.nativeTextViewProtected instanceof UIButton) {
-    //             // Clear attributedText or title won't be affected.
-    //             this.nativeTextViewProtected.setAttributedTitleForState(null, UIControlState.Normal);
-    //             this.nativeTextViewProtected.setTitleForState(source, UIControlState.Normal);
-    //         } else {
-    //             // Clear attributedText or text won't be affected.
-    //             this.nativeTextViewProtected.attributedText = undefined;
-    //             this.nativeTextViewProtected.text = source;
-    //         }
-    //     }
-    // }
 
     _requestLayoutOnTextChanged(): void {
         if (this._fixedSize === FixedSize.BOTH) {
@@ -498,13 +422,13 @@ export class Label extends LabelBase {
         // when in collectionView or pager
         // if this is done sync (without DTCoreText) while init the cell
         // it breaks the UICollectionView :s
-        if (usingIOSDTCoreText()) {
-            this._updateHTMLString();
-        } else {
-            // setTimeout(() => {
-            this._updateHTMLString();
-            // }, 0);
-        }
+        // if (usingIOSDTCoreText()) {
+        //     this._updateHTMLString();
+        // } else {
+        // setTimeout(() => {
+        this._updateHTMLString();
+        // }, 0);
+        // }
     }
     _setColor(color) {
         if (this.nativeTextViewProtected instanceof UIButton) {
@@ -629,6 +553,7 @@ export class Label extends LabelBase {
         } else {
             super._setNativeText();
         }
+        this.updateTextContainerInset();
         this._requestLayoutOnTextChanged();
     }
     setTextDecorationAndTransform() {
@@ -655,24 +580,18 @@ export class Label extends LabelBase {
         if (style.letterSpacing !== 0 && this.nativeTextViewProtected.font) {
             const kern = style.letterSpacing * this.nativeTextViewProtected.font.pointSize;
             dict.set(NSKernAttributeName, kern);
-            if (this.nativeTextViewProtected instanceof UITextField) {
-                this.nativeTextViewProtected.defaultTextAttributes.setValueForKey(kern, NSKernAttributeName);
-            }
         }
         const isTextView = false;
-        if (style.lineHeight) {
+        if (style.lineHeight !== undefined) {
+            let lineHeight = style.lineHeight;
+            if (lineHeight === 0) {
+                lineHeight = 0.00001;
+            }
             const paragraphStyle = NSMutableParagraphStyle.alloc().init();
-            paragraphStyle.lineSpacing = style.lineHeight;
+            paragraphStyle.minimumLineHeight = lineHeight;
+            paragraphStyle.maximumLineHeight = lineHeight;
             // make sure a possible previously set text alignment setting is not lost when line height is specified
-            if (this.nativeTextViewProtected instanceof UIButton) {
-                paragraphStyle.alignment = this.nativeTextViewProtected.titleLabel.textAlignment;
-            } else {
-                paragraphStyle.alignment = this.nativeTextViewProtected.textAlignment;
-            }
-            if (this.nativeTextViewProtected instanceof UILabel) {
-                // make sure a possible previously set line break mode is not lost when line height is specified
-                paragraphStyle.lineBreakMode = this.nativeTextViewProtected.lineBreakMode;
-            }
+            paragraphStyle.alignment = this.nativeTextViewProtected.textAlignment;
             dict.set(NSParagraphStyleAttributeName, paragraphStyle);
         } else if (isTextView) {
             const paragraphStyle = NSMutableParagraphStyle.alloc().init();
@@ -695,96 +614,29 @@ export class Label extends LabelBase {
                 location: 0,
                 length: source.length
             });
-            if (this.nativeTextViewProtected instanceof UIButton) {
-                this.nativeTextViewProtected.setAttributedTitleForState(result, 0 /* Normal */);
-            } else {
-                this.nativeTextViewProtected.attributedText = result;
-            }
+            this.nativeTextViewProtected.attributedText = result;
         } else {
-            if (this.nativeTextViewProtected instanceof UIButton) {
-                // Clear attributedText or title won't be affected.
-                this.nativeTextViewProtected.setAttributedTitleForState(null, 0 /* Normal */);
-                this.nativeTextViewProtected.setTitleForState(source, 0 /* Normal */);
-            } else {
-                // Clear attributedText or text won't be affected.
-                this.nativeTextViewProtected.attributedText = undefined;
-                this.nativeTextViewProtected.text = source;
-            }
+            // Clear attributedText or text won't be affected.
+            this.nativeTextViewProtected.attributedText = undefined;
+            this.nativeTextViewProtected.text = source;
         }
         if (!style.color && majorVersion >= 13 && UIColor.labelColor) {
             (this as any)._setColor(UIColor.labelColor);
         }
     }
-    currentMaxFontSize = 0;
-
-    createNSMutableAttributedString(formattedString: FormattedString): NSMutableAttributedString {
-        // we need to store the max Font size to pass it to createMutableStringForSpan
-        const length = formattedString.spans.length;
-        let maxFontSize = formattedString.style?.fontSize || this?.style.fontSize || 0;
-        for (let i = 0; i < length; i++) {
-            const s = formattedString.spans.getItem(i);
-            if (s.style.fontSize) {
-                maxFontSize = Math.max(maxFontSize, s.style.fontSize);
-            }
-        }
-        this.currentMaxFontSize = maxFontSize;
-        return super.createNSMutableAttributedString(formattedString);
+    createFormattedTextNative(value: FormattedString) {
+        return createNativeAttributedString(value, this, this.autoFontSize, this.fontSizeRatio);
     }
-    createMutableStringForSpan(span: Span, text: string): NSMutableAttributedString {
-        const viewFont = this.nativeTextViewProtected.font;
-        const attrDict: { key: string; value: any } = {} as any;
-        const style = span.style;
-
-        let align = style.verticalAlignment || (span.parent as FormattedString).style.verticalAlignment;
-        if (!align || align === 'stretch') {
-            align = this.verticalTextAlignment as any;
-        }
-        const font = new Font(style.fontFamily, style.fontSize, style.fontStyle, style.fontWeight);
-        const iosFont = font.getUIFont(viewFont);
-
-        attrDict[NSFontAttributeName] = iosFont;
-        if (span.color) {
-            const color = span.color instanceof Color ? span.color : new Color(span.color as any);
-            attrDict[NSForegroundColorAttributeName] = color.ios;
+    setFormattedTextDecorationAndTransform() {
+        const attrText = this.createFormattedTextNative(this.formattedText);
+        // we override parent class behavior because we apply letterSpacing and lineHeight on a per Span basis
+        if (majorVersion >= 13 && UIColor.labelColor) {
+            this.nativeTextViewProtected.textColor = UIColor.labelColor;
         }
 
-        // We don't use isSet function here because defaultValue for backgroundColor is null.
-        const backgroundColor: Color = style.backgroundColor || (span.parent as FormattedString).backgroundColor;
-        if (backgroundColor) {
-            const color = backgroundColor instanceof Color ? backgroundColor : new Color(backgroundColor);
-            attrDict[NSBackgroundColorAttributeName] = color.ios;
-        }
-
-        const textDecoration: CoreTypes.TextDecorationType = getClosestPropertyValue(textDecorationProperty, span);
-
-        if (textDecoration) {
-            const underline = textDecoration.indexOf('underline') !== -1;
-            if (underline) {
-                attrDict[NSUnderlineStyleAttributeName] = underline;
-            }
-
-            const strikethrough = textDecoration.indexOf('line-through') !== -1;
-            if (strikethrough) {
-                attrDict[NSStrikethroughStyleAttributeName] = strikethrough;
-            }
-        }
-
-        if (align && align !== 'stretch') {
-            if (iosFont) {
-                attrDict[NSBaselineOffsetAttributeName] = -computeBaseLineOffset(
-                    align,
-                    -iosFont.ascender,
-                    -iosFont.descender,
-                    -iosFont.ascender,
-                    -iosFont.descender,
-                    iosFont.pointSize,
-                    this.currentMaxFontSize
-                );
-            }
-        }
-
-        return NSMutableAttributedString.alloc().initWithStringAttributes(text, attrDict as any);
+        this.nativeTextViewProtected.attributedText = attrText;
     }
+
     [paddingTopProperty.getDefault](): CoreTypes.LengthType {
         return {
             value: 0,
