@@ -9,6 +9,7 @@
 import {
     CSSType,
     CoreTypes,
+    Device,
     FormattedString,
     Observable,
     Property,
@@ -48,9 +49,11 @@ import {
     selectableProperty,
     textShadowProperty
 } from './label-common';
+import lazy from '@nativescript/core/utils/lazy';
 
 export { createNativeAttributedString, enableIOSDTCoreText } from '@nativescript-community/text';
 export * from './label-common';
+const sdkVersion = lazy(() => parseInt(Device.sdkVersion, 10));
 
 let TextView: typeof com.nativescript.label.EllipsizingTextView;
 
@@ -450,11 +453,21 @@ export class Label extends LabelBase {
     }
 
     [lineHeightProperty.setNative](value: number) {
-        this.nativeTextViewProtected.setLineSpacing(value * layout.getDisplayDensity(), 1);
+        if (sdkVersion() >= 28) {
+            this.nativeTextViewProtected.setLineHeight(value * layout.getDisplayDensity());
+        } else {
+            const fontHeight = this.nativeTextViewProtected.getPaint().getFontMetricsInt(null);
+            this.nativeTextViewProtected.setLineSpacing(value * layout.getDisplayDensity() - fontHeight, 1);
+        }
     }
 
     [fontInternalProperty.setNative](value: Font | android.graphics.Typeface) {
-        this.nativeTextViewProtected.setTypeface(value instanceof Font ? value.getAndroidTypeface() : value);
+        const androidFont: android.graphics.Typeface = value instanceof Font ? value.getAndroidTypeface() : value;
+        this.nativeTextViewProtected.setTypeface(androidFont);
+        if (this.lineHeight && sdkVersion() < 28) {
+            const fontHeight = this.nativeTextViewProtected.getPaint().getFontMetricsInt(null);
+            this.nativeTextViewProtected.setLineSpacing(this.lineHeight * layout.getDisplayDensity() - fontHeight, 1);
+        }
     }
 
     [textDecorationProperty.setNative](value: number | CoreTypes.TextDecorationType) {
