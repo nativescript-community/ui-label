@@ -2,18 +2,28 @@
     <Page>
         <ActionBar title="Material Vue">
         </ActionBar>
-        <GridLayout rows="50,50,auto,*">
-            <HTMLLabel id="formattedText" padding="20 20 0 36" :autoFontSize="true" :autoFontSizeStep="4" maxFontSize="48" fontSize="48" maxLines="2" height="140" width="100%" :color="color">
-                <Span :text="'collect' + '\n'" fontWeight="800" />
-                <Span :text="counter + ' '" color="red" fontWeight="800" />
-                <Span :text="'dabbas'" />
+        <GridLayout rows="auto,auto,auto,*">
+            <HTMLLabel id="formattedText" padding="10 20 30 36" :autoFontSize="false" :autoFontSizeStep="4" maxFontSize="38" fontSize="30" maxLines="2" height="140" width="100%" :color="color" backgroundColor="blue" fontFamily="Montserrat,montserrat-regular">
+                <Span :text="'collect' + '\n'"/>
+                <Span :text="counter + ' '" color="red" fontWeight="bold" />
+                <Span :text="'dabbas'"/>
             </HTMLLabel>
-            <HTMLLabel id="html" row="1" padding="20 20 0 36" :autoFontSize="true" maxFontSize="48" fontSize="48" maxLines="2" height="140" width="100%" :color="color" :html="htmlText"/>
+            <HTMLLabel class="test" 
+            row="1" 
+            padding="0 20 0 36" 
+            maxLines="2" 
+            verticalTextAlignment='center'
+            height="140" 
+            fontSize="20"
+            width="100%" 
+            backgroundColor="yellow"
+            letterSpacing="-0.4"
+            text="af"/>
             <StackLayout row="2" orientation="horizontal">
                 <Button  text="up" @tap="counter+=1"/>
                 <Button  text="color" @tap="color='green'"/>
             </StackLayout>
-            <ListView row="3" ref="listView" rowHeight="50" for="example in examples" separatorColor="transparent" @itemTap="goToExample">
+            <ListView row="3" ref="listView" itemRowHeight="80" for="example in examples" separatorColor="transparent" @itemTap="goToExample">
                 <v-template>
                     <StackLayout class="item" orientation="horizontal">
                         <Label :text="example.title" class="title" verticalAlignment="center" />
