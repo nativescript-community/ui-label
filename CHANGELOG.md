@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.1](https://github.com/Akylas/nativescript-label/compare/v1.2.0...v1.2.1) (2022-01-02)
+
+
+### Bug Fixes
+
+* **android:** correctly set lineHeight on android >= 28 ([3a48c74](https://github.com/Akylas/nativescript-label/commit/3a48c740fcffbb781994b9b0b6b22c0779cb9b5c))
+* **ios:** lineHeight and letterSpacing fix ([ddc90c7](https://github.com/Akylas/nativescript-label/commit/ddc90c785af7e37e3c0e01cee2be2b1e07f957a5))
+
+
+
+
+
 # [1.2.0](https://github.com/Akylas/nativescript-label/compare/v1.1.25...v1.2.0) (2021-10-20)
 
 
