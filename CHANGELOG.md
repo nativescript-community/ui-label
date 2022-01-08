@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.2](https://github.com/Akylas/nativescript-label/compare/v1.2.1...v1.2.2) (2022-01-08)
+
+
+### Bug Fixes
+
+* **android:** wrong api level for `setJustificationMode` [#11](https://github.com/Akylas/nativescript-label/issues/11) ([f4b0c05](https://github.com/Akylas/nativescript-label/commit/f4b0c051336e292ac4970933609f21d55da26257))
+
+
+
+
+
 ## [1.2.1](https://github.com/Akylas/nativescript-label/compare/v1.2.0...v1.2.1) (2022-01-02)
 
 
