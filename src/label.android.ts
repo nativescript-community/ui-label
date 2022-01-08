@@ -424,7 +424,7 @@ export class Label extends LabelBase {
 
     [textAlignmentProperty.setNative](value: CoreTypes.TextAlignmentType) {
         const view = this.nativeTextViewProtected;
-        if (android.os.Build.VERSION.SDK_INT >= 25) {
+        if (android.os.Build.VERSION.SDK_INT >= 26) {
             if ((value as any) === 'justify') {
                 view.setJustificationMode(android.text.Layout.JUSTIFICATION_MODE_INTER_WORD);
             } else {
