@@ -64,8 +64,6 @@ public class EllipsizingTextView extends AppCompatTextView {
 
 
     private boolean wordWrap = true;
-    private float minTextSize = 20;
-    private float maxTextSize = 30;
 
     /**
      * The end punctuation which will be removed when appending {@link #ELLIPSIS}.
@@ -89,10 +87,6 @@ public class EllipsizingTextView extends AppCompatTextView {
         setMaxLines(a.getInt(0, Integer.MAX_VALUE));
         a.recycle();
         setEndPunctuationPattern(DEFAULT_END_PUNCTUATION);
-        maxTextSize = this.getTextSize();
-        if (maxTextSize < 35) {
-            maxTextSize = 30;
-        }
         super.setSingleLine(false);
     }
 
@@ -132,22 +126,6 @@ public class EllipsizingTextView extends AppCompatTextView {
         // // super.setMaxLines((maxLines == 0) ? Integer.MAX_VALUE : maxLines);
         mMaxLines = maxLines;
         isStale = true;
-    }
-
-    public float getMinTextSize() {
-        return minTextSize;
-    }
-
-    public void setMinTextSize(float minTextSize) {
-        this.minTextSize = minTextSize;
-    }
-
-    public float getMaxTextSize() {
-        return maxTextSize;
-    }
-
-    public void setMaxTextSize(float minTextSize) {
-        this.maxTextSize = minTextSize;
     }
 
     /**
