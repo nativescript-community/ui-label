@@ -215,7 +215,8 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     public html: string;
     @cssProperty selectable: boolean;
 
-    public _isSingleLine: boolean;
+    public mIsSingleLine: boolean;
+
     public text: string;
     // public spannableStringBuilder: globalAndroid.text.SpannableStringBuilder;
     //@ts-ignore
@@ -319,7 +320,9 @@ abstract class LabelBase extends View implements LabelViewDefinition {
 
 export class Label extends LabelBase {
     nativeViewProtected: com.nativescript.label.EllipsizingTextView;
-    handleFontSize = true;
+    mHandleFontSize = true;
+    private mAutoFontSize = false;
+
     private _defaultMovementMethod: android.text.method.MovementMethod;
     get nativeTextViewProtected() {
         return this.nativeViewProtected;
@@ -445,10 +448,18 @@ export class Label extends LabelBase {
         }
     }
     [fontSizeProperty.setNative](value: number | { nativeSize: number }) {
+        // setTextSize is ignored if autoFontSize is enabled
+        // so we need to disable autoFontSize just to set textSize
+        if (this.mAutoFontSize) {
+            this.disableAutoSize();
+        }
         if (typeof value === 'number') {
             this.nativeTextViewProtected.setTextSize(value);
         } else {
             this.nativeTextViewProtected.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, value.nativeSize);
+        }
+        if (this.mAutoFontSize) {
+            this.enableAutoSize();
         }
     }
 
@@ -535,21 +546,27 @@ export class Label extends LabelBase {
             Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderLeftWidth, 0)
         );
     }
-
+    private enableAutoSize() {
+        androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+            this.nativeView,
+            this.minFontSize || 10,
+            this.maxFontSize || 200,
+            this.autoFontSizeStep || 1,
+            android.util.TypedValue.COMPLEX_UNIT_DIP
+        );
+    }
+    private disableAutoSize() {
+        androidx.core.widget.TextViewCompat.setAutoSizeTextTypeWithDefaults(
+            this.nativeView,
+            androidx.core.widget.TextViewCompat.AUTO_SIZE_TEXT_TYPE_NONE
+        );
+    }
     [autoFontSizeProperty.setNative](value: boolean) {
+        this.mAutoFontSize = value;
         if (value) {
-            androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
-                this.nativeView,
-                this.minFontSize || 10,
-                this.maxFontSize || 200,
-                this.autoFontSizeStep || 1,
-                android.util.TypedValue.COMPLEX_UNIT_DIP
-            );
+            this.enableAutoSize();
         } else {
-            androidx.core.widget.TextViewCompat.setAutoSizeTextTypeWithDefaults(
-                this.nativeView,
-                androidx.core.widget.TextViewCompat.AUTO_SIZE_TEXT_TYPE_NONE
-            );
+            this.disableAutoSize();
         }
     }
 
