@@ -25,16 +25,6 @@ import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
 // init text to ensure font overrides are called
 init();
 
-// const CHILD_SPAN = 'Span';
-// const CHILD_FORMATTED_TEXT = 'formattedText';
-// const CHILD_FORMATTED_STRING = 'FormattedString';
-// FormattedString.prototype.addPropertyChangeHandler = function (span: Span) {
-//     span.on(Observable.propertyChangeEvent, this.onPropertyChange, this);
-// };
-// FormattedString.prototype.removePropertyChangeHandler = function (span: Span) {
-//     span.off(Observable.propertyChangeEvent, this.onPropertyChange, this);
-// };
-
 export const needFormattedStringComputation = function (
     target: any,
     propertyKey: string | Symbol,

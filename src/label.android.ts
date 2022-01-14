@@ -57,9 +57,7 @@ const sdkVersion = lazy(() => parseInt(Device.sdkVersion, 10));
 
 let TextView: typeof com.nativescript.label.EllipsizingTextView;
 
-const CHILD_SPAN = 'Span';
 const CHILD_FORMATTED_TEXT = 'formattedText';
-const CHILD_FORMATTED_STRING = 'FormattedString';
 
 const resetSymbol = Symbol('textPropertyDefault');
 enum SuspendType {
@@ -281,7 +279,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     }
 
     public _addChildFromBuilder(name: string, value: any): void {
-        if (name === CHILD_SPAN) {
+        if (name === Span.name) {
             if (!this.formattedText) {
                 let formattedText: FormattedString;
                 if (overrideSpanAndFormattedStringEnabled) {
@@ -295,7 +293,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
             } else {
                 this.formattedText.spans.push(value);
             }
-        } else if (name === CHILD_FORMATTED_TEXT || name === CHILD_FORMATTED_STRING) {
+        } else if (name === CHILD_FORMATTED_TEXT || name === FormattedString.name) {
             this.formattedText = value;
             value.parent = this;
         }
