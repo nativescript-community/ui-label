@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.4](https://github.com/Akylas/nativescript-label/compare/v1.2.3...v1.2.4) (2022-01-14)
+
+
+### Bug Fixes
+
+* uglify fix ([f04189f](https://github.com/Akylas/nativescript-label/commit/f04189f9838615d4eb037a6423fd245538860358))
+
+
+
+
+
 ## [1.2.3](https://github.com/Akylas/nativescript-label/compare/v1.2.2...v1.2.3) (2022-01-13)
 
 
