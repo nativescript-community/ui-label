@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.6](https://github.com/Akylas/nativescript-label/compare/v1.2.5...v1.2.6) (2022-02-09)
+
+
+### Bug Fixes
+
+* **ios:** another fix for flexbox layout ([9c4d55e](https://github.com/Akylas/nativescript-label/commit/9c4d55e511ca1d6f2d3bf51dcc59188b3e3e54c8))
+* **ios:** fix color change with HTML / formattedString ([4de4d80](https://github.com/Akylas/nativescript-label/commit/4de4d803556d5d5bee0745b2f60e3eee6e3caca2))
+
+
+
+
+
 ## [1.2.5](https://github.com/Akylas/nativescript-label/compare/v1.2.4...v1.2.5) (2022-02-09)
 
 
