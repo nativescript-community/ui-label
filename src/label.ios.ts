@@ -393,7 +393,7 @@ export class Label extends LabelBase {
                     fontSize,
                     familyName,
                     fontWeight,
-                    color: this.color,
+                    // color: this.color,
                     letterSpacing: this.letterSpacing,
                     lineHeight: this.lineHeight,
                     textAlignment: this.nativeTextViewProtected.textAlignment
@@ -440,11 +440,11 @@ export class Label extends LabelBase {
             this.nativeTextViewProtected.setTitleColorForState(color, 0 /* Normal */);
             this.nativeTextViewProtected.titleLabel.textColor = color;
         } else {
-            if (this.formattedText || this.html) {
-                this._setNativeText();
-            } else {
-                this.nativeTextViewProtected.textColor = color;
-            }
+            // if (this.formattedText || this.html) {
+            //     this._setNativeText();
+            // } else {
+            this.nativeTextViewProtected.textColor = color;
+            // }
         }
     }
     [linkColorProperty.setNative](value: Color | string) {
@@ -557,6 +557,10 @@ export class Label extends LabelBase {
             this.updateHTMLString();
         } else {
             super._setNativeText();
+        }
+        if (this.color) {
+            const color = this.color instanceof Color ? this.color.ios : this.color;
+            this._setColor(color);
         }
         this.updateTextContainerInset();
         this._requestLayoutOnTextChanged();
