@@ -440,11 +440,15 @@ export class Label extends LabelBase {
             this.nativeTextViewProtected.setTitleColorForState(color, 0 /* Normal */);
             this.nativeTextViewProtected.titleLabel.textColor = color;
         } else {
-            // if (this.formattedText || this.html) {
-            //     this._setNativeText();
-            // } else {
-            this.nativeTextViewProtected.textColor = color;
-            // }
+            if (this.formattedText || this.html) {
+                if (this.html) {
+                    this.updateHTMLString();
+                } else {
+                    super._setNativeText();
+                }
+            } else {
+                this.nativeTextViewProtected.textColor = color;
+            }
         }
     }
     [linkColorProperty.setNative](value: Color | string) {
