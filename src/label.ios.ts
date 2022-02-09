@@ -791,7 +791,11 @@ export class Label extends LabelBase {
                 return currentFont;
             }
             const autoSizeKey = fixedWidth + '_' + fixedHeight;
-            if (!force && autoSizeKey === this._lastAutoSizeKey) {
+            const fontSize = this.style.fontSize || 17;
+            let expectFont = (this.style.fontInternal || Font.default).getUIFont(UIFont.systemFontOfSize(fontSize));
+            //if we are not on the "default" font size we need to measure again or we could break
+            //the layout behavior like for flexbox where there are multiple measure passes
+            if (!force && autoSizeKey === this._lastAutoSizeKey && expectFont.pointSize === textView.font.pointSize) {
                 return null;
             }
             currentFont = textView.font;
@@ -800,9 +804,6 @@ export class Label extends LabelBase {
             // we need to reset verticalTextAlignment or computation will be wrong
             this.updateTextContainerInset(false);
 
-            const fontSize = this.style.fontSize || 17;
-            let expectFont: UIFont = (this.style.fontInternal || Font.default).getUIFont(UIFont.systemFontOfSize(fontSize));
-            //first reset the font size
             let expectSize;
 
             const stepSize = this.autoFontSizeStep || 1;
@@ -814,6 +815,7 @@ export class Label extends LabelBase {
                     textView.font = font;
                 }
             };
+            //first reset the font size
             updateFontSize(expectFont);
             const size = () => {
                 if (nbLines === 1) {
