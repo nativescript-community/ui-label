@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.5](https://github.com/Akylas/nativescript-label/compare/v1.2.4...v1.2.5) (2022-02-09)
+
+
+### Bug Fixes
+
+* **ios:** fix for flexbox. ([2c0e06d](https://github.com/Akylas/nativescript-label/commit/2c0e06d6292b25165729bce17384ca5d334ad538))
+
+
+
+
+
 ## [1.2.4](https://github.com/Akylas/nativescript-label/compare/v1.2.3...v1.2.4) (2022-01-14)
 
 
