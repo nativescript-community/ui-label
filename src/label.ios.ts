@@ -145,7 +145,7 @@ class LabelUITextViewDelegateImpl extends NSObject implements UITextViewDelegate
 }
 
 @NativeClass
-class ObserverClass extends NSObject {
+class LabelObserverClass extends NSObject {
     _owner: WeakRef<Label>;
     // NOTE: Refactor this - use Typescript property instead of strings....
     observeValueForKeyPathOfObjectChangeContext(path: string, tv: UITextView) {
@@ -195,7 +195,7 @@ export class Label extends LabelBase {
     public initNativeView() {
         super.initNativeView();
         this._delegate = LabelUITextViewDelegateImpl.initWithOwner(new WeakRef(this));
-        this._observer = ObserverClass.alloc().init();
+        this._observer = LabelObserverClass.alloc().init();
         this._observer['_owner'] = new WeakRef(this);
         this.nativeViewProtected.addObserverForKeyPathOptionsContext(
             this._observer,
