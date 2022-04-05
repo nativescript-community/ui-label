@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.7](https://github.com/Akylas/nativescript-label/compare/v1.2.6...v1.2.7) (2022-04-05)
+
+
+### Bug Fixes
+
+* **ios:** autoFontSize fix broken font formatting on measure ([5229637](https://github.com/Akylas/nativescript-label/commit/52296377eb69623144aa063a870ac8a0f8ffa03e))
+
+
+
+
+
 ## [1.2.6](https://github.com/Akylas/nativescript-label/compare/v1.2.5...v1.2.6) (2022-02-09)
 
 
