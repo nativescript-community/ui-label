@@ -341,7 +341,7 @@ export class Label extends LabelBase {
             }
 
             const desiredSize = layout.measureNativeView(nativeView, width, widthMode, height, heightMode);
-            if (resetFont) {
+            if (!this.formattedText && !this.html && resetFont) {
                 nativeView.font = resetFont;
             }
 
