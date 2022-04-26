@@ -94,11 +94,11 @@ export const htmlProperty = new Property<LabelBase, string>({
 });
 htmlProperty.register(LabelBase);
 
-export const maxLinesProperty = new CssProperty<Style, number>({
+export const maxLinesProperty = new Property<LabelBase, number>({
     name: 'maxLines',
-    cssName: 'max-lines'
+    affectsLayout: global.isAndroid
 });
-maxLinesProperty.register(Style);
+maxLinesProperty.register(LabelBase);
 export const lineBreakProperty = new CssProperty<Style, string>({
     name: 'lineBreak',
     cssName: 'line-break'
