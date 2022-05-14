@@ -37,7 +37,6 @@ import {
     linkColorProperty,
     linkUnderlineProperty,
     maxLinesProperty,
-    needFontComputation,
     needFormattedStringComputation,
     selectableProperty,
     textShadowProperty
@@ -159,12 +158,17 @@ class LabelObserverClass extends NSObject {
 }
 
 export class Label extends LabelBase {
-    private _observer: NSObject;
+    private mObserver: NSObject;
     nativeViewProtected: UITextView;
     nativeTextViewProtected: UITextView;
     attributedString: NSMutableAttributedString;
-    private _delegate: LabelUITextViewDelegateImpl;
+    private mDelegate: LabelUITextViewDelegateImpl;
+    private mFixedSize: FixedSize;
     static DTCORETEXT_INIT = false;
+
+    fontSizeRatio = 1;
+    mLastAutoSizeKey: string;
+
     // constructor() {
     // super();
     // if (iOSUseDTCoreText && !Label.DTCORETEXT_INIT) {
@@ -194,11 +198,11 @@ export class Label extends LabelBase {
 
     public initNativeView() {
         super.initNativeView();
-        this._delegate = LabelUITextViewDelegateImpl.initWithOwner(new WeakRef(this));
-        this._observer = LabelObserverClass.alloc().init();
-        this._observer['_owner'] = new WeakRef(this);
+        this.mDelegate = LabelUITextViewDelegateImpl.initWithOwner(new WeakRef(this));
+        this.mObserver = LabelObserverClass.alloc().init();
+        this.mObserver['_owner'] = new WeakRef(this);
         this.nativeViewProtected.addObserverForKeyPathOptionsContext(
-            this._observer,
+            this.mObserver,
             'contentSize',
             NSKeyValueObservingOptions.New,
             null
@@ -206,20 +210,20 @@ export class Label extends LabelBase {
         this.nativeViewProtected.attributedText = this.attributedString;
     }
     public disposeNativeView() {
-        this._delegate = null;
+        this.mDelegate = null;
         super.disposeNativeView();
         // if (this._htmlTapGestureRecognizer) {
         //     this.nativeViewProtected.removeGestureRecognizer(this._htmlTapGestureRecognizer);
         //     this._htmlTapGestureRecognizer = null;
         // }
-        if (this._observer) {
-            this.nativeViewProtected.removeObserverForKeyPath(this._observer, 'contentSize');
-            this._observer = null;
+        if (this.mObserver) {
+            this.nativeViewProtected.removeObserverForKeyPath(this.mObserver, 'contentSize');
+            this.mObserver = null;
         }
     }
     public onLoaded() {
         super.onLoaded();
-        this.nativeTextViewProtected.delegate = this._delegate;
+        this.nativeTextViewProtected.delegate = this.mDelegate;
     }
 
     public onUnloaded() {
@@ -302,17 +306,11 @@ export class Label extends LabelBase {
         }
     }
 
-    // @ts-ignore
-    get ios(): UITextView {
-        return this.nativeViewProtected;
-    }
-    private _fixedSize: FixedSize;
-
     _requestLayoutOnTextChanged(): void {
-        if (this._fixedSize === FixedSize.BOTH) {
+        if (this.mFixedSize === FixedSize.BOTH) {
             return;
         }
-        if (this._fixedSize === FixedSize.WIDTH && !this.textWrap && this.getMeasuredHeight() > 0) {
+        if (this.mFixedSize === FixedSize.WIDTH && !this.textWrap && this.getMeasuredHeight() > 0) {
             // Single line label with fixed width will skip request layout on text change.
             return;
         }
@@ -513,8 +511,8 @@ export class Label extends LabelBase {
         if (!this.formattedText && !this.html) {
             nativeView.font = newFont;
         } else if (newFont) {
-            if (!this._canChangeText) {
-                this._needFormattedStringComputation = true;
+            if (!this.mCanChangeText) {
+                this.mNeedFormattedStringComputation = true;
                 return;
             }
             this._setNativeText();
@@ -763,10 +761,6 @@ export class Label extends LabelBase {
             }
         }
     }
-
-    fontSizeRatio = 1;
-    _lastAutoSizeKey: string;
-
     updateAutoFontSize({
         textView,
         width,
@@ -799,11 +793,11 @@ export class Label extends LabelBase {
             let expectFont = (this.style.fontInternal || Font.default).getUIFont(UIFont.systemFontOfSize(fontSize));
             //if we are not on the "default" font size we need to measure again or we could break
             //the layout behavior like for flexbox where there are multiple measure passes
-            if (!force && autoSizeKey === this._lastAutoSizeKey && expectFont.pointSize === textView.font.pointSize) {
+            if (!force && autoSizeKey === this.mLastAutoSizeKey && expectFont.pointSize === textView.font.pointSize) {
                 return null;
             }
             currentFont = textView.font;
-            this._lastAutoSizeKey = autoSizeKey;
+            this.mLastAutoSizeKey = autoSizeKey;
             const nbLines = textView.textContainer.maximumNumberOfLines;
             // we need to reset verticalTextAlignment or computation will be wrong
             this.updateTextContainerInset(false);

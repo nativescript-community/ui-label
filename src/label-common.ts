@@ -32,23 +32,23 @@ export const needFormattedStringComputation = function (
 ) {
     const originalMethod = descriptor.value;
     descriptor.value = function (...args: any[]) {
-        if (!this._canChangeText) {
-            this._needFormattedStringComputation = true;
+        if (!this.mCanChangeText) {
+            this.mNeedFormattedStringComputation = true;
             return;
         }
         return originalMethod.apply(this, args);
     };
 };
-export const needFontComputation = function (target: any, propertyKey: string | Symbol, descriptor: PropertyDescriptor) {
-    const originalMethod = descriptor.value;
-    descriptor.value = function (...args: any[]) {
-        if (!this._canChangeText) {
-            this._needFontComputation = true;
-            return;
-        }
-        return originalMethod.apply(this, args);
-    };
-};
+// export const needFontComputation = function (target: any, propertyKey: string | Symbol, descriptor: PropertyDescriptor) {
+//     const originalMethod = descriptor.value;
+//     descriptor.value = function (...args: any[]) {
+//         if (!this.mCanChangeText) {
+//             this._needFontComputation = true;
+//             return;
+//         }
+//         return originalMethod.apply(this, args);
+//     };
+// };
 
 @CSSType('HTMLLabel')
 export abstract class LabelBase extends TNLabel implements LabelViewDefinition {
@@ -67,20 +67,20 @@ export abstract class LabelBase extends TNLabel implements LabelViewDefinition {
     @cssProperty maxFontSize: number;
     @cssProperty autoFontSizeStep: number;
 
-    _canChangeText = true;
-    _needFormattedStringComputation = false;
-    _needFontComputation = false;
+    mCanChangeText = true;
+    mNeedFormattedStringComputation = false;
+    mNeedFontComputation = false;
     public onResumeNativeUpdates(): void {
         // {N} suspends properties update on `_suspendNativeUpdates`. So we only need to do this in onResumeNativeUpdates
-        this._canChangeText = false;
+        this.mCanChangeText = false;
         super.onResumeNativeUpdates();
-        this._canChangeText = true;
-        if (this._needFormattedStringComputation) {
-            this._needFormattedStringComputation = false;
+        this.mCanChangeText = true;
+        if (this.mNeedFormattedStringComputation) {
+            this.mNeedFormattedStringComputation = false;
             this._setNativeText();
         }
-        if (this._needFontComputation) {
-            this._needFontComputation = false;
+        if (this.mNeedFontComputation) {
+            this.mNeedFontComputation = false;
             this[fontInternalProperty.setNative](this.style.fontInternal);
         }
     }

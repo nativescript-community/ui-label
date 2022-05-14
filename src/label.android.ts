@@ -60,24 +60,6 @@ let TextView: typeof com.nativescript.label.EllipsizingTextView;
 const CHILD_FORMATTED_TEXT = 'formattedText';
 
 const resetSymbol = Symbol('textPropertyDefault');
-enum SuspendType {
-    Incremental = 0,
-    Loaded = 1 << 20,
-    NativeView = 1 << 21,
-    UISetup = 1 << 22,
-    IncrementalCountMask = ~((1 << 20) + (1 << 21) + (1 << 22))
-}
-declare module '@nativescript/core/ui/core/view-base' {
-    interface ViewBase {
-        _resumeNativeUpdates(type: SuspendType);
-        _defaultPaddingTop: number;
-        _defaultPaddingRight: number;
-        _defaultPaddingBottom: number;
-        _defaultPaddingLeft: number;
-        _isPaddingRelative: boolean;
-        _androidView: any;
-    }
-}
 declare module '@nativescript/core/ui/text-base' {
     interface TextBase {
         _setTappableState(tappable: boolean);
@@ -245,15 +227,15 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     @cssProperty paddingLeft: CoreTypes.LengthType;
 
     // for now code is duplicated as Android version is a full rewrite
-    _canChangeText = true;
-    _needFormattedStringComputation = false;
+    mCanChangeText = true;
+    mNeedFormattedStringComputation = false;
     public onResumeNativeUpdates(): void {
         // {N} suspends properties update on `_suspendNativeUpdates`. So we only need to do this in onResumeNativeUpdates
-        this._canChangeText = false;
+        this.mCanChangeText = false;
         super.onResumeNativeUpdates();
-        this._canChangeText = true;
-        if (this._needFormattedStringComputation) {
-            this._needFormattedStringComputation = false;
+        this.mCanChangeText = true;
+        if (this.mNeedFormattedStringComputation) {
+            this.mNeedFormattedStringComputation = false;
             this._setNativeText();
         }
     }
@@ -319,9 +301,10 @@ abstract class LabelBase extends View implements LabelViewDefinition {
 export class Label extends LabelBase {
     nativeViewProtected: com.nativescript.label.EllipsizingTextView;
     mHandleFontSize = true;
+    mTappable = false;
     private mAutoFontSize = false;
 
-    private _defaultMovementMethod: android.text.method.MovementMethod;
+    private mDefaultMovementMethod: android.text.method.MovementMethod;
     get nativeTextViewProtected() {
         return this.nativeViewProtected;
     }
@@ -616,23 +599,22 @@ export class Label extends LabelBase {
         }
         return result;
     }
-    _tappable = false;
     _setTappableState(tappable: boolean) {
-        if (this._tappable !== tappable) {
-            this._tappable = tappable;
-            if (this._tappable) {
+        if (this.mTappable !== tappable) {
+            this.mTappable = tappable;
+            if (this.mTappable) {
                 this.nativeViewProtected.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
                 this.nativeViewProtected.setHighlightColor(null);
             } else {
-                this.nativeViewProtected.setMovementMethod(this._defaultMovementMethod);
+                this.nativeViewProtected.setMovementMethod(this.mDefaultMovementMethod);
             }
         }
     }
 
     @profile
     _setNativeText(reset: boolean = false): void {
-        if (!this._canChangeText) {
-            this._needFormattedStringComputation = true;
+        if (!this.mCanChangeText) {
+            this.mNeedFormattedStringComputation = true;
             return;
         }
         if (reset) {
@@ -657,44 +639,6 @@ export class Label extends LabelBase {
         }
         this.nativeTextViewProtected.setText(transformedText);
     }
-
-    @profile
-    public _setupUI(context: android.content.Context, atIndex?: number, parentIsLoaded?: boolean): void {
-        if (this._context === context) {
-            return;
-        } else if (this._context) {
-            this._tearDownUI(true);
-        }
-
-        this._context = context;
-
-        // This will account for nativeView that is created in createNativeView, recycled
-        // or for backward compatability - set before _setupUI in iOS contructor.
-        let nativeView = this.nativeViewProtected;
-
-        if (!nativeView) {
-            nativeView = this.createNativeView();
-        }
-
-        this._androidView = nativeView;
-        // if (nativeView) {
-        // if (this._isPaddingRelative === undefined) {
-        //     this._isPaddingRelative = false;
-        // }
-
-        // this._defaultPaddingTop = 0;
-        // this._defaultPaddingRight = 0;
-        // this._defaultPaddingBottom = 0;
-        // this._defaultPaddingLeft = 0;
-
-        // }
-
-        this.setNativeView(nativeView);
-        if (this.parent) {
-            this._isAddedToNativeVisualTree = this.parent._addViewToNativeVisualTree(this, undefined);
-        }
-        this._resumeNativeUpdates(SuspendType.UISetup);
-    }
 }
 
 function getCapitalizedString(str: string): string {
@@ -702,7 +646,7 @@ function getCapitalizedString(str: string): string {
     const newWords = [];
     for (let i = 0, length = words.length; i < length; i++) {
         const word = words[i].toLowerCase();
-        newWords.push(word.substr(0, 1).toUpperCase() + word.substring(1));
+        newWords.push(word.substring(0, 1).toUpperCase() + word.substring(1));
     }
 
     return newWords.join(' ');
