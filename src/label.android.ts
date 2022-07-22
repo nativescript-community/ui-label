@@ -34,22 +34,17 @@ import {
 } from '@nativescript/core/ui/styling/style-properties';
 import {
     letterSpacingProperty,
+    lineHeightProperty,
     textAlignmentProperty,
     textDecorationProperty,
     textTransformProperty,
     whiteSpaceProperty
 } from '@nativescript/core/ui/text-base';
-import { lineHeightProperty } from '@nativescript/core/ui/text-base/text-base-common';
-import { layout } from '@nativescript/core/utils/utils';
-import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
-import {
-    autoFontSizeProperty,
-    lineBreakProperty,
-    maxLinesProperty,
-    selectableProperty,
-    textShadowProperty
-} from './label-common';
+import { maxLinesProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import lazy from '@nativescript/core/utils/lazy';
+import { layout } from '@nativescript/core/utils/utils';
+import { Label as LabelViewDefinition, LineBreak } from './label';
+import { autoFontSizeProperty, lineBreakProperty, selectableProperty, textShadowProperty } from './label-common';
 
 export { createNativeAttributedString, enableIOSDTCoreText } from '@nativescript-community/text';
 export * from './label-common';
@@ -195,6 +190,8 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     public html: string;
     @cssProperty selectable: boolean;
 
+    _isSingleLine: boolean;
+
     public mIsSingleLine: boolean;
 
     public text: string;
@@ -217,6 +214,8 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     @cssProperty lineBreak: LineBreak;
     @cssProperty textAlignment: CoreTypes.TextAlignmentType;
     @cssProperty textDecoration: CoreTypes.TextDecorationType;
+
+    //@ts-ignore
     @cssProperty textTransform: CoreTypes.TextTransformType;
     @cssProperty whiteSpace: CoreTypes.WhiteSpaceType;
 

@@ -1,18 +1,10 @@
-import {
-    LightFormattedString,
-    VerticalTextAlignment,
-    computeBaseLineOffset,
-    createNativeAttributedString,
-    usingIOSDTCoreText,
-    verticalTextAlignmentProperty
-} from '@nativescript-community/text';
-import { Color, CoreTypes, Font, FormattedString, Span, View } from '@nativescript/core';
+import { VerticalTextAlignment, createNativeAttributedString, verticalTextAlignmentProperty } from '@nativescript-community/text';
+import { Color, CoreTypes, Font, FormattedString, View } from '@nativescript/core';
 import {
     borderBottomWidthProperty,
     borderLeftWidthProperty,
     borderRightWidthProperty,
     borderTopWidthProperty,
-    colorProperty,
     fontInternalProperty,
     paddingBottomProperty,
     paddingLeftProperty,
@@ -22,10 +14,10 @@ import {
 import {
     formattedTextProperty,
     letterSpacingProperty,
-    textDecorationProperty,
+    lineHeightProperty,
     whiteSpaceProperty
 } from '@nativescript/core/ui/text-base';
-import { getClosestPropertyValue, lineHeightProperty } from '@nativescript/core/ui/text-base/text-base-common';
+import { maxLinesProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import { isNullOrUndefined, isString } from '@nativescript/core/utils/types';
 import { iOSNativeHelper, layout } from '@nativescript/core/utils/utils';
 import { TextShadow } from './label';
@@ -36,7 +28,6 @@ import {
     lineBreakProperty,
     linkColorProperty,
     linkUnderlineProperty,
-    maxLinesProperty,
     needFormattedStringComputation,
     selectableProperty,
     textShadowProperty
