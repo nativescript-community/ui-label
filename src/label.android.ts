@@ -73,13 +73,14 @@ type ClickableSpan = new (owner: Span) => android.text.style.ClickableSpan;
 
 function getHorizontalGravity(textAlignment: CoreTypes.TextAlignmentType) {
     switch (textAlignment) {
-        case 'initial':
-        case 'left':
-            return 8388611; //Gravity.START
         case 'center':
             return 1; //Gravity.CENTER_HORIZONTAL
         case 'right':
             return 8388613; //Gravity.END
+        default:
+        case 'initial':
+        case 'left':
+            return 8388611; //Gravity.START
     }
 }
 function getVerticalGravity(textAlignment: VerticalTextAlignment) {
