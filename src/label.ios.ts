@@ -410,6 +410,7 @@ export class Label extends LabelBase {
         }
         if (this.nativeViewProtected) {
             this.nativeViewProtected.attributedText = this.attributedString;
+            this._requestLayoutOnTextChanged()
         }
     }
     updateHTMLString(fontSize?: number) {
