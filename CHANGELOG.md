@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.10](https://github.com/Akylas/nativescript-label/compare/v1.2.9...v1.2.10) (2022-09-01)
+
+
+### Bug Fixes
+
+* **ios:** fix for html label not layouting correctly ([500a25c](https://github.com/Akylas/nativescript-label/commit/500a25c38b7ff64c828e4888ef41239742e416f4))
+
+
+
+
+
 ## [1.2.9](https://github.com/Akylas/nativescript-label/compare/v1.2.8...v1.2.9) (2022-07-22)
 
 
