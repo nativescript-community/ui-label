@@ -410,7 +410,7 @@ export class Label extends LabelBase {
         }
         if (this.nativeViewProtected) {
             this.nativeViewProtected.attributedText = this.attributedString;
-            this._requestLayoutOnTextChanged()
+            this._requestLayoutOnTextChanged();
         }
     }
     updateHTMLString(fontSize?: number) {
@@ -580,26 +580,31 @@ export class Label extends LabelBase {
                     `Invalid text decoration value: ${style.textDecoration}. Valid values are: 'none', 'underline', 'line-through', 'underline line-through'.`
                 );
         }
+        let paragraphStyle;
+        const createParagraphStyle = () => {
+            if (!paragraphStyle) {
+                paragraphStyle = NSMutableParagraphStyle.alloc().init();
+                paragraphStyle.alignment = this.nativeTextViewProtected.textAlignment;
+                // make sure a possible previously set text alignment setting is not lost when line height is specified
+                dict.set(NSParagraphStyleAttributeName, paragraphStyle);
+            }
+        };
         if (style.letterSpacing !== 0 && this.nativeTextViewProtected.font) {
             const kern = style.letterSpacing * this.nativeTextViewProtected.font.pointSize;
             dict.set(NSKernAttributeName, kern);
+            createParagraphStyle();
         }
-        const isTextView = false;
+        // const isTextView = false;
         if (style.lineHeight !== undefined) {
             let lineHeight = style.lineHeight;
             if (lineHeight === 0) {
                 lineHeight = 0.00001;
             }
-            const paragraphStyle = NSMutableParagraphStyle.alloc().init();
+            createParagraphStyle();
             paragraphStyle.minimumLineHeight = lineHeight;
             paragraphStyle.maximumLineHeight = lineHeight;
-            // make sure a possible previously set text alignment setting is not lost when line height is specified
-            paragraphStyle.alignment = this.nativeTextViewProtected.textAlignment;
-            dict.set(NSParagraphStyleAttributeName, paragraphStyle);
-        } else if (isTextView) {
-            const paragraphStyle = NSMutableParagraphStyle.alloc().init();
-            paragraphStyle.alignment = this.nativeTextViewProtected.textAlignment;
-            dict.set(NSParagraphStyleAttributeName, paragraphStyle);
+        // } else if (isTextView) {
+            // createParagraphStyle();
         }
         const source = getTransformedText(isNullOrUndefined(this.text) ? '' : `${this.text}`, this.textTransform);
         if (dict.size > 0) {
