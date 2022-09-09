@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.11](https://github.com/Akylas/nativescript-label/compare/v1.2.10...v1.2.11) (2022-09-09)
+
+
+### Bug Fixes
+
+* **ios:** `textAlignment` not working with `letterSpacing` ([237771a](https://github.com/Akylas/nativescript-label/commit/237771a9ff9d7cac35a3d81c1048018b2ff95be5))
+
+
+
+
+
 ## [1.2.10](https://github.com/Akylas/nativescript-label/compare/v1.2.9...v1.2.10) (2022-09-01)
 
 
