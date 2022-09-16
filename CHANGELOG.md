@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.12](https://github.com/Akylas/nativescript-label/compare/v1.2.11...v1.2.12) (2022-09-16)
+
+
+### Bug Fixes
+
+* **ios:** correctly handle `linkTap` using UITextView methods ([1b1ab83](https://github.com/Akylas/nativescript-label/commit/1b1ab83b4b1e613da528d6c28383d9310dec3f03))
+
+
+
+
+
 ## [1.2.11](https://github.com/Akylas/nativescript-label/compare/v1.2.10...v1.2.11) (2022-09-09)
 
 
