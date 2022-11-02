@@ -4,26 +4,30 @@
     "readme": "README.md",
     "main": "app/main",
     "dependencies": {
-        "@nativescript-community/text": "^1.4.28",
+        "@akylas/nativescript": "8.3.6",
+        "@nativescript-community/text": "^1.5.9",
         "@nativescript-community/ui-label": "../plugin",
-        "@nativescript/core": "8.0.8",
-        "nativescript-vue": "~2.8.4"
+        "@nativescript/core": "8.3.5",
+        "nativescript-vue": "~2.9.3"
     },
     "devDependencies": {
         "@babel/core": "^7.13.10",
-        "@nativescript/android": "7.0.1",
-        "@nativescript/ios": "7.2.0",
+        "@nativescript/android": "8.4.0-alpha.6",
+        "@nativescript/ios": "6.5.5",
         "@nativescript/types": "7.3.0",
-        "@nativescript/webpack": "5.0.4",
-        "babel-loader": "^8.2.2",
-        "nativescript-vue-template-compiler": "~2.8.4",
-        "typescript": "^4.2.3",
-        "vue": "^2.6.12",
+        "@nativescript/webpack": "5.0.9",
+        "babel-loader": "^8.2.5",
+        "merge-options":"3.0.4",
+        "nativescript-vue-template-compiler": "~2.9.3",
+        "typescript": "4.7.4",
+        "vue": "^2.7.13",
         "vue-i18n": "^8.22.2",
         "vue-loader": "~15.9.8",
-        "vue-property-decorator": "^8.5.1"
+        "vue-property-decorator": "^9.1.2"
     },
     "scripts": {
-        "tslint": "npm i && tslint --config '../tslint.json' 'app/**/*.ts' --exclude '**/node_modules/**'"
+        "tslint": "npm i && tslint --config '../tslint.json' 'app/**/*.ts' --exclude '**/node_modules/**'",
+        "run.android.production": "devns run android --release --clean --key-store-path ./certs/upload.keystore --key-store-password nativescript --key-store-alias nativescript --key-store-alias-password nativescript",
+        "run.android.timeline": "devns run android --config=nativescript.config.timeline.js --release --clean --key-store-path ./certs/upload.keystore --key-store-password nativescript --key-store-alias nativescript --key-store-alias-password nativescript --env.timeline"
     }
 }

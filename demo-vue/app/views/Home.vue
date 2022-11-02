@@ -52,8 +52,14 @@ export default Vue.extend({
         }
     },
     methods: {
-        goToExample({ item }) {
+        async goToExample({ item }) {
+            console.log('goToExample', !!item.component)
+            try {
             this.$navigateTo(item.component);
+                
+            } catch (error) {
+                console.error(error)
+            }
         }
     }
 });

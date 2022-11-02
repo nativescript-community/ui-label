@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import * as frameModule from '@nativescript/core/ui/frame';
+import { Frame } from '@nativescript/core';
 import Vue from 'vue';
 
 export const title = 'verticalAlignment sample';
@@ -36,7 +36,7 @@ export default Vue.extend({
     },
     methods: {
         onNavigationButtonTap() {
-            frameModule.topmost().goBack();
+            Frame.topmost().goBack();
         },
         resize(event) {
             event.object.width = 100;
