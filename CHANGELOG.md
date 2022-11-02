@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.13](https://github.com/Akylas/nativescript-label/compare/v1.2.12...v1.2.13) (2022-11-02)
+
+
+### Bug Fixes
+
+* **ios:** prevent some html labels to use Times New Roman font instead of default ([01c9f81](https://github.com/Akylas/nativescript-label/commit/01c9f81ef341643ccaa615a7a06c94a4cfdbc092))
+
+
+
+
+
 ## [1.2.12](https://github.com/Akylas/nativescript-label/compare/v1.2.11...v1.2.12) (2022-09-16)
 
 
