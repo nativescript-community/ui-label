@@ -4,26 +4,28 @@
     "readme": "README.md",
     "main": "app/main",
     "dependencies": {
-        "@nativescript-community/text": "^1.4.28",
-        "@nativescript-community/ui-label": "../plugin",
-        "@nativescript/core": "8.0.8",
-        "nativescript-vue": "~2.8.4"
+        "@nativescript-community/text": "^1.5.6",
+        "@nativescript-community/ui-label": "link:../plugin",
+        "@nativescript-community/ui-material-bottomsheet": "7.0.25",
+        "@nativescript/core": "8.3.3",
+        "nativescript-vue": "~2.9.3"
     },
     "devDependencies": {
-        "@babel/core": "^7.13.10",
-        "@nativescript/android": "7.0.1",
-        "@nativescript/ios": "7.2.0",
-        "@nativescript/types": "7.3.0",
-        "@nativescript/webpack": "5.0.4",
-        "babel-loader": "^8.2.2",
-        "nativescript-vue-template-compiler": "~2.8.4",
-        "typescript": "^4.2.3",
-        "vue": "^2.6.12",
-        "vue-i18n": "^8.22.2",
+        "@babel/core": "^7.18.10",
+        "@nativescript/android": "8.3.1",
+        "@nativescript/ios": "8.3.3",
+        "@nativescript/types": "8.3.1",
+        "@nativescript/webpack": "5.0.8",
+        "babel-loader": "^8.2.5",
+        "nativescript-vue-template-compiler": "~2.9.3",
+        "typescript": "^4.7.4",
+        "vue": "^2.7.9",
+        "vue-i18n": "^8.27.2",
         "vue-loader": "~15.9.8",
-        "vue-property-decorator": "^8.5.1"
+        "vue-property-decorator": "^9.1.2"
     },
     "scripts": {
         "tslint": "npm i && tslint --config '../tslint.json' 'app/**/*.ts' --exclude '**/node_modules/**'"
-    }
+    },
+    "packageManager": "yarn@3.2.2"
 }
