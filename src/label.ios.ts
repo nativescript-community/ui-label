@@ -1,5 +1,5 @@
 import { VerticalTextAlignment, createNativeAttributedString, verticalTextAlignmentProperty } from '@nativescript-community/text';
-import { Color, CoreTypes, Font, FormattedString, View } from '@nativescript/core';
+import { Color, CoreTypes, Font, FormattedString, Span, View } from '@nativescript/core';
 import {
     borderBottomWidthProperty,
     borderLeftWidthProperty,
@@ -353,14 +353,40 @@ export class Label extends LabelBase {
     }
     // _htmlTappable = false;
     // _htmlTapGestureRecognizer;
+    _tappable;
+    _setTappableState(tappable) {
+        if (this._tappable !== tappable) {
+            this._tappable = tappable;
+            // we dont want the label gesture recognizer for linkTap
+            // so we override
+        }
+    }
 
     textViewShouldInteractWithURLInRangeInteraction?(
         textView: UITextView,
-        URL: NSURL,
+        url: NSURL,
         characterRange: NSRange,
         interaction: UITextItemInteraction
     ) {
-        this.notify({ eventName: 'linkTap', object: this, link: URL.toString() });
+        for (let i = 0, spanStart = 0, length = this.formattedText.spans.length; i < length; i++) {
+            const span = this.formattedText.spans.getItem(i);
+            const text = span.text;
+            const textTransform = (this.formattedText.parent as View).textTransform;
+            let spanText = isNullOrUndefined(text) ? '' : `${text}`;
+            if (textTransform !== 'none' && textTransform !== 'initial') {
+                spanText = getTransformedText(spanText, textTransform);
+            }
+
+            spanStart += spanText.length;
+            if (characterRange.location - 1 <= spanStart && characterRange.location - 1 + characterRange.length > spanStart) {
+                const span: Span = this.formattedText.spans.getItem(i);
+                if (span && span.tappable) {
+                    // if the span is found and tappable emit the linkTap event
+                    span.notify({ eventName: Span.linkTapEvent, link: url?.toString() });
+                }
+                break;
+            }
+        }
         return false;
     }
 
@@ -375,7 +401,7 @@ export class Label extends LabelBase {
             }
             const fontWeight = this.style.fontWeight;
             const familyName =
-                this.style.fontFamily || (this.style.fontInternal && this.style.fontInternal.fontFamily) || font?.familyName;
+                this.style.fontFamily || (this.style.fontInternal && this.style.fontInternal.fontFamily) || undefined;
             const result = createNativeAttributedString(
                 {
                     text: this.html,
@@ -392,7 +418,7 @@ export class Label extends LabelBase {
                 this.fontSizeRatio
             ) as NSMutableAttributedString;
             let hasLink = false;
-            result &&
+            if (result) {
                 result.enumerateAttributeInRangeOptionsUsingBlock(
                     NSLinkAttributeName,
                     { location: 0, length: result.length },
@@ -404,12 +430,15 @@ export class Label extends LabelBase {
                         }
                     }
                 );
+            }
+
             this.nativeTextViewProtected.selectable = this.selectable === true || hasLink;
 
             this.attributedString = result;
         }
         if (this.nativeViewProtected) {
             this.nativeViewProtected.attributedText = this.attributedString;
+            this._requestLayoutOnTextChanged();
         }
     }
     updateHTMLString(fontSize?: number) {
@@ -579,26 +608,31 @@ export class Label extends LabelBase {
                     `Invalid text decoration value: ${style.textDecoration}. Valid values are: 'none', 'underline', 'line-through', 'underline line-through'.`
                 );
         }
+        let paragraphStyle;
+        const createParagraphStyle = () => {
+            if (!paragraphStyle) {
+                paragraphStyle = NSMutableParagraphStyle.alloc().init();
+                paragraphStyle.alignment = this.nativeTextViewProtected.textAlignment;
+                // make sure a possible previously set text alignment setting is not lost when line height is specified
+                dict.set(NSParagraphStyleAttributeName, paragraphStyle);
+            }
+        };
         if (style.letterSpacing !== 0 && this.nativeTextViewProtected.font) {
             const kern = style.letterSpacing * this.nativeTextViewProtected.font.pointSize;
             dict.set(NSKernAttributeName, kern);
+            createParagraphStyle();
         }
-        const isTextView = false;
+        // const isTextView = false;
         if (style.lineHeight !== undefined) {
             let lineHeight = style.lineHeight;
             if (lineHeight === 0) {
                 lineHeight = 0.00001;
             }
-            const paragraphStyle = NSMutableParagraphStyle.alloc().init();
+            createParagraphStyle();
             paragraphStyle.minimumLineHeight = lineHeight;
             paragraphStyle.maximumLineHeight = lineHeight;
-            // make sure a possible previously set text alignment setting is not lost when line height is specified
-            paragraphStyle.alignment = this.nativeTextViewProtected.textAlignment;
-            dict.set(NSParagraphStyleAttributeName, paragraphStyle);
-        } else if (isTextView) {
-            const paragraphStyle = NSMutableParagraphStyle.alloc().init();
-            paragraphStyle.alignment = this.nativeTextViewProtected.textAlignment;
-            dict.set(NSParagraphStyleAttributeName, paragraphStyle);
+            // } else if (isTextView) {
+            // createParagraphStyle();
         }
         const source = getTransformedText(isNullOrUndefined(this.text) ? '' : `${this.text}`, this.textTransform);
         if (dict.size > 0) {

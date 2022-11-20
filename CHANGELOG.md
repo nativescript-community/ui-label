@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.13](https://github.com/Akylas/nativescript-label/compare/v1.2.12...v1.2.13) (2022-11-02)
+
+
+### Bug Fixes
+
+* **ios:** prevent some html labels to use Times New Roman font instead of default ([01c9f81](https://github.com/Akylas/nativescript-label/commit/01c9f81ef341643ccaa615a7a06c94a4cfdbc092))
+
+
+
+
+
+## [1.2.12](https://github.com/Akylas/nativescript-label/compare/v1.2.11...v1.2.12) (2022-09-16)
+
+
+### Bug Fixes
+
+* **ios:** correctly handle `linkTap` using UITextView methods ([1b1ab83](https://github.com/Akylas/nativescript-label/commit/1b1ab83b4b1e613da528d6c28383d9310dec3f03))
+
+
+
+
+
+## [1.2.11](https://github.com/Akylas/nativescript-label/compare/v1.2.10...v1.2.11) (2022-09-09)
+
+
+### Bug Fixes
+
+* **ios:** `textAlignment` not working with `letterSpacing` ([237771a](https://github.com/Akylas/nativescript-label/commit/237771a9ff9d7cac35a3d81c1048018b2ff95be5))
+
+
+
+
+
+## [1.2.10](https://github.com/Akylas/nativescript-label/compare/v1.2.9...v1.2.10) (2022-09-01)
+
+
+### Bug Fixes
+
+* **ios:** fix for html label not layouting correctly ([500a25c](https://github.com/Akylas/nativescript-label/commit/500a25c38b7ff64c828e4888ef41239742e416f4))
+
+
+
+
+
 ## [1.2.9](https://github.com/Akylas/nativescript-label/compare/v1.2.8...v1.2.9) (2022-07-22)
 
 
