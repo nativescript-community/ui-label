@@ -25,7 +25,8 @@
         "vue-property-decorator": "^9.1.2"
     },
     "scripts": {
-        "tslint": "npm i && tslint --config '../tslint.json' 'app/**/*.ts' --exclude '**/node_modules/**'"
-    },
-    "packageManager": "yarn@3.2.2"
+        "tslint": "npm i && tslint --config '../tslint.json' 'app/**/*.ts' --exclude '**/node_modules/**'",
+        "run.android.production": "devns run android --release --clean --key-store-path ./certs/upload.keystore --key-store-password nativescript --key-store-alias nativescript --key-store-alias-password nativescript",
+        "run.android.timeline": "devns run android --config=nativescript.config.timeline.js --release --clean --key-store-path ./certs/upload.keystore --key-store-password nativescript --key-store-alias nativescript --key-store-alias-password nativescript --env.timeline"
+    }
 }
