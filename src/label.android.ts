@@ -21,7 +21,7 @@ import {
 } from '@nativescript/core';
 import { Color } from '@nativescript/core/color';
 import { CSSShadow } from '@nativescript/core/ui/styling/css-shadow';
-import { Font, FontStyle, FontWeight } from '@nativescript/core/ui/styling/font';
+import { Font, FontStyle, FontStyleType, FontWeight, FontWeightType } from '@nativescript/core/ui/styling/font';
 import {
     Length,
     colorProperty,
@@ -42,7 +42,7 @@ import {
 } from '@nativescript/core/ui/text-base';
 import { maxLinesProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import lazy from '@nativescript/core/utils/lazy';
-import { layout } from '@nativescript/core/utils/utils';
+import { layout } from '@nativescript/core/utils/layout-helper';
 import { Label as LabelViewDefinition, LineBreak } from './label';
 import { autoFontSizeProperty, lineBreakProperty, selectableProperty, textShadowProperty } from './label-common';
 
@@ -208,8 +208,8 @@ abstract class LabelBase extends View implements LabelViewDefinition {
 
     @cssProperty fontFamily: string;
     @cssProperty fontSize: number;
-    @cssProperty fontStyle: FontStyle;
-    @cssProperty fontWeight: FontWeight;
+    @cssProperty fontStyle: FontStyleType;
+    @cssProperty fontWeight: FontWeightType;
     @cssProperty letterSpacing: number;
     @cssProperty lineHeight: number;
     @cssProperty lineBreak: LineBreak;

@@ -19,7 +19,7 @@ import {
 } from '@nativescript/core/ui/text-base';
 import { maxLinesProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import { isNullOrUndefined, isString } from '@nativescript/core/utils/types';
-import { iOSNativeHelper, layout } from '@nativescript/core/utils/utils';
+import { layout } from '@nativescript/core/utils/layout-helper';
 import { TextShadow } from './label';
 import {
     LabelBase,
@@ -32,6 +32,7 @@ import {
     selectableProperty,
     textShadowProperty
 } from './label-common';
+import { iOSNativeHelper } from '@nativescript/core/utils';
 
 export { createNativeAttributedString, enableIOSDTCoreText } from '@nativescript-community/text';
 export * from './label-common';
@@ -407,7 +408,7 @@ export class Label extends LabelBase {
                     text: this.html,
                     fontSize,
                     familyName,
-                    fontWeight,
+                    fontWeight: fontWeight as any,
                     // color: this.color,
                     letterSpacing: this.letterSpacing,
                     lineHeight: this.lineHeight,
