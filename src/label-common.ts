@@ -12,7 +12,7 @@ import {
     booleanConverter,
     fontInternalProperty
 } from '@nativescript/core';
-import { layout } from '@nativescript/core/utils/utils';
+import { layout } from '@nativescript/core/utils/layout-helper';
 import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
 
 // declare module '@nativescript/core/ui/text-base/formatted-string' {
