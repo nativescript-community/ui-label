@@ -23,6 +23,7 @@
                 <Button  text="up" @tap="counter+=1"/>
                 <Button  text="color" @tap="color='green'"/>
             </StackLayout>
+            <Button  text="bottomsheet" @tap="showBottomSheet"/>
             <ListView row="3" ref="listView" itemRowHeight="80" for="example in examples" separatorColor="transparent" @itemTap="goToExample">
                 <v-template>
                     <StackLayout class="item" orientation="horizontal">
@@ -36,6 +37,8 @@
 <script lang="ts">
 import { getExamples } from '../examples';
 import Vue from 'vue';
+import BottomSheetInnerVue from './BottomSheetInner.vue';
+import { NativeScriptVue } from 'nativescript-vue';
 
 export default Vue.extend({
     name: 'Home',
@@ -56,10 +59,19 @@ export default Vue.extend({
             console.log('goToExample', !!item.component)
             try {
             this.$navigateTo(item.component);
-                
+
             } catch (error) {
                 console.error(error)
             }
+        },
+        showBottomSheet() {
+            (this as NativeScriptVue).$showBottomSheet(BottomSheetInnerVue, {
+                        // transparent: true,
+                        closeCallback: (...args) => {
+                            console.log('bottom sheet closed', args);
+                        }
+                    });
+                
         }
     }
 });

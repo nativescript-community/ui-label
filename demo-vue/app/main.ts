@@ -1,21 +1,21 @@
 import Vue from 'nativescript-vue';
-// import { overrideSpanAndFormattedString } from '@nativescript-community/text';
-// overrideSpanAndFormattedString();
+import { overrideSpanAndFormattedString } from '@nativescript-community/text';
+overrideSpanAndFormattedString();
 Vue.registerElement('HTMLLabel', () => require('@nativescript-community/ui-label').Label);
-// import * as views from './views/index';
+import * as views from './views/index';
 
-// Vue.component('Home', views.Home);
+import { install as installBottomSheet } from '@nativescript-community/ui-material-bottomsheet';
+import BottomSheetPlugin from '@nativescript-community/ui-material-bottomsheet/vue';
+installBottomSheet();
 
-// Vue.config.silent = true;
-// new Vue({
-//     template: `
-//       <Frame>
-//         <Home />
-//       </Frame>
-//     `
-// }).$start();
-import Test from '~/views/Test.vue';
+Vue.component('Home', views.Home);
+Vue.use(BottomSheetPlugin);
 
+Vue.config.silent = true;
 new Vue({
-    render: (h) => h(Test)
+    template: `
+      <Frame>
+        <Home />
+      </Frame>
+    `
 }).$start();

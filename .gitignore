@@ -1,4 +1,5 @@
 .idea
+.yarn
 .vscode
 node_modules
 platforms
@@ -25,4 +26,3 @@ plugin/**/*js
 *.aar
 pnpm-lock.yaml
 yarn.lock
-.yarn
