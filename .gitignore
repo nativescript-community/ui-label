@@ -24,3 +24,5 @@ plugin/**/*js.map
 plugin/**/*js
 *.aar
 pnpm-lock.yaml
+yarn.lock
+.yarn
