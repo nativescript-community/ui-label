@@ -19,7 +19,7 @@ import {
 } from '@nativescript/core/ui/text-base';
 import { maxLinesProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import { isNullOrUndefined, isString } from '@nativescript/core/utils/types';
-import { iOSNativeHelper, layout } from '@nativescript/core/utils/utils';
+import { iOSNativeHelper, layout } from '@nativescript/core/utils/layout-helper';
 import { TextShadow } from './label';
 import {
     LabelBase,
