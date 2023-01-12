@@ -368,6 +368,12 @@ export class Label extends LabelBase {
         characterRange: NSRange,
         interaction: UITextItemInteraction
     ) {
+        if (!this.formattedText?.spans) {
+            if (url) {
+                this.notify({ eventName: Span.linkTapEvent, link: url?.toString() });
+            }
+            return false;
+        }
         for (let i = 0, spanStart = 0, length = this.formattedText.spans.length; i < length; i++) {
             const span = this.formattedText.spans.getItem(i);
             const text = span.text;
