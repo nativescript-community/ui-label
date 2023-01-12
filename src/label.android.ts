@@ -42,7 +42,7 @@ import {
 } from '@nativescript/core/ui/text-base';
 import { maxLinesProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import lazy from '@nativescript/core/utils/lazy';
-import { layout } from '@nativescript/core/utils/layout-helper';
+import { Utils } from '@nativescript/core';
 import { Label as LabelViewDefinition, LineBreak } from './label';
 import { autoFontSizeProperty, lineBreakProperty, selectableProperty, textShadowProperty } from './label-common';
 
