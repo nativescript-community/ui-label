@@ -1,5 +1,5 @@
 import { VerticalTextAlignment, createNativeAttributedString, verticalTextAlignmentProperty } from '@nativescript-community/text';
-import { Color, CoreTypes, Font, FormattedString, Span, View } from '@nativescript/core';
+import { Color, CoreTypes, Font, FormattedString, Span, Utils, View } from '@nativescript/core';
 import {
     borderBottomWidthProperty,
     borderLeftWidthProperty,
@@ -18,8 +18,8 @@ import {
     whiteSpaceProperty
 } from '@nativescript/core/ui/text-base';
 import { maxLinesProperty } from '@nativescript/core/ui/text-base/text-base-common';
+import { iOSNativeHelper } from '@nativescript/core/utils';
 import { isNullOrUndefined, isString } from '@nativescript/core/utils/types';
-import { Utils } from '@nativescript/core';
 import { TextShadow } from './label';
 import {
     LabelBase,
@@ -32,7 +32,6 @@ import {
     selectableProperty,
     textShadowProperty
 } from './label-common';
-import { iOSNativeHelper } from '@nativescript/core/utils';
 
 export { createNativeAttributedString, enableIOSDTCoreText } from '@nativescript-community/text';
 export * from './label-common';
@@ -311,15 +310,15 @@ export class Label extends LabelBase {
     public onMeasure(widthMeasureSpec: number, heightMeasureSpec: number): void {
         const nativeView = this.nativeTextViewProtected;
         if (nativeView) {
-            const width = layout.getMeasureSpecSize(widthMeasureSpec);
-            const widthMode = layout.getMeasureSpecMode(widthMeasureSpec);
+            const width = Utils.layout.getMeasureSpecSize(widthMeasureSpec);
+            const widthMode = Utils.layout.getMeasureSpecMode(widthMeasureSpec);
 
-            const height = layout.getMeasureSpecSize(heightMeasureSpec);
-            const heightMode = layout.getMeasureSpecMode(heightMeasureSpec);
+            const height = Utils.layout.getMeasureSpecSize(heightMeasureSpec);
+            const heightMode = Utils.layout.getMeasureSpecMode(heightMeasureSpec);
             let resetFont;
             if (this.autoFontSize) {
-                const finiteWidth = widthMode === layout.EXACTLY;
-                const finiteHeight = heightMode === layout.EXACTLY;
+                const finiteWidth = widthMode === Utils.layout.EXACTLY;
+                const finiteHeight = heightMode === Utils.layout.EXACTLY;
                 if (!finiteWidth || !finiteHeight) {
                     resetFont = this.updateAutoFontSize({
                         textView: nativeView,
@@ -330,12 +329,12 @@ export class Label extends LabelBase {
                 }
             }
 
-            const desiredSize = layout.measureNativeView(nativeView, width, widthMode, height, heightMode);
+            const desiredSize = Utils.layout.measureNativeView(nativeView, width, widthMode, height, heightMode);
             if (!this.formattedText && !this.html && resetFont) {
                 nativeView.font = resetFont;
             }
 
-            const labelWidth = widthMode === layout.AT_MOST ? Math.min(desiredSize.width, width) : desiredSize.width;
+            const labelWidth = widthMode === Utils.layout.AT_MOST ? Math.min(desiredSize.width, width) : desiredSize.width;
             // const labelHeight = heightMode === layout.AT_MOST ? Math.min(desiredSize.height, height) : desiredSize.height;
             const measureWidth = Math.max(labelWidth, this.effectiveMinWidth);
             const measureHeight = Math.max(desiredSize.height, this.effectiveMinHeight);
