@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.17](https://github.com/Akylas/nativescript-label/compare/v1.2.16...v1.2.17) (2023-01-12)
+
+### Bug Fixes
+
+-   **ios:** linkTap fix for html ([8469951](https://github.com/Akylas/nativescript-label/commit/8469951477ce1d478507ef0b76f4d0b1290a89c9))
+-   **ios:** more N 8.4 fixes ([3d7ac2e](https://github.com/Akylas/nativescript-label/commit/3d7ac2e72282f602ec8c9d90c1eb8eed5f80500c))
+
 ## [1.2.16](https://github.com/Akylas/nativescript-label/compare/v1.2.15...v1.2.16) (2022-12-01)
 
 **Note:** Version bump only for package @nativescript-community/ui-label
