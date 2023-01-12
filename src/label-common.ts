@@ -12,7 +12,7 @@ import {
     booleanConverter,
     fontInternalProperty
 } from '@nativescript/core';
-import { layout } from '@nativescript/core/utils/layout-helper';
+import { Utils } from '@nativescript/core';
 import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
 
 // declare module '@nativescript/core/ui/text-base/formatted-string' {
@@ -147,7 +147,7 @@ maxFontSizeProperty.register(Style);
 
 function parseDIPs(value: string): CoreTypes.dip {
     if (value.indexOf('px') !== -1) {
-        return layout.toDeviceIndependentPixels(parseFloat(value.replace('px', '').trim()));
+        return Utils.layout.toDeviceIndependentPixels(parseFloat(value.replace('px', '').trim()));
     } else {
         return parseFloat(value.replace('dip', '').trim());
     }

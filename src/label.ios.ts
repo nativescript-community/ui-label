@@ -19,7 +19,7 @@ import {
 } from '@nativescript/core/ui/text-base';
 import { maxLinesProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import { isNullOrUndefined, isString } from '@nativescript/core/utils/types';
-import { layout } from '@nativescript/core/utils/layout-helper';
+import { Utils } from '@nativescript/core';
 import { TextShadow } from './label';
 import {
     LabelBase,
@@ -241,10 +241,10 @@ export class Label extends LabelBase {
 
     updateTextContainerInset(applyVerticalTextAlignment = true) {
         const tv = this.nativeTextViewProtected;
-        const top = layout.toDeviceIndependentPixels(this.effectivePaddingTop + this.effectiveBorderTopWidth);
-        const right = layout.toDeviceIndependentPixels(this.effectivePaddingRight + this.effectiveBorderRightWidth);
-        const bottom = layout.toDeviceIndependentPixels(this.effectivePaddingBottom + this.effectiveBorderBottomWidth);
-        const left = layout.toDeviceIndependentPixels(this.effectivePaddingLeft + this.effectiveBorderLeftWidth);
+        const top = Utils.layout.toDeviceIndependentPixels(this.effectivePaddingTop + this.effectiveBorderTopWidth);
+        const right = Utils.layout.toDeviceIndependentPixels(this.effectivePaddingRight + this.effectiveBorderRightWidth);
+        const bottom = Utils.layout.toDeviceIndependentPixels(this.effectivePaddingBottom + this.effectiveBorderBottomWidth);
+        const left = Utils.layout.toDeviceIndependentPixels(this.effectivePaddingLeft + this.effectiveBorderLeftWidth);
         if (
             !applyVerticalTextAlignment ||
             !this.verticalTextAlignment ||
@@ -323,8 +323,8 @@ export class Label extends LabelBase {
                 if (!finiteWidth || !finiteHeight) {
                     resetFont = this.updateAutoFontSize({
                         textView: nativeView,
-                        width: layout.toDeviceIndependentPixels(width),
-                        height: layout.toDeviceIndependentPixels(height),
+                        width: Utils.layout.toDeviceIndependentPixels(width),
+                        height: Utils.layout.toDeviceIndependentPixels(height),
                         onlyMeasure: true
                     });
                 }
