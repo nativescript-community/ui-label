@@ -421,7 +421,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [1.0.36](https://github.com/nativescript-community/ui-label/compare/v1.0.35...v1.0.36) (2020-05-21)
 
-**Note:** Version bump only for package nativescript-htmllabel
+**Note:** Version bump only for package @nativescript-community/ui-label
 
 ## [1.0.35](https://github.com/nativescript-community/ui-label/compare/v1.0.34...v1.0.35) (2020-05-21)
 
@@ -437,7 +437,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [1.0.33](https://github.com/nativescript-community/ui-label/compare/v1.0.32...v1.0.33) (2020-05-21)
 
-**Note:** Version bump only for package nativescript-htmllabel
+**Note:** Version bump only for package @nativescript-community/ui-label
 
 ## [1.0.32](https://github.com/nativescript-community/ui-label/compare/v1.0.31...v1.0.32) (2020-05-10)
 
@@ -505,7 +505,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [1.0.22](https://github.com/nativescript-community/ui-label/compare/v1.0.21...v1.0.22) (2020-02-27)
 
-**Note:** Version bump only for package nativescript-htmllabel
+**Note:** Version bump only for package @nativescript-community/ui-label
 
 ## [1.0.21](https://github.com/nativescript-community/ui-label/compare/v1.0.20...v1.0.21) (2020-02-26)
 
