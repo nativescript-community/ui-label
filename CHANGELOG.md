@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.19](https://github.com/Akylas/nativescript-label/compare/v1.2.18...v1.2.19) (2023-01-17)
+
+### Bug Fixes
+
+-   **ios:** span click triggered on wrong span ([afa0f8f](https://github.com/Akylas/nativescript-label/commit/afa0f8f95c30bed44cf7a0755442315108923f16))
+
 ## [1.2.18](https://github.com/Akylas/nativescript-label/compare/v1.2.17...v1.2.18) (2023-01-17)
 
 **Note:** Version bump only for package @nativescript-community/ui-label
