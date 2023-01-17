@@ -1,8 +1,8 @@
 ﻿# NativeScript Label widget
 
-[![npm downloads](https://img.shields.io/npm/dm/nativescript-community/ui-label.svg)](https://www.npmjs.com/package/nativescript-community/ui-label)
-[![npm downloads](https://img.shields.io/npm/dt/nativescript-community/ui-label.svg)](https://www.npmjs.com/package/nativescript-community/ui-label)
-[![npm](https://img.shields.io/npm/v/nativescript-community/ui-label.svg)](https://www.npmjs.com/package/nativescript-community/ui-label)
+[![npm downloads](https://img.shields.io/npm/dm/@nativescript-community/ui-label.svg)](https://www.npmjs.com/package/@nativescript-community/ui-label)
+[![npm downloads](https://img.shields.io/npm/dt/@nativescript-community/ui-label.svg)](https://www.npmjs.com/package/@nativescript-community/ui-label)
+[![npm](https://img.shields.io/npm/v/@nativescript-community/ui-label.svg)](https://www.npmjs.com/package/@nativescript-community/ui-label)
 
 A NativeScript Label widget. It is a direct replacement for the {N} Label widget.
 
