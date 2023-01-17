@@ -383,7 +383,6 @@ export class Label extends LabelBase {
                 spanText = getTransformedText(spanText, textTransform);
             }
 
-            spanStart += spanText.length;
             if (characterRange.location - 1 <= spanStart && characterRange.location - 1 + characterRange.length > spanStart) {
                 const span: Span = this.formattedText.spans.getItem(i);
                 if (span && span.tappable) {
@@ -392,6 +391,7 @@ export class Label extends LabelBase {
                 }
                 break;
             }
+            spanStart += spanText.length;
         }
         return false;
     }
