@@ -1,8 +1,8 @@
 ﻿# NativeScript Label widget
 
-[![npm downloads](https://img.shields.io/npm/dm/nativescript-htmllabel.svg)](https://www.npmjs.com/package/nativescript-htmllabel)
-[![npm downloads](https://img.shields.io/npm/dt/nativescript-htmllabel.svg)](https://www.npmjs.com/package/nativescript-htmllabel)
-[![npm](https://img.shields.io/npm/v/nativescript-htmllabel.svg)](https://www.npmjs.com/package/nativescript-htmllabel)
+[![npm downloads](https://img.shields.io/npm/dm/nativescript-community/ui-label.svg)](https://www.npmjs.com/package/nativescript-community/ui-label)
+[![npm downloads](https://img.shields.io/npm/dt/nativescript-community/ui-label.svg)](https://www.npmjs.com/package/nativescript-community/ui-label)
+[![npm](https://img.shields.io/npm/v/nativescript-community/ui-label.svg)](https://www.npmjs.com/package/nativescript-community/ui-label)
 
 A NativeScript Label widget. It is a direct replacement for the {N} Label widget.
 
@@ -12,7 +12,7 @@ Run the following command from the root of your project:
 
 `tns plugin add @nativescript-community/ui-label`
 
-This command automatically installs the necessary files, as well as stores nativescript-htmllabel as a dependency in your project's package.json file.
+This command automatically installs the necessary files, as well as stores nativescript-community/ui-label as a dependency in your project's package.json file.
 
 ## Configuration
 
