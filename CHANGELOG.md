@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.20](https://github.com/nativescript-community/ui-label/compare/v1.2.19...v1.2.20) (2023-01-24)
+
+### Bug Fixes
+
+-   **android:** native-api-usage fix ([ffa6a5d](https://github.com/nativescript-community/ui-label/commit/ffa6a5dabaa6d0bfd0350bb0817e947648bb2e76))
+
 ## [1.2.19](https://github.com/Akylas/nativescript-label/compare/v1.2.18...v1.2.19) (2023-01-17)
 
 ### Bug Fixes
