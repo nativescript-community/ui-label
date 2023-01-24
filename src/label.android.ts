@@ -15,13 +15,14 @@ import {
     Property,
     PropertyChangeData,
     Span,
+    Utils,
     View,
     booleanConverter,
     profile
 } from '@nativescript/core';
 import { Color } from '@nativescript/core/color';
 import { CSSShadow } from '@nativescript/core/ui/styling/css-shadow';
-import { Font, FontStyle, FontWeight } from '@nativescript/core/ui/styling/font';
+import { Font, FontStyleType, FontWeightType } from '@nativescript/core/ui/styling/font';
 import {
     Length,
     colorProperty,
@@ -42,7 +43,6 @@ import {
 } from '@nativescript/core/ui/text-base';
 import { maxLinesProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import lazy from '@nativescript/core/utils/lazy';
-import { layout } from '@nativescript/core/utils/utils';
 import { Label as LabelViewDefinition, LineBreak } from './label';
 import { autoFontSizeProperty, lineBreakProperty, selectableProperty, textShadowProperty } from './label-common';
 
@@ -208,8 +208,8 @@ abstract class LabelBase extends View implements LabelViewDefinition {
 
     @cssProperty fontFamily: string;
     @cssProperty fontSize: number;
-    @cssProperty fontStyle: FontStyle;
-    @cssProperty fontWeight: FontWeight;
+    @cssProperty fontStyle: FontStyleType;
+    @cssProperty fontWeight: FontWeightType;
     @cssProperty letterSpacing: number;
     @cssProperty lineHeight: number;
     @cssProperty lineBreak: LineBreak;
@@ -446,10 +446,10 @@ export class Label extends LabelBase {
 
     [lineHeightProperty.setNative](value: number) {
         if (sdkVersion() >= 28) {
-            this.nativeTextViewProtected.setLineHeight(value * layout.getDisplayDensity());
+            this.nativeTextViewProtected.setLineHeight(value * Utils.layout.getDisplayDensity());
         } else {
             const fontHeight = this.nativeTextViewProtected.getPaint().getFontMetricsInt(null);
-            this.nativeTextViewProtected.setLineSpacing(value * layout.getDisplayDensity() - fontHeight, 1);
+            this.nativeTextViewProtected.setLineSpacing(value * Utils.layout.getDisplayDensity() - fontHeight, 1);
         }
     }
 
@@ -458,7 +458,7 @@ export class Label extends LabelBase {
         this.nativeTextViewProtected.setTypeface(androidFont);
         if (this.lineHeight && sdkVersion() < 28) {
             const fontHeight = this.nativeTextViewProtected.getPaint().getFontMetricsInt(null);
-            this.nativeTextViewProtected.setLineSpacing(this.lineHeight * layout.getDisplayDensity() - fontHeight, 1);
+            this.nativeTextViewProtected.setLineSpacing(this.lineHeight * Utils.layout.getDisplayDensity() - fontHeight, 1);
         }
     }
 

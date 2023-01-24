@@ -1,6 +1,6 @@
 {
     "name": "@nativescript-community/ui-label",
-    "version": "1.2.15",
+    "version": "1.2.19",
     "description": "Alternative to the built-in NativeScript Label but with better performance and additional features such as HTML rendering and more.",
     "main": "./label",
     "sideEffects": false,
@@ -33,5 +33,6 @@
     "readmeFilename": "README.md",
     "dependencies": {
         "@nativescript-community/text": "^1.5.9"
-    }
+    },
+    "gitHead": "a08eb50756c9a5d16fc8aa6ff7fba0051c71d1e0"
 }

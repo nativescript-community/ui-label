@@ -1,5 +1,5 @@
 import { VerticalTextAlignment, createNativeAttributedString, verticalTextAlignmentProperty } from '@nativescript-community/text';
-import { Color, CoreTypes, Font, FormattedString, Span, View } from '@nativescript/core';
+import { Color, CoreTypes, Font, FormattedString, Span, Utils, View } from '@nativescript/core';
 import {
     borderBottomWidthProperty,
     borderLeftWidthProperty,
@@ -18,8 +18,8 @@ import {
     whiteSpaceProperty
 } from '@nativescript/core/ui/text-base';
 import { maxLinesProperty } from '@nativescript/core/ui/text-base/text-base-common';
+import { iOSNativeHelper } from '@nativescript/core/utils';
 import { isNullOrUndefined, isString } from '@nativescript/core/utils/types';
-import { iOSNativeHelper, layout } from '@nativescript/core/utils/utils';
 import { TextShadow } from './label';
 import {
     LabelBase,
@@ -240,10 +240,10 @@ export class Label extends LabelBase {
 
     updateTextContainerInset(applyVerticalTextAlignment = true) {
         const tv = this.nativeTextViewProtected;
-        const top = layout.toDeviceIndependentPixels(this.effectivePaddingTop + this.effectiveBorderTopWidth);
-        const right = layout.toDeviceIndependentPixels(this.effectivePaddingRight + this.effectiveBorderRightWidth);
-        const bottom = layout.toDeviceIndependentPixels(this.effectivePaddingBottom + this.effectiveBorderBottomWidth);
-        const left = layout.toDeviceIndependentPixels(this.effectivePaddingLeft + this.effectiveBorderLeftWidth);
+        const top = Utils.layout.toDeviceIndependentPixels(this.effectivePaddingTop + this.effectiveBorderTopWidth);
+        const right = Utils.layout.toDeviceIndependentPixels(this.effectivePaddingRight + this.effectiveBorderRightWidth);
+        const bottom = Utils.layout.toDeviceIndependentPixels(this.effectivePaddingBottom + this.effectiveBorderBottomWidth);
+        const left = Utils.layout.toDeviceIndependentPixels(this.effectivePaddingLeft + this.effectiveBorderLeftWidth);
         if (
             !applyVerticalTextAlignment ||
             !this.verticalTextAlignment ||
@@ -310,31 +310,31 @@ export class Label extends LabelBase {
     public onMeasure(widthMeasureSpec: number, heightMeasureSpec: number): void {
         const nativeView = this.nativeTextViewProtected;
         if (nativeView) {
-            const width = layout.getMeasureSpecSize(widthMeasureSpec);
-            const widthMode = layout.getMeasureSpecMode(widthMeasureSpec);
+            const width = Utils.layout.getMeasureSpecSize(widthMeasureSpec);
+            const widthMode = Utils.layout.getMeasureSpecMode(widthMeasureSpec);
 
-            const height = layout.getMeasureSpecSize(heightMeasureSpec);
-            const heightMode = layout.getMeasureSpecMode(heightMeasureSpec);
+            const height = Utils.layout.getMeasureSpecSize(heightMeasureSpec);
+            const heightMode = Utils.layout.getMeasureSpecMode(heightMeasureSpec);
             let resetFont;
             if (this.autoFontSize) {
-                const finiteWidth = widthMode === layout.EXACTLY;
-                const finiteHeight = heightMode === layout.EXACTLY;
+                const finiteWidth = widthMode === Utils.layout.EXACTLY;
+                const finiteHeight = heightMode === Utils.layout.EXACTLY;
                 if (!finiteWidth || !finiteHeight) {
                     resetFont = this.updateAutoFontSize({
                         textView: nativeView,
-                        width: layout.toDeviceIndependentPixels(width),
-                        height: layout.toDeviceIndependentPixels(height),
+                        width: Utils.layout.toDeviceIndependentPixels(width),
+                        height: Utils.layout.toDeviceIndependentPixels(height),
                         onlyMeasure: true
                     });
                 }
             }
 
-            const desiredSize = layout.measureNativeView(nativeView, width, widthMode, height, heightMode);
+            const desiredSize = Utils.layout.measureNativeView(nativeView, width, widthMode, height, heightMode);
             if (!this.formattedText && !this.html && resetFont) {
                 nativeView.font = resetFont;
             }
 
-            const labelWidth = widthMode === layout.AT_MOST ? Math.min(desiredSize.width, width) : desiredSize.width;
+            const labelWidth = widthMode === Utils.layout.AT_MOST ? Math.min(desiredSize.width, width) : desiredSize.width;
             // const labelHeight = heightMode === layout.AT_MOST ? Math.min(desiredSize.height, height) : desiredSize.height;
             const measureWidth = Math.max(labelWidth, this.effectiveMinWidth);
             const measureHeight = Math.max(desiredSize.height, this.effectiveMinHeight);
@@ -368,6 +368,12 @@ export class Label extends LabelBase {
         characterRange: NSRange,
         interaction: UITextItemInteraction
     ) {
+        if (!this.formattedText?.spans) {
+            if (url) {
+                this.notify({ eventName: Span.linkTapEvent, link: url?.toString() });
+            }
+            return false;
+        }
         for (let i = 0, spanStart = 0, length = this.formattedText.spans.length; i < length; i++) {
             const span = this.formattedText.spans.getItem(i);
             const text = span.text;
@@ -377,7 +383,6 @@ export class Label extends LabelBase {
                 spanText = getTransformedText(spanText, textTransform);
             }
 
-            spanStart += spanText.length;
             if (characterRange.location - 1 <= spanStart && characterRange.location - 1 + characterRange.length > spanStart) {
                 const span: Span = this.formattedText.spans.getItem(i);
                 if (span && span.tappable) {
@@ -386,6 +391,7 @@ export class Label extends LabelBase {
                 }
                 break;
             }
+            spanStart += spanText.length;
         }
         return false;
     }
@@ -407,7 +413,7 @@ export class Label extends LabelBase {
                     text: this.html,
                     fontSize,
                     familyName,
-                    fontWeight,
+                    fontWeight: fontWeight as any,
                     // color: this.color,
                     letterSpacing: this.letterSpacing,
                     lineHeight: this.lineHeight,

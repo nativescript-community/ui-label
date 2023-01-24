@@ -5,25 +5,22 @@
         </ActionBar>
         <ScrollView>
             <StackLayout>
-            <!-- Label with text align left (right will also do) -->
-<!-- Set full width or height to test tap outside bounds -->
-<HTMLLabel textAlignment="left" width="100%" marginBottom="50">
-        <Span text="Click to open link" @linkTap="openLink">
-        </Span>
-</HTMLLabel>
-
-<!-- Centered label with multiple lines -->
-<HTMLLabel textAlignment="center" textWrap="true">
-        <Span text="I am a paragraph with looots of words that wastes your time reading because I'm a humble little sample. If you are brave enough to lose more time, click this">
-        </Span>
-        <Span text="  link" @linkTap="openLink">
-        </Span>
-</HTMLLabel>
-
+            <HTMLLabel textAlignment="left" width="100%" margin="50">
+                    <Span text="Click to open link" @linkTap="openLink">
+                    </Span>
+            </HTMLLabel>
+            <!-- Centered label with multiple lines -->
+            <HTMLLabel textAlignment="center" textWrap="true"  margin="50">
+                    <Span text="I am a paragraph with looots of words that wastes your time reading because I'm a humble little sample. If you are brave enough to lose more time, click this">
+                    </Span>
+                    <Span text=" link" @linkTap="openLink">
+                    </Span>
+            </HTMLLabel>
+            <!-- Centered label with multiple lines -->
+            <HTMLLabel textAlignment="center"  margin="50" html="<a href='urltest'>toot</a>"  @linkTap="openLink">
+            </HTMLLabel>
         </StackLayout>
         </ScrollView>
-        
-
     </Page>
 </template>
 
@@ -43,8 +40,8 @@ export default Vue.extend({
         onNavigationButtonTap() {
             Frame.topmost().goBack();
         },
-        openLink() {
-            console.log('openLink')
+        openLink(event) {
+            console.log('openLink', event.link)
         }
     }
 });
