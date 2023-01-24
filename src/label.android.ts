@@ -22,7 +22,8 @@ import {
 } from '@nativescript/core';
 import { Color } from '@nativescript/core/color';
 import { CSSShadow } from '@nativescript/core/ui/styling/css-shadow';
-import { Font, FontStyleType, FontWeightType } from '@nativescript/core/ui/styling/font';
+import { Font } from '@nativescript/core/ui/styling/font';
+import { FontStyleType, FontWeightType } from '@nativescript/core/ui/styling/font-common';
 import {
     Length,
     colorProperty,
