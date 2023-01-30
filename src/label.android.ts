@@ -585,17 +585,21 @@ export class Label extends LabelBase {
             this.autoFontSize,
             1
         ) as android.text.SpannableStringBuilder;
-        const urlSpan = result.getSpans(0, result.length(), android.text.style.URLSpan.class);
-        if (urlSpan.length > 0) {
-            this._setTappableState(true);
-            initializeURLClickableSpan();
-            for (let index = 0; index < urlSpan.length; index++) {
-                const span = urlSpan[index];
-                const text = span.getURL();
-                const start = result.getSpanStart(span);
-                const end = result.getSpanEnd(span);
-                result.removeSpan(span);
-                result.setSpan(new URLClickableSpan(text, this), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        // no need to check for urlspan if we dont have a listener
+        // the only issue might happen if the listener is set afterward. Is that really an issue?
+        if (this.hasListeners(Span.linkTapEvent)) {
+            const urlSpan = result.getSpans(0, result.length(), android.text.style.URLSpan.class);
+            if (urlSpan.length > 0) {
+                this._setTappableState(true);
+                initializeURLClickableSpan();
+                for (let index = 0; index < urlSpan.length; index++) {
+                    const span = urlSpan[index];
+                    const text = span.getURL();
+                    const start = result.getSpanStart(span);
+                    const end = result.getSpanEnd(span);
+                    result.removeSpan(span);
+                    result.setSpan(new URLClickableSpan(text, this), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
             }
         }
         return result;
