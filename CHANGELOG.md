@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.21](https://github.com/nativescript-community/ui-label/compare/v1.2.20...v1.2.21) (2023-01-30)
+
+### Bug Fixes
+
+-   **android:** dont check urlspan if not needed ([ae17045](https://github.com/nativescript-community/ui-label/commit/ae17045b332a8577ad7bd385f08e9603b865fa9f))
+
 ## [1.2.20](https://github.com/nativescript-community/ui-label/compare/v1.2.19...v1.2.20) (2023-01-24)
 
 ### Bug Fixes
