@@ -262,7 +262,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     }
 
     public _addChildFromBuilder(name: string, value: any): void {
-        if (name === Span.name) {
+        if (name === Span.name || value.constructor.isSpan) {
             if (!this.formattedText) {
                 let formattedText: FormattedString;
                 if (overrideSpanAndFormattedStringEnabled) {
