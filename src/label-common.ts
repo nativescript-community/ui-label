@@ -52,6 +52,7 @@ export const needFormattedStringComputation = function (
 
 @CSSType('HTMLLabel')
 export abstract class LabelBase extends TNLabel implements LabelViewDefinition {
+    //@ts-ignore
     @cssProperty maxLines: string | number;
     @cssProperty verticalTextAlignment: VerticalTextAlignment;
     @cssProperty lineBreak: LineBreak;

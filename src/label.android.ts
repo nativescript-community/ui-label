@@ -179,6 +179,7 @@ function initializeURLClickableSpan(): void {
 
 @CSSType('HTMLLabel')
 abstract class LabelBase extends View implements LabelViewDefinition {
+    //@ts-ignore
     @cssProperty maxLines: string | number;
     @cssProperty autoFontSize: boolean;
     @cssProperty autoFontSizeStep: number;
