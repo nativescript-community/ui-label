@@ -895,6 +895,7 @@ export class Label extends LabelBase {
         return currentFont;
     }
     textViewDidChange(textView: UITextView) {
+        //only called when user triggers the text change, not programmatically
         this.updateAutoFontSize({ textView, force: true });
     }
     [autoFontSizeProperty.setNative](value: boolean) {
