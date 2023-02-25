@@ -855,10 +855,8 @@ export class Label extends LabelBase {
             };
             size();
             if (expectSize.height > fixedHeight || expectSize.width > fixedWidth) {
-                while (
-                    (expectSize.height > fixedHeight || expectSize.width > fixedWidth) &&
-                    expectFont.pointSize > (this.minFontSize || 12)
-                ) {
+                const minFontSize = this.minFontSize || 12;
+                while ((expectSize.height > fixedHeight || expectSize.width > fixedWidth) && expectFont.pointSize > minFontSize) {
                     const newFont = expectFont.fontWithSize(expectFont.pointSize - stepSize);
                     updateFontSize(newFont);
                     size();
@@ -873,21 +871,16 @@ export class Label extends LabelBase {
                     }
                 }
             } else {
-                while (
-                    (expectSize.height < fixedHeight || expectSize.width < fixedWidth) &&
-                    expectFont.pointSize < (this.maxFontSize || 200)
-                ) {
+                const maxFontSize = this.maxFontSize || 200;
+                while (expectSize.height < fixedHeight && expectSize.width < fixedWidth && expectFont.pointSize < maxFontSize) {
                     const newFont = expectFont.fontWithSize(expectFont.pointSize + stepSize);
                     updateFontSize(newFont);
-
                     size();
-
-                    if (expectSize.height <= fixedHeight || expectSize.width <= fixedWidth) {
+                    if (expectSize.height <= fixedHeight && expectSize.width <= fixedWidth) {
                         expectFont = newFont;
                     } else {
-                        expectFont = newFont;
                         if (!this.formattedText && !this.html) {
-                            textView.font = newFont;
+                            textView.font = expectFont;
                         }
                         break;
                     }
