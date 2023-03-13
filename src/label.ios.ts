@@ -28,6 +28,8 @@ import {
     lineBreakProperty,
     linkColorProperty,
     linkUnderlineProperty,
+    maxFontSizeProperty,
+    minFontSizeProperty,
     needFormattedStringComputation,
     selectableProperty,
     textShadowProperty
@@ -542,6 +544,17 @@ export class Label extends LabelBase {
                 return;
             }
             this._setNativeText();
+        }
+    }
+
+    [maxFontSizeProperty.setNative]() {
+        if (this.autoFontSize) {
+            this.updateAutoFontSize({ textView: this.nativeTextViewProtected, force: true });
+        }
+    }
+    [minFontSizeProperty.setNative]() {
+        if (this.autoFontSize) {
+            this.updateAutoFontSize({ textView: this.nativeTextViewProtected, force: true });
         }
     }
     _setSpannablesFontSizeWithRatio(ratio) {
