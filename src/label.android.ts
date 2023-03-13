@@ -22,8 +22,7 @@ import {
 } from '@nativescript/core';
 import { Color } from '@nativescript/core/color';
 import { CSSShadow } from '@nativescript/core/ui/styling/css-shadow';
-import { Font } from '@nativescript/core/ui/styling/font';
-import { FontStyleType, FontWeightType } from '@nativescript/core/ui/styling/font-common';
+import { Font, FontStyleType, FontWeightType } from '@nativescript/core/ui/styling/font';
 import {
     Length,
     colorProperty,
@@ -187,6 +186,7 @@ function initializeURLClickableSpan(): void {
 
 @CSSType('HTMLLabel')
 abstract class LabelBase extends View implements LabelViewDefinition {
+    //@ts-ignore
     @cssProperty maxLines: string | number;
     @cssProperty autoFontSize: boolean;
     @cssProperty autoFontSizeStep: number;
@@ -269,7 +269,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     }
 
     public _addChildFromBuilder(name: string, value: any): void {
-        if (name === Span.name) {
+        if (name === Span.name || value.constructor.isSpan) {
             if (!this.formattedText) {
                 let formattedText: FormattedString;
                 if (overrideSpanAndFormattedStringEnabled) {

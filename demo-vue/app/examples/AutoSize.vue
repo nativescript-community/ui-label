@@ -3,20 +3,17 @@
         <ActionBar :title="title">
             <NavigationButton text="Back" android.systemIcon="ic_menu_back" @tap="onNavigationButtonTap"></NavigationButton>
         </ActionBar>
-        <ScrollView>
-            <GridLayout columns="auto" horizontalAlignment="center" height="200" backgroundColor="red" @tap="resize">
+            <GridLayout rows="*,*,*,60,auto,60" padding="0 20 0 20">
 
-            <HTMLLabel 
-            verticalAlignment="center"
-          width="50"
+            <HTMLLabel
+            ref="textView"
+            :text="text"
           :textWrap="true"
-          :autoFontSize="true"
-          text="center textAlignment, bottom verticalAlignment"
-          fontSize="10"
-          maxFontSize="30"/>
+          lineBreak="end"
+          textAlignment="center" verticalTextAlignment="center" fontSize="20" :autoFontSize="true" backgroundColor="red" />
+                <Button ref="nextButton"  row="4" text="next" @onTap="onTap" />
 
         </GridLayout>
-        </ScrollView>
         
 
     </Page>
@@ -31,15 +28,32 @@ export const title = 'verticalAlignment sample';
 export default Vue.extend({
     data() {
         return {
-            title: title
+            title: title,
+            index:0,
+            text:'247 characters azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiof'
         };
     },
     methods: {
         onNavigationButtonTap() {
             Frame.topmost().goBack();
         },
-        resize(event) {
-            event.object.width = 100;
+        onTap(event) {
+            this.index = (this.index+1) %3;
+            console.log('onTap', this.index)
+            switch(this.index) {
+                case 0:
+                    this.text='Toto'
+                    this.$refs.textView.nativeView.style = ''
+                    break;
+                case 1:
+                    this.text='this is a test text'
+                    this.$refs.textView.nativeView.style = 'font-size:48pt;'
+                    break;
+                case 2:
+                    this.text='247 characters azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiof'
+                    this.$refs.textView.nativeView.style = ''
+                    break;
+            }
         }
     }
 });
