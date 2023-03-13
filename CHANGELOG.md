@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.23](https://github.com/Akylas/nativescript-label/compare/v1.2.22...v1.2.23) (2023-02-25)
+
+### Bug Fixes
+
+-   **ios:** fixed autoFontSize computation when text can get bigger ([955d7d0](https://github.com/Akylas/nativescript-label/commit/955d7d07db5df8285a86ec673aaffc0ae47126f8))
+-   **ios:** update autoFontSize when needed ([d12a792](https://github.com/Akylas/nativescript-label/commit/d12a79261a7bd61b936bfe5b8c7a80c47c404307))
+
+## [1.2.22](https://github.com/Akylas/nativescript-label/compare/v1.2.21...v1.2.22) (2023-02-20)
+
+### Bug Fixes
+
+-   **android:** fix for `@nativescript-community/text` override and light spans ([9241a0d](https://github.com/Akylas/nativescript-label/commit/9241a0d7372b7ddc0e452d6704e96872b6fcb6fe))
+
 ## [1.2.21](https://github.com/nativescript-community/ui-label/compare/v1.2.20...v1.2.21) (2023-01-30)
 
 ### Bug Fixes
