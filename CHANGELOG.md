@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.25](https://github.com/Akylas/nativescript-label/compare/v1.2.24...v1.2.25) (2023-03-21)
+
+### Bug Fixes
+
+-   **ios:** crash fix which could happen while removing a label view ([18903f1](https://github.com/Akylas/nativescript-label/commit/18903f186d05e0d413b61ecb1a188e488d17a2e5))
+
 ## [1.2.24](https://github.com/nativescript-community/ui-label/compare/v1.2.23...v1.2.24) (2023-03-13)
 
 ### Bug Fixes
