@@ -218,6 +218,7 @@ export class Label extends LabelBase {
     }
     public disposeNativeView() {
         this.mDelegate = null;
+        this.nativeTextViewProtected.delegate = null;
         super.disposeNativeView();
         // if (this._htmlTapGestureRecognizer) {
         //     this.nativeViewProtected.removeGestureRecognizer(this._htmlTapGestureRecognizer);
@@ -230,11 +231,15 @@ export class Label extends LabelBase {
     }
     public onLoaded() {
         super.onLoaded();
-        this.nativeTextViewProtected.delegate = this.mDelegate;
+        if (this.nativeTextViewProtected) {
+            this.nativeTextViewProtected.delegate = this.mDelegate;
+        }
     }
 
     public onUnloaded() {
-        this.nativeTextViewProtected.delegate = null;
+        if (this.nativeTextViewProtected) {
+            this.nativeTextViewProtected.delegate = null;
+        }
         super.onUnloaded();
     }
     mCanUpdateAutoFontSize = true;
