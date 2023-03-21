@@ -44,7 +44,14 @@ import {
 import { maxLinesProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import lazy from '@nativescript/core/utils/lazy';
 import { Label as LabelViewDefinition, LineBreak } from './label';
-import { autoFontSizeProperty, lineBreakProperty, selectableProperty, textShadowProperty } from './label-common';
+import {
+    autoFontSizeProperty,
+    lineBreakProperty,
+    maxFontSizeProperty,
+    minFontSizeProperty,
+    selectableProperty,
+    textShadowProperty
+} from './label-common';
 
 export { createNativeAttributedString, enableIOSDTCoreText } from '@nativescript-community/text';
 export * from './label-common';
@@ -536,6 +543,16 @@ export class Label extends LabelBase {
             this.autoFontSizeStep || 1,
             android.util.TypedValue.COMPLEX_UNIT_DIP
         );
+    }
+    [maxFontSizeProperty.setNative](value) {
+        if (this.mAutoFontSize) {
+            this.enableAutoSize();
+        }
+    }
+    [minFontSizeProperty.setNative](value) {
+        if (this.mAutoFontSize) {
+            this.enableAutoSize();
+        }
     }
     private disableAutoSize() {
         androidx.core.widget.TextViewCompat.setAutoSizeTextTypeWithDefaults(

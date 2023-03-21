@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.24](https://github.com/nativescript-community/ui-label/compare/v1.2.23...v1.2.24) (2023-03-13)
+
+### Bug Fixes
+
+-   update auto font size on min/max fontSize change ([38d8356](https://github.com/nativescript-community/ui-label/commit/38d8356f63f60a795100e295e4e560de6b526ee7))
+
 ## [1.2.23](https://github.com/Akylas/nativescript-label/compare/v1.2.22...v1.2.23) (2023-02-25)
 
 ### Bug Fixes
