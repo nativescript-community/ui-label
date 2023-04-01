@@ -512,41 +512,47 @@ export class Label extends LabelBase {
             }
         }
     }
-    [linkColorProperty.setNative](value: Color | string) {
-        const color = !value || value instanceof Color ? (value as Color) : new Color(value);
+    defaultLinkTextAttributes: NSDictionary<any, any>;
+
+    updateLinkTextAttributes() {
+        const color = !this.linkColor || this.linkColor instanceof Color ? this.linkColor : new Color(this.linkColor);
         const nativeView = this.nativeTextViewProtected;
         let attributes = nativeView.linkTextAttributes;
         if (!(attributes instanceof NSMutableDictionary)) {
+            this.defaultLinkTextAttributes = attributes;
             attributes = NSMutableDictionary.new();
         }
-        if (this.linkUnderline !== false && color) {
+        if (color) {
             attributes.setValueForKey(color.ios, NSForegroundColorAttributeName);
-            attributes.setValueForKey(color.ios, NSUnderlineColorAttributeName);
+            if (this.linkUnderline !== false) {
+                attributes.setValueForKey(color.ios, NSUnderlineColorAttributeName);
+            } else {
+                attributes.setValueForKey(UIColor.clearColor, NSUnderlineColorAttributeName);
+            }
         } else {
-            attributes.setValueForKey(UIColor.clearColor, NSUnderlineColorAttributeName);
+            attributes.setValueForKey(
+                this.defaultLinkTextAttributes.objectForKey(NSForegroundColorAttributeName),
+                NSForegroundColorAttributeName
+            );
+            if (this.linkUnderline !== false) {
+                attributes.setValueForKey(
+                    this.defaultLinkTextAttributes.objectForKey(NSUnderlineColorAttributeName),
+                    NSUnderlineColorAttributeName
+                );
+            } else {
+                attributes.setValueForKey(UIColor.clearColor, NSUnderlineColorAttributeName);
+            }
         }
         nativeView.linkTextAttributes = attributes;
+    }
+    [linkColorProperty.setNative](value: Color | string) {
+        this.updateLinkTextAttributes();
     }
     [selectableProperty.setNative](value: boolean) {
         this.nativeTextViewProtected.selectable = value;
     }
     [linkUnderlineProperty.setNative](value: boolean) {
-        const nativeView = this.nativeTextViewProtected;
-        let attributes = nativeView.linkTextAttributes as NSMutableDictionary<any, any>;
-        if (!(attributes instanceof NSMutableDictionary)) {
-            attributes = NSMutableDictionary.new();
-        }
-        if (value) {
-            const color = !this.linkColor || this.linkColor instanceof Color ? this.linkColor : new Color(this.linkColor);
-            if (color) {
-                attributes.setValueForKey(color.ios, NSUnderlineColorAttributeName);
-            } else {
-                attributes.removeObjectForKey(NSUnderlineColorAttributeName);
-            }
-        } else {
-            attributes.setValueForKey(UIColor.clearColor, NSUnderlineColorAttributeName);
-        }
-        nativeView.linkTextAttributes = attributes;
+        this.updateLinkTextAttributes();
     }
     @needFormattedStringComputation
     @needAutoFontSizeComputation
