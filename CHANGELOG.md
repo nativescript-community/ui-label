@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.26](https://github.com/Akylas/nativescript-label/compare/v1.2.25...v1.2.26) (2023-04-01)
+
+### Bug Fixes
+
+-   linkUnderline and linkColor now correctly working ([da7c13d](https://github.com/Akylas/nativescript-label/commit/da7c13db016bdad8ca19c80a8f88a47796f02af7))
+
 ## [1.2.25](https://github.com/Akylas/nativescript-label/compare/v1.2.24...v1.2.25) (2023-03-21)
 
 ### Bug Fixes
