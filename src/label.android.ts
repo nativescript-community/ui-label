@@ -168,15 +168,16 @@ function initializeURLClickableSpan(): void {
         }
         updateDrawState(tp: android.text.TextPaint): void {
             const owner = this.owner.get();
-            if (!owner || owner.linkUnderline !== false) {
-                super.updateDrawState(tp);
-            }
-            if (owner && owner.linkColor) {
-                const color =
-                    !owner.linkColor || owner.linkColor instanceof Color
-                        ? (owner.linkColor as Color)
-                        : new Color(owner.linkColor);
-                tp.setColor(color.android);
+            super.updateDrawState(tp);
+
+            if (owner) {
+                if (owner.linkUnderline === false) {
+                    tp.setUnderlineText(false);
+                }
+                if (owner.linkColor) {
+                    const color = owner.linkColor instanceof Color ? owner.linkColor : new Color(owner.linkColor);
+                    tp.setColor(color.android);
+                }
             }
         }
     }
@@ -604,21 +605,21 @@ export class Label extends LabelBase {
         ) as android.text.SpannableStringBuilder;
         // no need to check for urlspan if we dont have a listener
         // the only issue might happen if the listener is set afterward. Is that really an issue?
-        if (this.hasListeners(Span.linkTapEvent)) {
-            const urlSpan = result.getSpans(0, result.length(), android.text.style.URLSpan.class);
-            if (urlSpan.length > 0) {
-                this._setTappableState(true);
-                initializeURLClickableSpan();
-                for (let index = 0; index < urlSpan.length; index++) {
-                    const span = urlSpan[index];
-                    const text = span.getURL();
-                    const start = result.getSpanStart(span);
-                    const end = result.getSpanEnd(span);
-                    result.removeSpan(span);
-                    result.setSpan(new URLClickableSpan(text, this), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }
+        // if (this.linkColor || this.linkUnderline this.hasListeners(Span.linkTapEvent)) {
+        const urlSpan = result.getSpans(0, result.length(), android.text.style.URLSpan.class);
+        if (urlSpan.length > 0) {
+            this._setTappableState(true);
+            initializeURLClickableSpan();
+            for (let index = 0; index < urlSpan.length; index++) {
+                const span = urlSpan[index];
+                const text = span.getURL();
+                const start = result.getSpanStart(span);
+                const end = result.getSpanEnd(span);
+                result.removeSpan(span);
+                result.setSpan(new URLClickableSpan(text, this), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
         }
+        // }
         return result;
     }
     _setTappableState(tappable: boolean) {
