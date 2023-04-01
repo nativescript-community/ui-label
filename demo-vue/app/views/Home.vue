@@ -3,27 +3,35 @@
         <ActionBar title="Material Vue">
         </ActionBar>
         <GridLayout rows="auto,auto,auto,*">
-            <HTMLLabel id="formattedText" padding="10 20 30 36" :autoFontSize="false" :autoFontSizeStep="4" maxFontSize="38" fontSize="30" maxLines="2" height="140" width="100%" :color="color" backgroundColor="blue" fontFamily="Montserrat,montserrat-regular">
-                <Span :text="'collect' + '\n'"/>
-                <Span :text="counter + ' '" color="red" fontWeight="bold" />
-                <Span :text="'dabbas'"/>
-            </HTMLLabel>
-            <HTMLLabel class="test" 
-            row="1" 
-            padding="0 20 0 36" 
-            maxLines="2" 
-            verticalTextAlignment='center'
-            height="140" 
-            fontSize="20"
-            width="100%" 
-            backgroundColor="yellow"
-            letterSpacing="-0.4"
-            text="af"/>
-            <StackLayout row="2" orientation="horizontal">
-                <Button  text="up" @tap="counter+=1"/>
-                <Button  text="color" @tap="color='green'"/>
-            </StackLayout>
-            <Button  text="bottomsheet" @tap="showBottomSheet"/>
+            <GridLayout rows="50, 50, 50, 50">
+      <HTMLLabel text="This is a test" color="#ff0000" row="0"/>
+
+      <HTMLLabel html="This is a test" color="#ff0000" row="1"/>
+
+      <HTMLLabel
+          :html="someBindedUrl"
+          @linkTap="()=>{}"
+          linkColor="#ff0000"
+          linkUnderline="false"
+          fontFamily="OpenSans"
+          fontSize="16"
+          margin="2 5 5 5"
+          textWrap="true"
+          row="2"
+      ></HTMLLabel>
+
+      <HTMLLabel
+          :html="someBindedUrl"
+          @linkTap="()=>{}"
+          linkColor="#ff0000"
+          fontFamily="OpenSans"
+          fontSize="16"
+          margin="2 5 5 5"
+          textWrap="true"
+          row="3"
+      ></HTMLLabel>
+    </GridLayout>
+
             <ListView row="3" ref="listView" itemRowHeight="80" for="example in examples" separatorColor="transparent" @itemTap="goToExample">
                 <v-template>
                     <StackLayout class="item" orientation="horizontal">
@@ -45,6 +53,7 @@ export default Vue.extend({
     data() {
         return {
             counter:0,
+            someBindedUrl: '<a href=\"https://youtube.com\">Open Youtube.com</a>',
             color:'yellow',
             examples: getExamples()
         };
