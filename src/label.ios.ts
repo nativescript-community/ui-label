@@ -451,7 +451,7 @@ export class Label extends LabelBase {
                     fontSize,
                     familyName,
                     fontWeight: fontWeight as any,
-                    // color: this.color,
+                    color: this.color,
                     letterSpacing: this.letterSpacing,
                     lineHeight: this.lineHeight,
                     textAlignment: this.nativeTextViewProtected.textAlignment
