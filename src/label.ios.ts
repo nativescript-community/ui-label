@@ -445,6 +445,9 @@ export class Label extends LabelBase {
             const fontWeight = this.style.fontWeight;
             const familyName =
                 this.style.fontFamily || (this.style.fontInternal && this.style.fontInternal.fontFamily) || undefined;
+
+            // we need to pass color because initWithDataOptionsDocumentAttributesError
+            // will set a default color preventing the UITextView from applying its color
             const result = createNativeAttributedString(
                 {
                     text: this.html,
