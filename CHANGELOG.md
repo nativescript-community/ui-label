@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.27](https://github.com/Akylas/nativescript-label/compare/v1.2.26...v1.2.27) (2023-04-20)
+
+### Bug Fixes
+
+-   **ios:** fix issue with color not applied on html ([8394d7d](https://github.com/Akylas/nativescript-label/commit/8394d7d919425d71bfd9cd80df894cbb9ebd0aa6))
+
 ## [1.2.26](https://github.com/Akylas/nativescript-label/compare/v1.2.25...v1.2.26) (2023-04-01)
 
 ### Bug Fixes
