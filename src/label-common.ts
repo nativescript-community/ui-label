@@ -6,13 +6,12 @@ import {
     CssProperty,
     FormattedString,
     Property,
-    Span,
     Style,
     Label as TNLabel,
+    Utils,
     booleanConverter,
     fontInternalProperty
 } from '@nativescript/core';
-import { Utils } from '@nativescript/core';
 import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
 
 // declare module '@nativescript/core/ui/text-base/formatted-string' {
