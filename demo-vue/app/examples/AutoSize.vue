@@ -8,9 +8,8 @@
             <HTMLLabel
             ref="textView"
             :text="text"
-          :textWrap="true"
-          lineBreak="end"
-          textAlignment="center" verticalTextAlignment="center" fontSize="20" :autoFontSize="true" backgroundColor="red" />
+           textWrap="true"
+          textAlignment="center" verticalTextAlignment="center" :autoFontSize="true" backgroundColor="red" selectable="true" lineBreak="end" :class="testClass"/>
                 <Button ref="nextButton"  row="4" text="next" @onTap="onTap" />
 
         </GridLayout>
@@ -18,7 +17,14 @@
 
     </Page>
 </template>
+<style scoped>
 
+.testClass {
+    font-size: 40;
+    color: green;
+}
+   
+</style>
 <script lang="ts">
 import { Frame } from '@nativescript/core';
 import Vue from 'vue';
@@ -30,6 +36,7 @@ export default Vue.extend({
         return {
             title: title,
             index:0,
+            testClass:'testClass',
             text:'247 characters azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiof'
         };
     },
@@ -38,6 +45,9 @@ export default Vue.extend({
             Frame.topmost().goBack();
         },
         onTap(event) {
+            // this.testClass = this.testClass ? null: 'testClass';
+            // console.log('onTap', this.testClass)
+            // return;
             this.index = (this.index+1) %3;
             console.log('onTap', this.index)
             switch(this.index) {
@@ -47,7 +57,7 @@ export default Vue.extend({
                     break;
                 case 1:
                     this.text='this is a test text'
-                    this.$refs.textView.nativeView.style = 'font-size:48pt;'
+                    this.$refs.textView.nativeView.style = 'font-size:88pt;'
                     break;
                 case 2:
                     this.text='247 characters azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiop azertyuiof'

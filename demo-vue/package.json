@@ -4,21 +4,23 @@
     "readme": "README.md",
     "main": "app/main",
     "dependencies": {
-        "@nativescript-community/text": "^1.5.11",
+        "@nativescript-community/text": "^1.5.14",
+        "@nativescript-community/ui-collectionview": "5.1.4",
         "@nativescript-community/ui-label": "link:../plugin",
         "@nativescript-community/ui-material-bottomsheet": "7.0.34",
-        "@nativescript/core": "8.5.0-dom.2",
+        "@nativescript/core": "8.5.2",
         "nativescript-vue": "~2.9.3"
     },
     "devDependencies": {
+        "@akylas/nativescript": "8.4.9",
         "@babel/core": "^7.18.10",
-        "@nativescript/android": "8.3.1",
-        "@nativescript/ios": "8.3.3",
-        "@nativescript/types": "8.3.1",
-        "@nativescript/webpack": "5.0.8",
+        "@nativescript/android": "8.5.0",
+        "@nativescript/ios": "8.5.2-alpha.3",
+        "@nativescript/types": "8.5.0",
+        "@nativescript/webpack": "5.0.14",
         "babel-loader": "^8.2.5",
         "nativescript-vue-template-compiler": "~2.9.3",
-        "typescript": "^4.7.4",
+        "typescript": "4.8.4",
         "vue": "^2.7.9",
         "vue-i18n": "^8.27.2",
         "vue-loader": "~15.9.8",
@@ -28,5 +30,9 @@
         "tslint": "npm i && tslint --config '../tslint.json' 'app/**/*.ts' --exclude '**/node_modules/**'",
         "run.android.production": "devns run android --release --clean --key-store-path ./certs/upload.keystore --key-store-password nativescript --key-store-alias nativescript --key-store-alias-password nativescript",
         "run.android.timeline": "devns run android --config=nativescript.config.timeline.js --release --clean --key-store-path ./certs/upload.keystore --key-store-password nativescript --key-store-alias nativescript --key-store-alias-password nativescript --env.timeline"
+    },
+    "resolutions": {
+        "@nativescript-community/text": "portal:/Volumes/dev/nativescript/nativescript-text/packages/text",
+        "@akylas/nativescript": "portal:/Volumes/data/dev/nativescript/NativeScript/dist/packages/core"
     }
 }

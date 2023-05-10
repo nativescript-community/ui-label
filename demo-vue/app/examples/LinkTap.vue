@@ -5,20 +5,48 @@
         </ActionBar>
         <ScrollView>
             <StackLayout>
-            <HTMLLabel textAlignment="left" width="100%" margin="50">
+            <HTMLLabel textAlignment="left" width="100%" margin="50" backgroundColor="red">
                     <Span text="Click to open link" @linkTap="openLink">
                     </Span>
             </HTMLLabel>
             <!-- Centered label with multiple lines -->
-            <HTMLLabel textAlignment="center" textWrap="true"  margin="50">
+            <HTMLLabel horizontalAlignment="center" textAlignment="center" textWrap="true" width="80%" height="290" paddingRight="10" verticalTextAlignment="top" backgroundColor="yellow" fontSize='12' paddingTop="20" autoFontSize="true" selectable="true" borderWidth="30">
+                <!-- <FormattedString> -->
                     <Span text="I am a paragraph with looots of words that wastes your time reading because I'm a humble little sample. If you are brave enough to lose more time, click this">
                     </Span>
                     <Span text=" link" @linkTap="openLink">
                     </Span>
+                <!-- </FormattedString> -->
             </HTMLLabel>
             <!-- Centered label with multiple lines -->
             <HTMLLabel textAlignment="center"  margin="50" html="<a href='urltest'>toot</a>"  @linkTap="openLink">
             </HTMLLabel>
+            <HTMLLabel text="This is a test" color="#ff0000" row="0"/>
+
+      <HTMLLabel html="This is a test" color="#ff0000" row="1"/>
+
+      <HTMLLabel
+          :html="someBindedUrl"
+          linkColor="#ff0000"
+          linkUnderline="false"
+          fontFamily="OpenSans"
+          fontSize="16"
+          margin="2 5 5 5"
+          textWrap="true"
+          row="2"
+          @linkTap="openLink"
+      ></HTMLLabel>
+
+      <HTMLLabel
+          :html="someBindedUrl"
+          linkColor="#ff0000"
+          fontFamily="OpenSans"
+          fontSize="16"
+          margin="2 5 5 5"
+          textWrap="true"
+          row="3"
+          @linkTap="openLink"
+      ></HTMLLabel>
         </StackLayout>
         </ScrollView>
     </Page>
@@ -33,7 +61,8 @@ export const title = 'LinkTap sample';
 export default Vue.extend({
     data() {
         return {
-            title: title
+            title: title,
+            someBindedUrl: '<a href=\"https://youtube.com\">Open Youtube.com</a> + <a href=\"https://google.com\">Open Google.com</a>'
         };
     },
     methods: {

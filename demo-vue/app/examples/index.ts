@@ -2,6 +2,7 @@ import BaseDemo, { title as BaseDemoTitle } from './Base.vue';
 import VerticalAlignment, { title as VerticalAlignmentTitle } from './VerticalAlignment.vue';
 import AutoSize from './AutoSize.vue';
 import LinkTap from './LinkTap.vue';
+import PerfTest from './PerfsTest.vue';
 
 export const getExamples = () => [
     {
@@ -18,6 +19,10 @@ export const getExamples = () => [
     },
     {
         title: 'linkTap',
-        component: LinkTap
+        component: LinkTap,
+    },
+    {
+        title: 'perfTest',
+        component: PerfTest
     }
 ];
