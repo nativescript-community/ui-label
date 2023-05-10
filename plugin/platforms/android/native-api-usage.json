@@ -9,6 +9,7 @@
         "android.os:Build",
         "android.util:TypedValue",
         "android.graphics:Paint",
+        "android.graphics:Paint.FontMetrics",
         "android.text:Spanned",
         "androidx.core.widget:TextViewCompat"
     ]

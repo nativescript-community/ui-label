@@ -49,12 +49,12 @@
     "devDependencies": {
         "@commitlint/cli": "^17.4.4",
         "@commitlint/config-conventional": "^17.4.4",
-        "@nativescript-community/text": "1.5.11",
+        "@nativescript-community/text": "1.5.17",
         "@nativescript/core": "8.4.7",
         "@nativescript/types-android": "8.4.0",
         "@nativescript/types-ios": "8.4.0",
         "@nativescript/webpack": "5.0.13",
-        "@types/node": "^18.14.0",
+        "@types/node": "^20.1.2",
         "@typescript-eslint/eslint-plugin": "5.52.0",
         "@typescript-eslint/parser": "5.52.0",
         "eslint": "8.34.0",
@@ -75,5 +75,8 @@
         "extends": [
             "@commitlint/config-conventional"
         ]
+    },
+    "resolutions": {
+        "@nativescript-community/text": "portal:/Volumes/dev/nativescript/nativescript-text/packages/text"
     }
 }

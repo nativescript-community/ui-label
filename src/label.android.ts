@@ -3,7 +3,7 @@
     VerticalTextAlignment,
     createNativeAttributedString,
     cssProperty,
-    overrideSpanAndFormattedStringEnabled,
+    useLightFormattedString,
     verticalTextAlignmentProperty
 } from '@nativescript-community/text';
 import {
@@ -49,11 +49,12 @@ import {
     lineBreakProperty,
     maxFontSizeProperty,
     minFontSizeProperty,
+    needSetText,
     selectableProperty,
     textShadowProperty
 } from './label-common';
 
-export { createNativeAttributedString, enableIOSDTCoreText } from '@nativescript-community/text';
+export { createNativeAttributedString } from '@nativescript-community/text';
 export * from './label-common';
 const sdkVersion = lazy(() => parseInt(Device.sdkVersion, 10));
 
@@ -237,14 +238,14 @@ abstract class LabelBase extends View implements LabelViewDefinition {
 
     // for now code is duplicated as Android version is a full rewrite
     mCanChangeText = true;
-    mNeedFormattedStringComputation = false;
+    mNeedSetText = false;
     public onResumeNativeUpdates(): void {
         // {N} suspends properties update on `_suspendNativeUpdates`. So we only need to do this in onResumeNativeUpdates
         this.mCanChangeText = false;
         super.onResumeNativeUpdates();
         this.mCanChangeText = true;
-        if (this.mNeedFormattedStringComputation) {
-            this.mNeedFormattedStringComputation = false;
+        if (this.mNeedSetText) {
+            this.mNeedSetText = false;
             this._setNativeText();
         }
     }
@@ -273,7 +274,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
         if (name === Span.name || value.constructor.isSpan) {
             if (!this.formattedText) {
                 let formattedText: FormattedString;
-                if (overrideSpanAndFormattedStringEnabled) {
+                if (useLightFormattedString) {
                     formattedText = new LightFormattedString() as any;
                 } else {
                     formattedText = new FormattedString();
@@ -398,22 +399,17 @@ export class Label extends LabelBase {
     [textProperty.getDefault](): symbol | number {
         return resetSymbol;
     }
+    @needSetText
+    [textProperty.setNative](value: string | number | symbol) {}
 
-    [textProperty.setNative](value: string | number | symbol) {
-        this._setNativeText();
-    }
+    @needSetText
+    [formattedTextProperty.setNative](value: FormattedString) {}
 
-    [formattedTextProperty.setNative](value: FormattedString) {
-        this._setNativeText();
-    }
+    @needSetText
+    [htmlProperty.setNative](value: string) {}
 
-    [htmlProperty.setNative](value: string) {
-        this._setNativeText();
-    }
-
-    [textTransformProperty.setNative](value: CoreTypes.TextTransformType) {
-        this._setNativeText();
-    }
+    @needSetText
+    [textTransformProperty.setNative](value: CoreTypes.TextTransformType) {}
 
     [textAlignmentProperty.setNative](value: CoreTypes.TextAlignmentType) {
         const view = this.nativeTextViewProtected;
@@ -457,7 +453,7 @@ export class Label extends LabelBase {
         if (sdkVersion() >= 28) {
             this.nativeTextViewProtected.setLineHeight(value * Utils.layout.getDisplayDensity());
         } else {
-            const fontHeight = this.nativeTextViewProtected.getPaint().getFontMetricsInt(null);
+            const fontHeight = this.nativeTextViewProtected.getPaint().getFontMetrics(null);
             this.nativeTextViewProtected.setLineSpacing(value * Utils.layout.getDisplayDensity() - fontHeight, 1);
         }
     }
@@ -466,7 +462,7 @@ export class Label extends LabelBase {
         const androidFont: android.graphics.Typeface = value instanceof Font ? value.getAndroidTypeface() : value;
         this.nativeTextViewProtected.setTypeface(androidFont);
         if (this.lineHeight && sdkVersion() < 28) {
-            const fontHeight = this.nativeTextViewProtected.getPaint().getFontMetricsInt(null);
+            const fontHeight = this.nativeTextViewProtected.getPaint().getFontMetrics(null);
             this.nativeTextViewProtected.setLineSpacing(this.lineHeight * Utils.layout.getDisplayDensity() - fontHeight, 1);
         }
     }
@@ -637,7 +633,7 @@ export class Label extends LabelBase {
     @profile
     _setNativeText(reset: boolean = false): void {
         if (!this.mCanChangeText) {
-            this.mNeedFormattedStringComputation = true;
+            this.mNeedSetText = true;
             return;
         }
         if (reset) {
