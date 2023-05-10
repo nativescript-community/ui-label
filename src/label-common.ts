@@ -1,4 +1,4 @@
-import { VerticalTextAlignment, cssProperty, init } from '@nativescript-community/text';
+import { VerticalTextAlignment, cssProperty, init, overrideSpanAndFormattedString } from '@nativescript-community/text';
 import {
     CSSType,
     Color,
@@ -12,7 +12,8 @@ import {
     booleanConverter,
     fontInternalProperty
 } from '@nativescript/core';
-import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
+import type { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
+overrideSpanAndFormattedString(false);
 
 // declare module '@nativescript/core/ui/text-base/formatted-string' {
 //     interface FormattedString {
@@ -24,30 +25,24 @@ import { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
 // init text to ensure font overrides are called
 init();
 
-export const needFormattedStringComputation = function (
-    target: any,
-    propertyKey: string | Symbol,
-    descriptor: PropertyDescriptor
-) {
+export const needSetText = function (target: any, propertyKey: string | Symbol, descriptor: PropertyDescriptor) {
+    const originalMethod = descriptor.value;
+    descriptor.value = function (...args: any[]) {
+        const result = originalMethod.apply(this, args);
+        this._setNativeText();
+        return result;
+    };
+};
+export const needTextSet = function (target: any, propertyKey: string | Symbol, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
     descriptor.value = function (...args: any[]) {
         if (!this.mCanChangeText) {
-            this.mNeedFormattedStringComputation = true;
+            this._needFontComputation = true;
             return;
         }
         return originalMethod.apply(this, args);
     };
 };
-// export const needFontComputation = function (target: any, propertyKey: string | Symbol, descriptor: PropertyDescriptor) {
-//     const originalMethod = descriptor.value;
-//     descriptor.value = function (...args: any[]) {
-//         if (!this.mCanChangeText) {
-//             this._needFontComputation = true;
-//             return;
-//         }
-//         return originalMethod.apply(this, args);
-//     };
-// };
 
 @CSSType('HTMLLabel')
 export abstract class LabelBase extends TNLabel implements LabelViewDefinition {
@@ -68,15 +63,15 @@ export abstract class LabelBase extends TNLabel implements LabelViewDefinition {
     @cssProperty autoFontSizeStep: number;
 
     mCanChangeText = true;
-    mNeedFormattedStringComputation = false;
+    mNeedSetText = false;
     mNeedFontComputation = false;
     public onResumeNativeUpdates(): void {
         // {N} suspends properties update on `_suspendNativeUpdates`. So we only need to do this in onResumeNativeUpdates
         this.mCanChangeText = false;
         super.onResumeNativeUpdates();
         this.mCanChangeText = true;
-        if (this.mNeedFormattedStringComputation) {
-            this.mNeedFormattedStringComputation = false;
+        if (this.mNeedSetText) {
+            this.mNeedSetText = false;
             this._setNativeText();
         }
         if (this.mNeedFontComputation) {
@@ -109,7 +104,8 @@ linkColorProperty.register(Style);
 export const linkUnderlineProperty = new CssProperty<Style, boolean>({
     name: 'linkUnderline',
     cssName: 'link-underline',
-    valueConverter: booleanConverter
+    valueConverter: booleanConverter,
+    defaultValue: true
 });
 linkUnderlineProperty.register(Style);
 
