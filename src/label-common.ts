@@ -1,4 +1,10 @@
-import { VerticalTextAlignment, cssProperty, init, overrideSpanAndFormattedString } from '@nativescript-community/text';
+import {
+    VerticalTextAlignment,
+    cssProperty,
+    init,
+    overrideSpanAndFormattedString,
+    overrideSpanAndFormattedStringEnabled
+} from '@nativescript-community/text';
 import {
     CSSType,
     Color,
@@ -13,7 +19,6 @@ import {
     fontInternalProperty
 } from '@nativescript/core';
 import type { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
-overrideSpanAndFormattedString(false);
 
 // declare module '@nativescript/core/ui/text-base/formatted-string' {
 //     interface FormattedString {
@@ -24,6 +29,9 @@ overrideSpanAndFormattedString(false);
 
 // init text to ensure font overrides are called
 init();
+const useLightFormatString =
+    typeof __UI_LABEL_USE_LIGHT_FORMATTEDSTRING__ != 'undefined' ? __UI_LABEL_USE_LIGHT_FORMATTEDSTRING__ : false;
+overrideSpanAndFormattedString(useLightFormatString);
 
 export const needSetText = function (target: any, propertyKey: string | Symbol, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
