@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.1](https://github.com/Akylas/nativescript-label/compare/v1.3.0...v1.3.1) (2023-05-11)
+
+### Bug Fixes
+
+-   `__UI_LABEL_USE_LIGHT_FORMATTEDSTRING__` support to force use of `LightFormattedString` ([fb1d8d0](https://github.com/Akylas/nativescript-label/commit/fb1d8d04e949f7e992be24b7d17129d7a9382257))
+
 # [1.3.0](https://github.com/Akylas/nativescript-label/compare/v1.2.27...v1.3.0) (2023-05-10)
 
 ### Features
