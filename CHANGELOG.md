@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.2](https://github.com/Akylas/nativescript-label/compare/v1.3.1...v1.3.2) (2023-05-12)
+
+### Bug Fixes
+
+-   **android:** faster formattedText / html creation ([fea5249](https://github.com/Akylas/nativescript-label/commit/fea524999766bf90ad109a1d180dac86151fe59a))
+-   **ios:** linkColor fix ([d690423](https://github.com/Akylas/nativescript-label/commit/d690423567601405687204f4302f0fa8e8da45b4))
+
 ## [1.3.1](https://github.com/Akylas/nativescript-label/compare/v1.3.0...v1.3.1) (2023-05-11)
 
 ### Bug Fixes
