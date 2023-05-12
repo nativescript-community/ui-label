@@ -59,7 +59,7 @@ export { createNativeAttributedString } from '@nativescript-community/text';
 export * from './label-common';
 const sdkVersion = lazy(() => parseInt(Device.sdkVersion, 10));
 
-let TextView: typeof com.nativescript.label.EllipsizingTextView;
+let TextView: typeof com.nativescript.text.TextView;
 
 const CHILD_FORMATTED_TEXT = 'formattedText';
 
@@ -138,53 +138,6 @@ function initializeClickableSpan(): void {
     }
 
     ClickableSpan = ClickableSpanImpl;
-}
-
-type URLClickableSpan = new (url: string, owner: Label) => android.text.style.URLSpan;
-
-// eslint-disable-next-line no-redeclare
-let URLClickableSpan: URLClickableSpan;
-
-function initializeURLClickableSpan(): void {
-    if (URLClickableSpan) {
-        return;
-    }
-
-    @NativeClass
-    class URLClickableSpanImpl extends android.text.style.URLSpan {
-        owner: WeakRef<Label>;
-        constructor(url: string, owner: Label) {
-            super(url);
-            this.owner = new WeakRef(owner);
-
-            return global.__native(this);
-        }
-        onClick(view: android.view.View): void {
-            const owner = this.owner.get();
-            if (owner) {
-                owner.notify({ eventName: Span.linkTapEvent, object: owner, link: this.getURL() });
-            }
-
-            view.clearFocus();
-            view.invalidate();
-        }
-        updateDrawState(tp: android.text.TextPaint): void {
-            const owner = this.owner.get();
-            super.updateDrawState(tp);
-
-            if (owner) {
-                if (owner.linkUnderline === false) {
-                    tp.setUnderlineText(false);
-                }
-                if (owner.linkColor) {
-                    const color = owner.linkColor instanceof Color ? owner.linkColor : new Color(owner.linkColor);
-                    tp.setColor(color.android);
-                }
-            }
-        }
-    }
-
-    URLClickableSpan = URLClickableSpanImpl;
 }
 
 @CSSType('HTMLLabel')
@@ -310,7 +263,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
 }
 
 export class Label extends LabelBase {
-    nativeViewProtected: com.nativescript.label.EllipsizingTextView;
+    nativeViewProtected: com.nativescript.text.TextView;
     mHandleFontSize = true;
     mTappable = false;
     private mAutoFontSize = false;
@@ -323,9 +276,17 @@ export class Label extends LabelBase {
     @profile
     public createNativeView() {
         if (!TextView) {
-            TextView = androidx.appcompat.widget.AppCompatTextView;
+            TextView = com.nativescript.text.TextView;
         }
         return new TextView(this._context);
+    }
+    urlSpanClickListener: com.nativescript.text.URLSpanClickListener;
+    public disposeNativeView() {
+        super.disposeNativeView();
+        this.nativeTextViewProtected.urlSpanClickListener = null;
+        if (this.urlSpanClickListener) {
+            this.urlSpanClickListener = null;
+        }
     }
 
     [maxLinesProperty.setNative](value: number | string) {
@@ -573,23 +534,25 @@ export class Label extends LabelBase {
     createFormattedTextNative(value: any) {
         const result = createNativeAttributedString(value, this, this.autoFontSize);
 
-        let indexSearch = 0;
+        // let indexSearch = 0;
         let str: string;
-        value.spans.forEach((s) => {
-            if (s.tappable) {
-                if (!str) {
-                    str = value.toString();
-                    this._setTappableState(true);
-                }
-                initializeClickableSpan();
-                const text = s.text;
-                const start = str.indexOf(text, indexSearch);
-                if (start !== -1) {
-                    indexSearch = start + text.length;
-                    result.setSpan(new ClickableSpan(s), start, indexSearch, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                }
-            }
-        });
+        // const spans = value.spans;
+        this._setTappableState(value.spans.some((s) => s.tappable));
+        // value.spans.forEach((s) => {
+        //     if (s.tappable) {
+        //         if (!str) {
+        //             // str = value.toString();
+        //             this._setTappableState(true);
+        //         }
+        //         // initializeClickableSpan();
+        //         // const text = s.text;
+        //         // const start = str.indexOf(text, indexSearch);
+        //         // if (start !== -1) {
+        //         //     indexSearch = start + text.length;
+        //         //     result.setSpan(new ClickableSpan(s), start, indexSearch, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        //         // }
+        //     }
+        // });
         return result;
     }
     @profile
@@ -603,32 +566,54 @@ export class Label extends LabelBase {
         // no need to check for urlspan if we dont have a listener
         // the only issue might happen if the listener is set afterward. Is that really an issue?
         // if (this.linkColor || this.linkUnderline this.hasListeners(Span.linkTapEvent)) {
-        const urlSpan = result.getSpans(0, result.length(), android.text.style.URLSpan.class);
-        if (urlSpan.length > 0) {
-            this._setTappableState(true);
-            initializeURLClickableSpan();
-            for (let index = 0; index < urlSpan.length; index++) {
-                const span = urlSpan[index];
-                const text = span.getURL();
-                const start = result.getSpanStart(span);
-                const end = result.getSpanEnd(span);
-                result.removeSpan(span);
-                result.setSpan(new URLClickableSpan(text, this), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-        }
+        // const urlSpan = result.getSpans(0, result.length(), android.text.style.URLSpan.class);
+        // if (urlSpan.length > 0) {
+        this._setTappableState(TextView.attributedStringHasSpan(result, android.text.style.URLSpan.class));
+        //     initializeURLClickableSpan();
+        //     for (let index = 0; index < urlSpan.length; index++) {
+        //         const span = urlSpan[index];
+        //         const text = span.getURL();
+        //         const start = result.getSpanStart(span);
+        //         const end = result.getSpanEnd(span);
+        //         result.removeSpan(span);
+        //         result.setSpan(new URLClickableSpan(text, this), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        //     }
+        // }
         // }
         return result;
     }
     _setTappableState(tappable: boolean) {
         if (this.mTappable !== tappable) {
             this.mTappable = tappable;
+            const nativeView = this.nativeTextViewProtected;
             if (this.mTappable) {
-                this.nativeViewProtected.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
-                this.nativeViewProtected.setHighlightColor(null);
+                nativeView.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
+                nativeView.setHighlightColor(null);
+                if (!this.urlSpanClickListener) {
+                    this.urlSpanClickListener = new com.nativescript.text.URLSpanClickListener({
+                        onClick: this.onURLClick.bind(this)
+                    });
+                }
+                nativeView.urlSpanClickListener = this.urlSpanClickListener;
             } else {
-                this.nativeViewProtected.setMovementMethod(this.mDefaultMovementMethod);
+                nativeView.setMovementMethod(this.mDefaultMovementMethod);
+                nativeView.urlSpanClickListener = null;
             }
         }
+    }
+    onURLClick(span: android.text.style.URLSpan) {
+        const link = span.getURL();
+        if (this.formattedText) {
+            const spanIndex = parseInt(link, 10);
+            if (!isNaN(spanIndex) && spanIndex >= 0 && spanIndex < this.formattedText?.spans.length) {
+                this.formattedText?.spans.getItem(spanIndex).notify({ eventName: Span.linkTapEvent });
+            }
+        }
+        this.notify({ eventName: Span.linkTapEvent, link });
+        // const nativeView = this.nativeTextViewProtected;
+
+        // nativeView.clearFocus();
+        // nativeView.invalidate();
     }
 
     @profile
