@@ -1,4 +1,9 @@
-import { VerticalTextAlignment, createNativeAttributedString, verticalTextAlignmentProperty } from '@nativescript-community/text';
+import {
+    VerticalTextAlignment,
+    createNativeAttributedString,
+    getTransformedText,
+    verticalTextAlignmentProperty
+} from '@nativescript-community/text';
 import { Color, CoreTypes, Font, FormattedString, Span, Utils, View, profile } from '@nativescript/core';
 import {
     borderBottomWidthProperty,
@@ -19,7 +24,7 @@ import {
     whiteSpaceProperty
 } from '@nativescript/core/ui/text-base';
 import { maxLinesProperty } from '@nativescript/core/ui/text-base/text-base-common';
-import { isNullOrUndefined, isString } from '@nativescript/core/utils/types';
+import { isNullOrUndefined } from '@nativescript/core/utils/types';
 import { TextShadow } from './label';
 import {
     LabelBase,
@@ -73,26 +78,6 @@ declare module '@nativescript/core/ui/text-base' {
     interface TextBase {
         _requestLayoutOnTextChanged();
         _setNativeText();
-    }
-}
-
-function NSStringFromNSAttributedString(source: NSAttributedString | string): NSString {
-    return NSString.stringWithString((source instanceof NSAttributedString && source.string) || (source as string));
-}
-export function getTransformedText(text: string, textTransform: CoreTypes.TextTransformType): string {
-    if (!text || !isString(text)) {
-        return '';
-    }
-
-    switch (textTransform) {
-        case 'uppercase':
-            return NSStringFromNSAttributedString(text).uppercaseString;
-        case 'lowercase':
-            return NSStringFromNSAttributedString(text).lowercaseString;
-        case 'capitalize':
-            return NSStringFromNSAttributedString(text).capitalizedString;
-        default:
-            return text;
     }
 }
 
@@ -755,7 +740,7 @@ export class Label extends LabelBase {
             }
         }
         const text = getTransformedText(isNullOrUndefined(this.text) ? '' : `${this.text}`, this.textTransform);
-        NSLabelUtils.setTextDecorationAndTransformOnViewTextTextDecorationLetterSpacingLineHeightColor(
+        NSTextUtils.setTextDecorationAndTransformOnViewTextTextDecorationLetterSpacingLineHeightColor(
             this.nativeTextViewProtected,
             text,
             this.style.textDecoration || '',
@@ -770,11 +755,6 @@ export class Label extends LabelBase {
     setFormattedTextDecorationAndTransform() {
         const nativeView = this.nativeTextViewProtected;
         const attrText = this.createFormattedTextNative(this.formattedText);
-        // we override parent class behavior because we apply letterSpacing and lineHeight on a per Span basis
-        // if (majorVersion >= 13 && UIColor.labelColor) {
-        //     this.nativeTextViewProtected.textColor = UIColor.labelColor;
-        // }
-
         nativeView.attributedText = attrText;
     }
     updateTextViewContentInset(data: Partial<UIEdgeInsets>) {
