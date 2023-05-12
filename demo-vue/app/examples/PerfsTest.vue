@@ -25,7 +25,7 @@
                     rows="auto,auto"
                 >
                 <Label disableCss="true" text="1. ▲"  marginRight="1" color="gray" verticalAlignment="top"/>
-                <Label disableCss="true" col="1" fontSize="12" lineHeight="1" maxLines="0" color="black">
+                <Label disableCss="true" col="1" fontSize="12" color="black" textWrap>
                     <FormattedString>
                         <Span text="Largest island in a lake on an island in a lake on an island" />
                         <Span text="(elbruz.org)" />

@@ -22,6 +22,16 @@
             <HTMLLabel textAlignment="center"  margin="50" html="<a href='urltest'>toot</a>"  @linkTap="openLink">
             </HTMLLabel>
             <HTMLLabel text="This is a test" color="#ff0000" row="0"/>
+            <GridLayout class="content-el text-indication-el">
+    <HTMLLabel
+        :fontSize="20"
+        :html="someBindedUrl"
+        textWrap="true"
+        @linkTap="openLink"
+        linkUnderline="true"
+    >
+    </HTMLLabel>
+  </GridLayout>
 
       <HTMLLabel html="This is a test" color="#ff0000" row="1"/>
 
@@ -51,6 +61,20 @@
         </ScrollView>
     </Page>
 </template>
+<style scoped>
+.text-indication-el HTMLLabel {
+  font-weight: 500;
+  font-size: 17;
+  border-radius: 4;
+  background-color: green;
+  color: white;
+  link-color: white;
+  text-align: center;
+  margin-left: 20;
+  margin-right: 20;
+  padding: 25;
+}
+</style>
 
 <script lang="ts">
 import { Frame } from '@nativescript/core';

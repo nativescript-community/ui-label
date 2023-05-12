@@ -2,11 +2,11 @@ import { NativeScriptConfig } from '@nativescript/core';
 
 export default {
     id: 'org.nativescript.demovuehtmllabel',
-    appResourcesPath: 'app/App_Resources',
+    appResourcesPath: 'App_Resources',
     android: {
         v8Flags: '--expose_gc',
-        markingMode: 'none',
+        markingMode: 'none'
     },
     // profiling:'timeline',
-    appPath: 'app',
+    appPath: 'app'
 } as NativeScriptConfig;
