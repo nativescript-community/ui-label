@@ -3,6 +3,7 @@
     VerticalTextAlignment,
     createNativeAttributedString,
     cssProperty,
+    getTransformedText,
     useLightFormattedString,
     verticalTextAlignmentProperty
 } from '@nativescript-community/text';
@@ -657,31 +658,6 @@ export class Label extends LabelBase {
             transformedText = getTransformedText(stringValue, this.textTransform);
         }
         this.nativeTextViewProtected.setText(transformedText);
-    }
-}
-
-function getCapitalizedString(str: string): string {
-    const words = str.split(' ');
-    const newWords = [];
-    for (let i = 0, length = words.length; i < length; i++) {
-        const word = words[i].toLowerCase();
-        newWords.push(word.substring(0, 1).toUpperCase() + word.substring(1));
-    }
-
-    return newWords.join(' ');
-}
-
-export function getTransformedText(text: string, textTransform: CoreTypes.TextTransformType): string {
-    switch (textTransform) {
-        case 'uppercase':
-            return text.toUpperCase();
-        case 'lowercase':
-            return text.toLowerCase();
-        case 'capitalize':
-            return getCapitalizedString(text);
-        case 'none':
-        default:
-            return text;
     }
 }
 
