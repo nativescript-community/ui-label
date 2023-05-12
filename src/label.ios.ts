@@ -545,22 +545,29 @@ export class Label extends LabelBase {
 
             // we need to pass color because initWithDataOptionsDocumentAttributesError
             // will set a default color preventing the UITextView from applying its color
+
+            const color = this.color ? (this.color instanceof Color ? this.color : new Color(this.color)) : undefined;
             const params = {
                 text: this.html,
                 fontSize,
                 familyName,
                 fontWeight: fontWeight as any,
-                color: this.color,
+                color,
                 letterSpacing: this.letterSpacing,
                 lineHeight: this.lineHeight,
                 textAlignment: nativeView.textAlignment
             };
             if (!this.isUsingUITextView) {
+                const linkColor = this.linkColor
+                    ? this.linkColor instanceof Color
+                        ? this.linkColor
+                        : new Color(this.linkColor)
+                    : undefined;
                 Object.assign(params, {
                     useCustomLinkTag: true,
                     lineBreak: (nativeView as UILabel).lineBreakMode,
                     linkDecoration: this.linkUnderline ? 'underline' : undefined,
-                    linkColor: this.linkColor
+                    linkColor
                 });
             }
             const result = createNativeAttributedString(
