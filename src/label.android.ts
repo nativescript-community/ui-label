@@ -78,8 +78,6 @@ const formattedTextProperty = new Property<Label, FormattedString>({
 });
 export const htmlProperty = new Property<Label, string>({ name: 'html', defaultValue: null, affectsLayout: true });
 
-type ClickableSpan = new (owner: Span) => android.text.style.ClickableSpan;
-
 function getHorizontalGravity(textAlignment: CoreTypes.TextAlignmentType) {
     switch (textAlignment) {
         case 'center':
@@ -106,40 +104,6 @@ function getVerticalGravity(textAlignment: VerticalTextAlignment) {
     }
 }
 
-// eslint-disable-next-line no-redeclare
-let ClickableSpan: ClickableSpan;
-
-function initializeClickableSpan(): void {
-    if (ClickableSpan) {
-        return;
-    }
-
-    @NativeClass
-    class ClickableSpanImpl extends android.text.style.ClickableSpan {
-        owner: WeakRef<Span>;
-
-        constructor(owner: Span) {
-            super();
-            this.owner = new WeakRef(owner);
-            return global.__native(this);
-        }
-        onClick(view: android.view.View): void {
-            const owner = this.owner.get();
-            if (owner) {
-                owner._emit(Span.linkTapEvent);
-            }
-
-            view.clearFocus();
-            view.invalidate();
-        }
-        updateDrawState(tp: android.text.TextPaint): void {
-            // don't style as link
-        }
-    }
-
-    ClickableSpan = ClickableSpanImpl;
-}
-
 @CSSType('HTMLLabel')
 abstract class LabelBase extends View implements LabelViewDefinition {
     //@ts-ignore
@@ -160,7 +124,6 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     public mIsSingleLine: boolean;
 
     public text: string;
-    // public spannableStringBuilder: globalAndroid.text.SpannableStringBuilder;
     //@ts-ignore
     formattedText: FormattedString;
 
@@ -248,14 +211,6 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     _requestLayoutOnTextChanged(): void {
         this.requestLayout();
     }
-
-    // // without this spans class wont work :s
-    // eachChild(callback: (child: ViewBase) => boolean): void {
-    //     const text = this.formattedText;
-    //     if (text) {
-    //         callback(text);
-    //     }
-    // }
 
     abstract _setNativeText(reset?: boolean): void;
 
@@ -533,26 +488,7 @@ export class Label extends LabelBase {
     }
     createFormattedTextNative(value: any) {
         const result = createNativeAttributedString(value, this, this.autoFontSize);
-
-        // let indexSearch = 0;
-        let str: string;
-        // const spans = value.spans;
         this._setTappableState(value.spans.some((s) => s.tappable));
-        // value.spans.forEach((s) => {
-        //     if (s.tappable) {
-        //         if (!str) {
-        //             // str = value.toString();
-        //             this._setTappableState(true);
-        //         }
-        //         // initializeClickableSpan();
-        //         // const text = s.text;
-        //         // const start = str.indexOf(text, indexSearch);
-        //         // if (start !== -1) {
-        //         //     indexSearch = start + text.length;
-        //         //     result.setSpan(new ClickableSpan(s), start, indexSearch, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        //         // }
-        //     }
-        // });
         return result;
     }
     @profile
@@ -563,23 +499,7 @@ export class Label extends LabelBase {
             this.autoFontSize,
             1
         ) as android.text.SpannableStringBuilder;
-        // no need to check for urlspan if we dont have a listener
-        // the only issue might happen if the listener is set afterward. Is that really an issue?
-        // if (this.linkColor || this.linkUnderline this.hasListeners(Span.linkTapEvent)) {
-        // const urlSpan = result.getSpans(0, result.length(), android.text.style.URLSpan.class);
-        // if (urlSpan.length > 0) {
         this._setTappableState(TextView.attributedStringHasSpan(result, android.text.style.URLSpan.class));
-        //     initializeURLClickableSpan();
-        //     for (let index = 0; index < urlSpan.length; index++) {
-        //         const span = urlSpan[index];
-        //         const text = span.getURL();
-        //         const start = result.getSpanStart(span);
-        //         const end = result.getSpanEnd(span);
-        //         result.removeSpan(span);
-        //         result.setSpan(new URLClickableSpan(text, this), start, end, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        //     }
-        // }
-        // }
         return result;
     }
     _setTappableState(tappable: boolean) {
