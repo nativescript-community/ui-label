@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.4](https://github.com/nativescript-community/ui-label/compare/v1.3.3...v1.3.4) (2023-05-14)
+
+### Bug Fixes
+
+-   **ios:** tap event not working anymore ([ee70746](https://github.com/nativescript-community/ui-label/commit/ee70746117908abb542c19f71ad2a9e47ce98290))
+
 ## [1.3.3](https://github.com/nativescript-community/ui-label/compare/v1.3.2...v1.3.3) (2023-05-13)
 
 **Note:** Version bump only for package @nativescript-community/ui-label
