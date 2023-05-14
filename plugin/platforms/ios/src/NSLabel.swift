@@ -21,6 +21,7 @@ class NSLabel: UILabel {
   func commonInit() {
     if #available(iOS 13, *) {
       self.textColor = UIColor.label
+      self.isUserInteractionEnabled = true
     }
   }
   

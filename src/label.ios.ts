@@ -452,9 +452,9 @@ export class Label extends LabelBase {
     }
     // _htmlTappable = false;
     // _htmlTapGestureRecognizer;
-    updateInteractionState(hasLink: boolean = false) {
-        this.nativeTextViewProtected.userInteractionEnabled = this._tappable || this.selectable || hasLink;
-    }
+    // updateInteractionState(hasLink: boolean = false) {
+    //     this.nativeTextViewProtected.userInteractionEnabled = this._tappable || this.selectable || hasLink;
+    // }
     _tappable;
     mTapGestureRecognizer: LabelLinkGestureRecognizer;
     mTapDelegate: NSLabelLinkHandlerTapDelegateImpl;
@@ -475,7 +475,7 @@ export class Label extends LabelBase {
                 }
             }
         }
-        this.updateInteractionState();
+        // this.updateInteractionState();
     }
 
     textViewShouldInteractWithURLInRangeInteraction?(
@@ -567,7 +567,7 @@ export class Label extends LabelBase {
                 hasLink = result.hasAttribute('CustomLinkAttribute');
             }
             this._setTappableState(hasLink);
-            this.updateInteractionState(hasLink);
+            // this.updateInteractionState(hasLink);
             if (this.isUsingNSTextView) {
                 (nativeView as NSTextView).selectable = this.selectable === true || hasLink;
             }
@@ -646,7 +646,7 @@ export class Label extends LabelBase {
         if (this.isUsingNSTextView) {
             (nativeView as NSTextView).selectable = value;
         }
-        this.updateInteractionState();
+        // this.updateInteractionState();
     }
     @needSetText
     [linkUnderlineProperty.setNative](value: boolean) {

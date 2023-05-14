@@ -27,7 +27,7 @@ class NSTextView: UITextView {
     self.isEditable = false;
     self.isSelectable = false;
     self.backgroundColor = UIColor.clear;
-    // self.userInteractionEnabled = true;
+    self.isUserInteractionEnabled = true;
     self.dataDetectorTypes = UIDataDetectorTypes.all;
     self.textContainerInset = UIEdgeInsets.zero;
     self.textContainer.lineFragmentPadding = 0;
