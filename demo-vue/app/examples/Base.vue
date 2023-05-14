@@ -5,7 +5,7 @@
         </ActionBar>
         <CollectionView :items="items" rowHeight="80">
             <v-template>
-                    <HTMLLabel fontSize="40" :autoFontSize="true" fontFamily="Cabin Sketch,res/cabinsketch" width="100%" paddingTop="5" :textWrap="true" :html="item.text" :color="item.color" lineBreak="end" />
+                    <HTMLLabel fontSize="40" :autoFontSize="true" fontFamily="Cabin Sketch,res/cabinsketch" width="100%" paddingTop="5" :textWrap="true" :selectable="false" :html="item.text" :color="item.color" lineBreak="end" @tap="onItemTap(item)"/>
             </v-template>
         </CollectionView>
     </Page>
@@ -319,6 +319,9 @@ export default Vue.extend({
     methods: {
         onNavigationButtonTap() {
             frameModule.topmost().goBack();
+        },
+        onItemTap(item) {
+            console.log('onItemTap')
         }
     },
     created() {
