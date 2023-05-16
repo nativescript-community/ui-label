@@ -494,7 +494,7 @@ export class Label extends LabelBase {
     @profile
     createHTMLString() {
         const result = createNativeAttributedString(
-            { text: this.html },
+            { text: this.html, linkColor: this.linkColor, linkDecoration: this.linkUnderline ? 'underline' : undefined },
             undefined,
             this,
             this.autoFontSize,
