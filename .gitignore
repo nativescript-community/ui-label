@@ -2,7 +2,7 @@
 .yarn
 .vscode
 node_modules
-platforms
+demo-vue/platforms
 hooks
 package-lock.json
 .DS_Store
@@ -17,12 +17,11 @@ plugin/**/*.d.ts
 bin
 build
 Pods
-!plugin/platforms
+!/plugin/platforms
 /plugin/platforms/android/nativescript_*.aar
 *.xcuserdatad
 /plugin/README.md
 plugin/**/*js.map
-plugin/**/*js
 *.aar
 pnpm-lock.yaml
 yarn.lock
