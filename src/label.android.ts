@@ -119,8 +119,6 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     public html: string;
     @cssProperty selectable: boolean;
 
-    _isSingleLine: boolean;
-
     public mIsSingleLine: boolean;
 
     public text: string;
