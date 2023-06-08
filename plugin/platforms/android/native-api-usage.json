@@ -1,5 +1,6 @@
 {
     "uses": [
+        "android.text:Spannable",
         "android.text.style:URLSpan",
         "android.text.style:ClickableSpan",
         "android.text:TextPaint",
