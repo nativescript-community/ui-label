@@ -30,9 +30,5 @@
         "tslint": "npm i && tslint --config '../tslint.json' 'app/**/*.ts' --exclude '**/node_modules/**'",
         "run.android.production": "devns run android --release --clean --key-store-path ./certs/upload.keystore --key-store-password nativescript --key-store-alias nativescript --key-store-alias-password nativescript",
         "run.android.timeline": "devns run android --config=nativescript.config.timeline.js --release --clean --key-store-path ./certs/upload.keystore --key-store-password nativescript --key-store-alias nativescript --key-store-alias-password nativescript --env.timeline"
-    },
-    "resolutions": {
-        "@nativescript-community/text": "portal:/Volumes/dev/nativescript/nativescript-text/packages/text",
-        "@akylas/nativescript": "portal:/Volumes/data/dev/nativescript/NativeScript/dist/packages/core"
     }
 }

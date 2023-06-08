@@ -75,8 +75,5 @@
         "extends": [
             "@commitlint/config-conventional"
         ]
-    },
-    "resolutions": {
-        "@nativescript-community/text": "portal:/Volumes/dev/nativescript/nativescript-text/packages/text"
     }
 }
