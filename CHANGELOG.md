@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.7](https://github.com/nativescript-community/ui-label/compare/v1.3.6...v1.3.7) (2023-08-12)
+
+### Bug Fixes
+
+-   **android:** faster fontSize property ([9d771d9](https://github.com/nativescript-community/ui-label/commit/9d771d924b65c3a9b3420c8cedfe0532fe0d3b60))
+
 ## [1.3.6](https://github.com/nativescript-community/ui-label/compare/v1.3.5...v1.3.6) (2023-06-08)
 
 ### Bug Fixes
