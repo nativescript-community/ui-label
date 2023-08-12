@@ -18,23 +18,6 @@ This command automatically installs the necessary files, as well as stores nativ
 
 It works exactly the same way as the {N} plugin. However it adds a few improvements
 
-## iOS Performances
-
-On iOS generating html string can be slow using the system way.
-You can enable `DTCoreText` to make it faster.
-
--   add pod `DTCoreText` in your app Podfile at `App_Resources/ios`
-
-```
-pod 'DTCoreText'
-```
-
--   enable it in your `app.(js|ts)` (as soon as possible)
-
-```javascript
-require('@nativescript-community/ui-label').enableIOSDTCoreText();
-```
-
 ### Angular
 
 ```typescript
