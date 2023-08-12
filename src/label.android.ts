@@ -217,7 +217,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
 
 export class Label extends LabelBase {
     nativeViewProtected: com.nativescript.text.TextView;
-    mHandleFontSize = true;
+    handleFontSize = true;
     mTappable = false;
     private mAutoFontSize = false;
 
@@ -345,7 +345,9 @@ export class Label extends LabelBase {
         if (color) {
             this.nativeTextViewProtected.setTextColor(color.android);
         } else {
-            this.nativeTextViewProtected.setTextColor(null);
+            // what to call in this case ? transparent color?
+            // we cant call with null as we will get a null pointer exception
+            // this.nativeTextViewProtected.setTextColor(null);
         }
     }
     [fontSizeProperty.setNative](value: number | { nativeSize: number }) {
