@@ -41,17 +41,6 @@ export const needSetText = function (target: any, propertyKey: string | Symbol, 
         return result;
     };
 };
-export const needTextSet = function (target: any, propertyKey: string | Symbol, descriptor: PropertyDescriptor) {
-    const originalMethod = descriptor.value;
-    descriptor.value = function (...args: any[]) {
-        if (!this.mCanChangeText) {
-            this._needFontComputation = true;
-            return;
-        }
-        return originalMethod.apply(this, args);
-    };
-};
-
 @CSSType('HTMLLabel')
 export abstract class LabelBase extends TNLabel implements LabelViewDefinition {
     //@ts-ignore
