@@ -13,5 +13,10 @@
         "android.graphics:Paint.FontMetrics",
         "android.text:Spanned",
         "androidx.core.widget:TextViewCompat"
+    ],
+    "proguard_whitelist": [
+        "org.apache.xerces.jaxp.SAXParserFactoryImpl",
+        "org.apache.xerces.parsers.XIncludeAwareParserConfiguration",
+        "org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl"
     ]
 }
