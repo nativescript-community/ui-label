@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.9](https://github.com/nativescript-community/ui-label/compare/v1.3.8...v1.3.9) (2023-12-29)
+
+### Bug Fixes
+
+-   **android:** proguard fix (for app supporting proguard) ([9d92693](https://github.com/nativescript-community/ui-label/commit/9d92693583b37ed6fd62bf01d4d3d4e568f244ed))
+
 ## [1.3.8](https://github.com/nativescript-community/ui-label/compare/v1.3.7...v1.3.8) (2023-09-06)
 
 ### Bug Fixes
