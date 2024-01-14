@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.10](https://github.com/nativescript-community/ui-label/compare/v1.3.9...v1.3.10) (2024-01-14)
+
+### Bug Fixes
+
+-   **android:** create native view using inflate (a bit faster) ([10ecedf](https://github.com/nativescript-community/ui-label/commit/10ecedf40395da22f2b5d78eaab17ac50cebd1ae))
+
 ## [1.3.9](https://github.com/nativescript-community/ui-label/compare/v1.3.8...v1.3.9) (2023-12-29)
 
 ### Bug Fixes
