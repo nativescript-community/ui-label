@@ -9,6 +9,7 @@
         "android.text:Layout",
         "android.os:Build",
         "android.util:TypedValue",
+        "android.view:LayoutInflater",
         "android.graphics:Paint",
         "android.graphics:Paint.FontMetrics",
         "android.text:Spanned",

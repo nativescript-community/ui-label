@@ -215,6 +215,8 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     protected _paintFlags: number;
 }
 
+let layoutId;
+let LayoutInflater: typeof android.view.LayoutInflater;
 export class Label extends LabelBase {
     nativeViewProtected: com.nativescript.text.TextView;
     handleFontSize = true;
@@ -228,10 +230,18 @@ export class Label extends LabelBase {
 
     @profile
     public createNativeView() {
-        if (!TextView) {
-            TextView = com.nativescript.text.TextView;
+        // if (!TextView) {
+        //     TextView = com.nativescript.text.TextView;
+        // }
+        // return new TextView(this._context);
+        if (!layoutId) {
+            const context = Utils.android.getApplicationContext();
+            layoutId = context.getResources().getIdentifier('label', 'layout', context.getPackageName());
         }
-        return new TextView(this._context);
+        if (!LayoutInflater) {
+            LayoutInflater = android.view.LayoutInflater;
+        }
+        return LayoutInflater.from(this._context).inflate(layoutId, null, false);
     }
     urlSpanClickListener: com.nativescript.text.URLSpanClickListener;
     public disposeNativeView() {
