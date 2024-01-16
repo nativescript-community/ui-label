@@ -230,9 +230,9 @@ export class Label extends LabelBase {
 
     @profile
     public createNativeView() {
-        // if (!TextView) {
-        //     TextView = com.nativescript.text.TextView;
-        // }
+        if (!TextView) {
+            TextView = com.nativescript.text.TextView;
+        }
         // return new TextView(this._context);
         if (!layoutId) {
             const context = Utils.android.getApplicationContext();
