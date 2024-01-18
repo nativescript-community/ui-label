@@ -14,6 +14,10 @@ Run the following command from the root of your project:
 
 This command automatically installs the necessary files, as well as stores nativescript-community/ui-label as a dependency in your project's package.json file.
 
+### Production build
+
+If you are using proguard on Android build you need ensure some resource from this plugin are not minified. You need to add ` tools:keep="@layout/ns_*"` as explained [here](https://developer.android.com/build/shrink-code#keep-resources)
+
 ## Configuration
 
 It works exactly the same way as the {N} plugin. However it adds a few improvements
