@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.12](https://github.com/nativescript-community/ui-label/compare/v1.3.11...v1.3.12) (2024-01-18)
+
+### Bug Fixes
+
+-   **android:** renamed label layout so that we can easily keep it with proguard/minification ([2597a97](https://github.com/nativescript-community/ui-label/commit/2597a972a0796b02e0be024910dc3b4e7fbdd048))
+
 ## [1.3.11](https://github.com/nativescript-community/ui-label/compare/v1.3.10...v1.3.11) (2024-01-16)
 
 **Note:** Version bump only for package @nativescript-community/ui-label
