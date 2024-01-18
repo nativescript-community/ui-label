@@ -236,7 +236,7 @@ export class Label extends LabelBase {
         // return new TextView(this._context);
         if (!layoutId) {
             const context = Utils.android.getApplicationContext();
-            layoutId = context.getResources().getIdentifier('label', 'layout', context.getPackageName());
+            layoutId = context.getResources().getIdentifier('ns_label', 'layout', context.getPackageName());
         }
         if (!LayoutInflater) {
             LayoutInflater = android.view.LayoutInflater;
