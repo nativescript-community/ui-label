@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.13](https://github.com/nativescript-community/ui-label/compare/v1.3.12...v1.3.13) (2024-01-18)
+
+### Bug Fixes
+
+-   **android:** fix font size for html/spans which was a bit smaller than normal `text`. WARNING: it will change font size a bit (bigger) for all labels using html or FormattedString/Span ([5c34149](https://github.com/nativescript-community/ui-label/commit/5c3414927ba90e3e7d8e71cd54287f792eb1cf37))
+
 ## [1.3.12](https://github.com/nativescript-community/ui-label/compare/v1.3.11...v1.3.12) (2024-01-18)
 
 ### Bug Fixes
