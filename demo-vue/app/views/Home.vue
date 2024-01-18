@@ -2,11 +2,21 @@
     <Page>
         <ActionBar title="Material Vue">
         </ActionBar>
-<GridLayout>
-            <ListView ref="listView" itemRowHeight="80" for="example in examples" separatorColor="transparent" @itemTap="goToExample">
+<GridLayout rows="auto,*">
+    <StackLayout>
+    <HTMLLabel :text="nativeText" backgroundColor='yellow'/>
+    <HTMLLabel html='<span style="font-size:16;font-weight:bold">test</span><span style="color:red;font-size:14">hello</span>' backgroundColor='yellow'/>
+    <HTMLLabel  backgroundColor='pink'> 
+        <Span fontSize="16" fontWeight="bold" text="test"/>
+    </HTMLLabel>
+    <HTMLLabel fontSize="16" fontWeight="bold" text="test"/>
+    <Label  fontSize="16" fontWeight="bold" text="test"/>
+    <Label text="test" fontWeight="bold" fontSize="16"/>
+    </StackLayout>
+            <ListView ref="listView" itemRowHeight="80" for="example in examples" separatorColor="transparent" @itemTap="goToExample" row="1">
                 <v-template>
                     <StackLayout class="item" orientation="horizontal">
-                        <Label :text="example.title" class="title" verticalAlignment="center" />
+                        <HTMLLabel fontSize="16" :text="example.title" verticalAlignment="center" />
                     </StackLayout>
                 </v-template>
             </ListView>
@@ -18,6 +28,9 @@ import { getExamples } from '../examples';
 import Vue from 'vue';
 import BottomSheetInnerVue from './BottomSheetInner.vue';
 import { NativeScriptVue } from 'nativescript-vue';
+
+import { createNativeAttributedString } from '@nativescript-community/ui-label';
+
 
 export default Vue.extend({
     name: 'Home',
