@@ -121,7 +121,8 @@ abstract class LabelBase extends View implements LabelViewDefinition {
 
     public mIsSingleLine: boolean;
 
-    public text: string;
+    //@ts-ignore
+    public text: string | java.lang.CharSequence | android.text.Spannable;
     //@ts-ignore
     formattedText: FormattedString;
 
@@ -369,7 +370,7 @@ export class Label extends LabelBase {
         if (typeof value === 'number') {
             this.nativeTextViewProtected.setTextSize(value);
         } else {
-            this.nativeTextViewProtected.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, value.nativeSize);
+            this.nativeTextViewProtected.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, value.nativeSize);
         }
         if (this.mAutoFontSize) {
             this.enableAutoSize();
@@ -557,7 +558,6 @@ export class Label extends LabelBase {
             this.nativeTextViewProtected.setText(null);
             return;
         }
-
         let transformedText: any = null;
         if (this.html) {
             transformedText = this.createHTMLString();
@@ -568,6 +568,8 @@ export class Label extends LabelBase {
                 this,
                 this.formattedText === null || this.formattedText === undefined ? '' : this.formattedText.toString()
             );
+        } else if (this.text instanceof java.lang.CharSequence || this.text instanceof 	android.text.Spannable) {
+            transformedText = this.text;
         } else {
             const text = this.text;
             const stringValue = text === null || text === undefined ? '' : text.toString();

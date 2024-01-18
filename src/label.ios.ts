@@ -188,6 +188,9 @@ export class Label extends LabelBase {
 
     isUsingNSTextView = false;
 
+    //@ts-ignore
+    public text: string | NSAttributedString;
+
     @profile
     public createNativeView() {
         if (this.selectable) {
@@ -705,6 +708,8 @@ export class Label extends LabelBase {
         this.fontSizeRatio = 1;
         if (this.html) {
             this.updateHTMLString();
+        } else if (this.text instanceof NSAttributedString) {
+            this.nativeViewProtected.attributedText = this.text;
         } else {
             super._setNativeText();
         }
