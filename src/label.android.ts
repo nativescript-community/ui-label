@@ -59,7 +59,7 @@ import { SDK_VERSION } from '@nativescript/core/utils/constants';
 export { createNativeAttributedString } from '@nativescript-community/text';
 export * from './label-common';
 
-let TextView: typeof com.nativescript.text.TextView;
+let NSLabel: typeof com.nativescript.label.NSLabel;
 
 const CHILD_FORMATTED_TEXT = 'formattedText';
 
@@ -77,32 +77,6 @@ const formattedTextProperty = new Property<Label, FormattedString>({
     valueChanged: onFormattedTextPropertyChanged
 });
 export const htmlProperty = new Property<Label, string>({ name: 'html', defaultValue: null, affectsLayout: true });
-
-function getHorizontalGravity(textAlignment: CoreTypes.TextAlignmentType) {
-    switch (textAlignment) {
-        case 'center':
-            return 1; //Gravity.CENTER_HORIZONTAL
-        case 'right':
-            return 8388613; //Gravity.END
-        default:
-        case 'initial':
-        case 'left':
-            return 8388611; //Gravity.START
-    }
-}
-function getVerticalGravity(textAlignment: VerticalTextAlignment) {
-    switch (textAlignment) {
-        case 'initial':
-        case 'top':
-            return 48; //Gravity.TOP
-        case 'middle':
-        case 'center':
-            return 16; //Gravity.CENTER_VERTICAL
-
-        case 'bottom':
-            return 80; //Gravity.BOTTOM
-    }
-}
 
 @CSSType('HTMLLabel')
 abstract class LabelBase extends View implements LabelViewDefinition {
@@ -216,10 +190,8 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     protected _paintFlags: number;
 }
 
-let layoutId;
-let LayoutInflater: typeof android.view.LayoutInflater;
 export class Label extends LabelBase {
-    nativeViewProtected: com.nativescript.text.TextView;
+    nativeViewProtected: com.nativescript.label.NSLabel;
     handleFontSize = true;
     mTappable = false;
     private mAutoFontSize = false;
@@ -231,18 +203,10 @@ export class Label extends LabelBase {
 
     @profile
     public createNativeView() {
-        if (!TextView) {
-            TextView = com.nativescript.text.TextView;
+        if (!NSLabel) {
+            NSLabel = com.nativescript.label.NSLabel;
         }
-        // return new TextView(this._context);
-        if (!layoutId) {
-            const context = Utils.android.getApplicationContext();
-            layoutId = context.getResources().getIdentifier('ns_label', 'layout', context.getPackageName());
-        }
-        if (!LayoutInflater) {
-            LayoutInflater = android.view.LayoutInflater;
-        }
-        return LayoutInflater.from(this._context).inflate(layoutId, null, false);
+        return NSLabel.inflateLayout(this._context);
     }
     urlSpanClickListener: com.nativescript.text.URLSpanClickListener;
     public disposeNativeView() {
@@ -262,42 +226,12 @@ export class Label extends LabelBase {
         }
     }
     [lineBreakProperty.setNative](value: string) {
-        // TODO move it all to native
-        const nativeView = this.nativeTextViewProtected;
-        switch (value) {
-            case 'end':
-                nativeView.setEllipsize(android.text.TextUtils.TruncateAt.END);
-                break;
-            case 'start':
-                nativeView.setEllipsize(android.text.TextUtils.TruncateAt.START);
-                break;
-            case 'marquee':
-                nativeView.setEllipsize(android.text.TextUtils.TruncateAt.MARQUEE);
-                break;
-            case 'middle':
-                nativeView.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);
-                break;
-            case 'none':
-                nativeView.setEllipsize(null);
-                break;
-        }
+        this.nativeTextViewProtected.setLineBreak(value);
     }
 
     [whiteSpaceProperty.setNative](value: CoreTypes.WhiteSpaceType) {
-        // TODO move it all to native
         if (!this.lineBreak) {
-            const nativeView = this.nativeTextViewProtected;
-            switch (value) {
-                case 'initial':
-                case 'normal':
-                    nativeView.setSingleLine(false);
-                    nativeView.setEllipsize(null);
-                    break;
-                case 'nowrap':
-                    nativeView.setSingleLine(true);
-                    nativeView.setEllipsize(android.text.TextUtils.TruncateAt.END);
-                    break;
-            }
+            this.nativeTextViewProtected.setWhiteSpace(value);
         }
     }
     [textShadowProperty.getDefault](value: number) {
@@ -323,9 +257,7 @@ export class Label extends LabelBase {
     }
 
     [verticalTextAlignmentProperty.setNative](value: VerticalTextAlignment) {
-        // TODO move it all to native
-        const view = this.nativeTextViewProtected;
-        view.setGravity(getHorizontalGravity(this.textAlignment) | getVerticalGravity(value));
+        this.nativeTextViewProtected.setVerticalTextAlignment(value, this.textAlignment);
     }
 
     [textProperty.getDefault](): symbol | number {
@@ -344,18 +276,7 @@ export class Label extends LabelBase {
     [textTransformProperty.setNative](value: CoreTypes.TextTransformType) {}
 
     [textAlignmentProperty.setNative](value: CoreTypes.TextAlignmentType) {
-        // TODO move it all to native
-        const view = this.nativeTextViewProtected;
-        if (SDK_VERSION >= 26) {
-            if ((value as any) === 'justify') {
-                view.setJustificationMode(1 /* android.text.Layout.JUSTIFICATION_MODE_INTER_WORD */);
-            } else {
-                view.setJustificationMode(0 /* android.text.Layout.JUSTIFICATION_MODE_NONE */);
-                view.setGravity(getHorizontalGravity(value) | getVerticalGravity(this.verticalTextAlignment));
-            }
-        } else {
-            view.setGravity(getHorizontalGravity(value) | getVerticalGravity(this.verticalTextAlignment));
-        }
+        this.nativeTextViewProtected.setLabelTextAlignment(value, this.verticalTextAlignment);
     }
 
     [colorProperty.setNative](value: Color | string) {
@@ -369,63 +290,26 @@ export class Label extends LabelBase {
         }
     }
     [fontSizeProperty.setNative](value: number | { nativeSize: number }) {
-        // TODO move it all to native
-        // setTextSize is ignored if autoFontSize is enabled
-        // so we need to disable autoFontSize just to set textSize
-        if (this.mAutoFontSize) {
-            this.disableAutoSize();
-        }
-        if (typeof value === 'number') {
-            this.nativeTextViewProtected.setTextSize(value);
-        } else {
-            this.nativeTextViewProtected.setTextSize(2 /* android.util.TypedValue.COMPLEX_UNIT_SP */, value.nativeSize);
-        }
-        if (this.mAutoFontSize) {
-            this.enableAutoSize();
-        }
+        this.nativeTextViewProtected.setLabelTextSize(
+            2,
+            typeof value === 'number' ? value : value.nativeSize,
+            this.minFontSize || 10,
+            this.maxFontSize || 200,
+            this.autoFontSizeStep || 1
+        );
     }
 
     [lineHeightProperty.setNative](value: number) {
-        // TODO move it all to native
-        if (SDK_VERSION >= 28) {
-            this.nativeTextViewProtected.setLineHeight(value * Utils.layout.getDisplayDensity());
-        } else {
-            const fontHeight = this.nativeTextViewProtected.getPaint().getFontMetrics(null);
-            this.nativeTextViewProtected.setLineSpacing(value * Utils.layout.getDisplayDensity() - fontHeight, 1);
-        }
+        this.nativeTextViewProtected.setLineHeight(value * Utils.layout.getDisplayDensity());
     }
 
     [fontInternalProperty.setNative](value: Font | android.graphics.Typeface) {
-        // TODO move it all to native
         const androidFont: android.graphics.Typeface = value instanceof Font ? value.getAndroidTypeface() : value;
         this.nativeTextViewProtected.setTypeface(androidFont);
-        if (SDK_VERSION < 28 && this.lineHeight) {
-            const fontHeight = this.nativeTextViewProtected.getPaint().getFontMetrics(null);
-            this.nativeTextViewProtected.setLineSpacing(this.lineHeight * Utils.layout.getDisplayDensity() - fontHeight, 1);
-        }
     }
 
     [textDecorationProperty.setNative](value: number | CoreTypes.TextDecorationType) {
-        // TODO move it all to native
-        switch (value) {
-            case 'none':
-                this.nativeTextViewProtected.setPaintFlags(0);
-                break;
-            case 'underline':
-                this.nativeTextViewProtected.setPaintFlags(8 /* android.graphics.Paint.UNDERLINE_TEXT_FLAG */);
-                break;
-            case 'line-through':
-                this.nativeTextViewProtected.setPaintFlags(16 /* android.graphics.Paint.STRIKE_THRU_TEXT_FLAG */);
-                break;
-            case 'underline line-through':
-                this.nativeTextViewProtected.setPaintFlags(
-                    8 /* android.graphics.Paint.UNDERLINE_TEXT_FLAG */ | 16 /*  android.graphics.Paint.STRIKE_THRU_TEXT_FLAG */
-                );
-                break;
-            default:
-                this.nativeTextViewProtected.setPaintFlags(value);
-                break;
-        }
+        this.nativeTextViewProtected.setTextDecoration(value);
     }
 
     [letterSpacingProperty.setNative](value: number) {
@@ -471,15 +355,6 @@ export class Label extends LabelBase {
             Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderLeftWidth, 0)
         );
     }
-    private enableAutoSize() {
-        androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
-            this.nativeView,
-            this.minFontSize || 10,
-            this.maxFontSize || 200,
-            this.autoFontSizeStep || 1,
-            1 /* android.util.TypedValue.COMPLEX_UNIT_DIP */
-        );
-    }
     [maxFontSizeProperty.setNative](value) {
         if (this.mAutoFontSize) {
             this.enableAutoSize();
@@ -490,11 +365,12 @@ export class Label extends LabelBase {
             this.enableAutoSize();
         }
     }
-    private disableAutoSize() {
-        androidx.core.widget.TextViewCompat.setAutoSizeTextTypeWithDefaults(
-            this.nativeView,
-            0 /* androidx.core.widget.TextViewCompat.AUTO_SIZE_TEXT_TYPE_NONE */
-        );
+
+    protected enableAutoSize() {
+        this.nativeViewProtected.enableAutoSize(this.minFontSize || 10, this.maxFontSize || 200, this.autoFontSizeStep || 1);
+    }
+    protected disableAutoSize() {
+        this.nativeViewProtected.disableAutoSize();
     }
     [autoFontSizeProperty.setNative](value: boolean) {
         this.mAutoFontSize = value;
@@ -522,16 +398,15 @@ export class Label extends LabelBase {
             this.autoFontSize,
             1
         ) as android.text.SpannableStringBuilder;
-        this._setTappableState(TextView.attributedStringHasSpan(result, android.text.style.URLSpan.class));
+        this._setTappableState(NSLabel.attributedStringHasURLSpan(result));
         return result;
     }
     _setTappableState(tappable: boolean) {
         if (this.mTappable !== tappable) {
             this.mTappable = tappable;
             const nativeView = this.nativeTextViewProtected;
+            nativeView.setTappableState(tappable);
             if (this.mTappable) {
-                nativeView.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
-                nativeView.setHighlightColor(null);
                 if (!this.urlSpanClickListener) {
                     this.urlSpanClickListener = new com.nativescript.text.URLSpanClickListener({
                         onClick: this.onURLClick.bind(this)
@@ -539,13 +414,11 @@ export class Label extends LabelBase {
                 }
                 nativeView.urlSpanClickListener = this.urlSpanClickListener;
             } else {
-                nativeView.setMovementMethod(this.mDefaultMovementMethod);
                 nativeView.urlSpanClickListener = null;
             }
         }
     }
-    onURLClick(span: android.text.style.URLSpan) {
-        const link = span.getURL();
+    onURLClick(link: string) {
         if (this.formattedText) {
             const spanIndex = parseInt(link, 10);
             if (!isNaN(spanIndex) && spanIndex >= 0 && spanIndex < this.formattedText?.spans.length) {
@@ -579,7 +452,7 @@ export class Label extends LabelBase {
                 this,
                 this.formattedText === null || this.formattedText === undefined ? '' : this.formattedText.toString()
             );
-        } else if (this.text instanceof java.lang.CharSequence || this.text instanceof android.text.Spannable) {
+        } else if (this.text instanceof java.lang.CharSequence || this.text instanceof android.text.Spanned) {
             transformedText = this.text;
         } else {
             const text = this.text;
