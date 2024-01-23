@@ -94,7 +94,7 @@ export default Vue.extend({
             Frame.topmost().goBack();
         },
         openLink(event) {
-            console.log('openLink', event.link)
+            console.log('openLink', event.object, event.link)
         }
     }
 });
