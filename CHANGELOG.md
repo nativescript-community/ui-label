@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.14](https://github.com/nativescript-community/ui-label/compare/v1.3.13...v1.3.14) (2024-01-23)
+
+### Bug Fixes
+
+-   **android:** faster and lighter(using proguard/native-api-usage) implementation ([74e0b8f](https://github.com/nativescript-community/ui-label/commit/74e0b8f8ea484bc2ed4aa770d885f5f258c9fee7))
+-   **android:** some improvements to make `Label` a bit faster ([982673b](https://github.com/nativescript-community/ui-label/commit/982673b0744b8761635383bb5eeba24415470e38))
+
 ## [1.3.13](https://github.com/nativescript-community/ui-label/compare/v1.3.12...v1.3.13) (2024-01-18)
 
 ### Bug Fixes
