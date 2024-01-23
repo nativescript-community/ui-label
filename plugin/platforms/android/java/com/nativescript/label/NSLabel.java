@@ -1,5 +1,6 @@
 package com.nativescript.label;
 
+import java.lang.CharSequence;
 import androidx.appcompat.widget.AppCompatTextView;
 import com.nativescript.text.TextView;
 import android.content.Context;
@@ -41,6 +42,17 @@ public class NSLabel extends TextView {
     @Override
     public void setMaxLines (int maxLines) {
         super.setMaxLines(maxLines);
+    }
+
+    @Override
+    public void setTextColor (int color) {
+        super.setTextColor(color);
+    }
+    public void setLabelText(String text) {
+        super.setText(text);
+    }
+    public void setLabelText(CharSequence text) {
+        super.setText(text);
     }
 
     @Override

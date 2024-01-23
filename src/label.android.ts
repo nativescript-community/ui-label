@@ -439,7 +439,7 @@ export class Label extends LabelBase {
             return;
         }
         if (reset) {
-            this.nativeTextViewProtected.setText(null);
+            this.nativeTextViewProtected.setLabelText(null);
             return;
         }
         let transformedText: any = null;
@@ -459,7 +459,7 @@ export class Label extends LabelBase {
             const stringValue = text === null || text === undefined ? '' : text.toString();
             transformedText = getTransformedText(stringValue, this.textTransform);
         }
-        this.nativeTextViewProtected.setText(transformedText);
+        this.nativeTextViewProtected.setLabelText(transformedText);
     }
 }
 
