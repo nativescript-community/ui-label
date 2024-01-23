@@ -32,7 +32,7 @@
     "license": "Apache-2.0",
     "readmeFilename": "README.md",
     "dependencies": {
-        "@nativescript-community/text": "^1.5.41"
+        "@nativescript-community/text": "^1.5.44"
     },
     "gitHead": "a08eb50756c9a5d16fc8aa6ff7fba0051c71d1e0"
 }

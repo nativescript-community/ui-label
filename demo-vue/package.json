@@ -4,7 +4,7 @@
     "readme": "README.md",
     "main": "app/main",
     "dependencies": {
-        "@nativescript-community/text": "^1.5.19",
+        "@nativescript-community/text": "^1.5.44",
         "@nativescript-community/ui-collectionview": "5.1.4",
         "@nativescript-community/ui-label": "link:../plugin",
         "@nativescript-community/ui-material-bottomsheet": "7.0.34",
