@@ -15,6 +15,7 @@ declare namespace com {
                 enableAutoSize(minFontSize: number, maxFontSize: number, step: number);
                 disableAutoSize();
                 setTappableState(value: boolean);
+                setLabelText(value: string | java.lang.CharSequence);
             }
         }
     }
