@@ -1,19 +1,7 @@
 {
     "uses": [
-        "android.text:Spannable",
-        "android.text.style:URLSpan",
-        "android.text.style:ClickableSpan",
-        "android.text:TextPaint",
-        "android.text.method:MovementMethod",
-        "android.text:TextUtils.TruncateAt",
-        "android.text:Layout",
-        "android.os:Build",
-        "android.util:TypedValue",
-        "android.view:LayoutInflater",
-        "android.graphics:Paint",
-        "android.graphics:Paint.FontMetrics",
-        "android.text:Spanned",
-        "androidx.core.widget:TextViewCompat"
+        "com.nativescript.label:NSLabel",
+        "android.text:Spanned"
     ],
     "proguard_whitelist": [
         "org.apache.xerces.jaxp.SAXParserFactoryImpl",
