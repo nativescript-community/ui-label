@@ -487,3 +487,4 @@ function onFormattedTextPropertyChanged(textBase: Label, oldValue: FormattedStri
         newValue.on(Observable.propertyChangeEvent, textBase._onFormattedTextContentsChanged, textBase);
     }
 }
+LabelBase.prototype['_hasDefaultAccessibilityContentDescription'] = true;
