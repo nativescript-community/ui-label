@@ -26,7 +26,7 @@ public class NSLabel extends TextView {
         super(context, attrs);
     }
 
-    public static boolean attributedStringHasURLSpan(android.text.Spannable attributeString) {
+    public static boolean attributedStringHasURLSpan(android.text.Spanned attributeString) {
         return attributedStringHasSpan(attributeString, URLSpan.class);
     }
 
