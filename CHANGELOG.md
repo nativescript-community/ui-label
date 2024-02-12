@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.19](https://github.com/Akylas/nativescript-label/compare/v1.3.18...v1.3.19) (2024-02-12)
+
+### Bug Fixes
+
+-   **ios:** ensure verticalTextAlignment works in all cases ([05ed697](https://github.com/Akylas/nativescript-label/commit/05ed697ad415f0d93608d9011599446b5d347afa))
+
 ## [1.3.18](https://github.com/nativescript-community/ui-label/compare/v1.3.17...v1.3.18) (2024-01-30)
 
 ### Bug Fixes
