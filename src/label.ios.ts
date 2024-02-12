@@ -415,6 +415,8 @@ export class Label extends LabelBase {
             const height = Utils.layout.getMeasureSpecSize(heightMeasureSpec);
             const heightMode = Utils.layout.getMeasureSpecMode(heightMeasureSpec);
             let resetFont;
+            // reset insent or it will taken into account for measurement
+            this.updateVerticalAlignment(false);
             if (this.autoFontSize) {
                 const finiteWidth = widthMode === Utils.layout.EXACTLY;
                 const finiteHeight = heightMode === Utils.layout.EXACTLY;
