@@ -446,13 +446,21 @@ export class Label extends LabelBase {
             this.setMeasuredDimension(widthAndState, heightAndState);
         }
     }
-    _onSizeChanged() {
-        super._onSizeChanged();
+    onLayout(left, top, right, bottom) {
+        super.onLayout(left, top, right, bottom);
+        // we do on every layout pass or we might be out of sync
         this.updateVerticalAlignment();
         if (this.autoFontSize) {
             this.updateAutoFontSize({ textView: this.nativeTextViewProtected });
         }
     }
+    // _onSizeChanged() {
+    //     super._onSizeChanged();
+    //     this.updateVerticalAlignment();
+    //     if (this.autoFontSize) {
+    //         this.updateAutoFontSize({ textView: this.nativeTextViewProtected });
+    //     }
+    // }
     // _htmlTappable = false;
     // _htmlTapGestureRecognizer;
     // updateInteractionState(hasLink: boolean = false) {
