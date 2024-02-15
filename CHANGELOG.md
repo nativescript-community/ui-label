@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.21](https://github.com/Akylas/nativescript-label/compare/v1.3.20...v1.3.21) (2024-02-15)
+
+### Bug Fixes
+
+-   **ios:** more verticalAlignment/autoSize fixes ([44d5752](https://github.com/Akylas/nativescript-label/commit/44d575226f824bba8fe256719820f9b64ed78e62))
+
 ## [1.3.20](https://github.com/Akylas/nativescript-label/compare/v1.3.19...v1.3.20) (2024-02-12)
 
 ### Bug Fixes
