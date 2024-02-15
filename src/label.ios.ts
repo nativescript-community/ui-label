@@ -416,7 +416,6 @@ export class Label extends LabelBase {
             const heightMode = Utils.layout.getMeasureSpecMode(heightMeasureSpec);
             let resetFont;
             // reset insent or it will taken into account for measurement
-            this.updateVerticalAlignment(false);
             if (this.autoFontSize) {
                 const finiteWidth = widthMode === Utils.layout.EXACTLY;
                 const finiteHeight = heightMode === Utils.layout.EXACTLY;
@@ -428,6 +427,8 @@ export class Label extends LabelBase {
                         onlyMeasure: true
                     });
                 }
+            } else {
+                this.updateVerticalAlignment(false);
             }
             const desiredSize = Utils.layout.measureNativeView(nativeView, width, widthMode, height, heightMode);
             // if (this.isUsingNSTextView) {
@@ -451,9 +452,10 @@ export class Label extends LabelBase {
     onLayout(left, top, right, bottom) {
         super.onLayout(left, top, right, bottom);
         // we do on every layout pass or we might be out of sync
-        this.updateVerticalAlignment();
         if (this.autoFontSize) {
             this.updateAutoFontSize({ textView: this.nativeTextViewProtected });
+        } else {
+            this.updateVerticalAlignment();
         }
     }
     // _onSizeChanged() {
@@ -723,10 +725,12 @@ export class Label extends LabelBase {
         } else {
             super._setNativeText();
         }
-        this.updateVerticalAlignment();
-        if (this.autoFontSize) {
-            this.updateAutoFontSize({ textView: this.nativeTextViewProtected, force: true });
-        }
+        // no need to update veticalAlignment or autoSize as we ask for a layout
+        // will be done in onMeasure and onLayout
+        // this.updateVerticalAlignment();
+        // if (this.autoFontSize) {
+        //     this.updateAutoFontSize({ textView: this.nativeTextViewProtected, force: true });
+        // }
         this._requestLayoutOnTextChanged();
     }
 
@@ -931,7 +935,7 @@ export class Label extends LabelBase {
             const nbLines =
                 textView instanceof NSTextView ? textView.textContainer?.maximumNumberOfLines : textView.numberOfLines;
             // we need to reset verticalTextAlignment or computation will be wrong
-            // this.updateVerticalAlignment(false);
+            this.updateVerticalAlignment(false);
 
             let expectSize;
 
