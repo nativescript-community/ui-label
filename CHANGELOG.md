@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.22](https://github.com/nativescript-community/ui-label/compare/v1.3.21...v1.3.22) (2024-02-22)
+
+### Bug Fixes
+
+-   **android:** wrong line height rendering on android < 28 ([4276ad6](https://github.com/nativescript-community/ui-label/commit/4276ad6494271f924ae5eafedfaa6f3e65607d95))
+
 ## [1.3.21](https://github.com/Akylas/nativescript-label/compare/v1.3.20...v1.3.21) (2024-02-15)
 
 ### Bug Fixes
