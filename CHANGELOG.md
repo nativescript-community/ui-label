@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.23](https://github.com/nativescript-community/ui-label/compare/v1.3.22...v1.3.23) (2024-03-05)
+
+### Bug Fixes
+
+-   **android:** prevent enableAutoSize to be called before min and max font size are set ([b1cdfd7](https://github.com/nativescript-community/ui-label/commit/b1cdfd738a1ba9c647f1d1ffff9c6ea12cc5b908))
+
 ## [1.3.22](https://github.com/nativescript-community/ui-label/compare/v1.3.21...v1.3.22) (2024-02-22)
 
 ### Bug Fixes
