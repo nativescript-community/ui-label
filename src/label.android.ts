@@ -127,13 +127,14 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     @cssProperty paddingLeft: CoreTypes.LengthType;
 
     // for now code is duplicated as Android version is a full rewrite
-    mCanChangeText = true;
+    mInResumeNativeUpdates = false;
     mNeedSetText = false;
+    mNeedSetAutoSize = false;
     public onResumeNativeUpdates(): void {
         // {N} suspends properties update on `_suspendNativeUpdates`. So we only need to do this in onResumeNativeUpdates
-        this.mCanChangeText = false;
+        this.mInResumeNativeUpdates = true;
         super.onResumeNativeUpdates();
-        this.mCanChangeText = true;
+        this.mInResumeNativeUpdates = false;
         if (this.mNeedSetText) {
             this.mNeedSetText = false;
             this._setNativeText();
@@ -355,21 +356,39 @@ export class Label extends LabelBase {
             Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderLeftWidth, 0)
         );
     }
-    [maxFontSizeProperty.setNative](value) {
-        if (this.mAutoFontSize) {
-            this.enableAutoSize();
+
+    // for now code is duplicated as Android version is a full rewrite
+    mNeedSetAutoSize = false;
+    public onResumeNativeUpdates(): void {
+        super.onResumeNativeUpdates();
+        if (this.mNeedSetAutoSize) {
+            this.mNeedSetAutoSize = false;
+            if (this.autoFontSize) {
+                this.enableAutoSize();
+            } else {
+                this.disableAutoSize();
+            }
         }
     }
+    [maxFontSizeProperty.setNative](value) {
+        this.enableAutoSize();
+    }
     [minFontSizeProperty.setNative](value) {
-        if (this.mAutoFontSize) {
-            this.enableAutoSize();
-        }
+        this.enableAutoSize();
     }
 
     protected enableAutoSize() {
+        if (this.mInResumeNativeUpdates) {
+            this.mNeedSetAutoSize = true;
+            return;
+        }
         this.nativeViewProtected.enableAutoSize(this.minFontSize || 10, this.maxFontSize || 200, this.autoFontSizeStep || 1);
     }
     protected disableAutoSize() {
+        if (this.mInResumeNativeUpdates) {
+            this.mNeedSetAutoSize = true;
+            return;
+        }
         this.nativeViewProtected.disableAutoSize();
     }
     [autoFontSizeProperty.setNative](value: boolean) {
@@ -434,7 +453,7 @@ export class Label extends LabelBase {
 
     @profile
     _setNativeText(reset: boolean = false): void {
-        if (!this.mCanChangeText) {
+        if (this.mInResumeNativeUpdates) {
             this.mNeedSetText = true;
             return;
         }
