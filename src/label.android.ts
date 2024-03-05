@@ -371,10 +371,14 @@ export class Label extends LabelBase {
         }
     }
     [maxFontSizeProperty.setNative](value) {
-        this.enableAutoSize();
+        if (this.autoFontSize) {
+            this.enableAutoSize();
+        }
     }
     [minFontSizeProperty.setNative](value) {
-        this.enableAutoSize();
+        if (this.autoFontSize) {
+            this.enableAutoSize();
+        }
     }
 
     protected enableAutoSize() {
