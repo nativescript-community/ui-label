@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.24](https://github.com/nativescript-community/ui-label/compare/v1.3.23...v1.3.24) (2024-03-05)
+
+### Bug Fixes
+
+-   **android:** regression fix ([07ec72b](https://github.com/nativescript-community/ui-label/commit/07ec72b6ef92d49ced93c70cd38dcd5c9a30f6bc))
+
 ## [1.3.23](https://github.com/nativescript-community/ui-label/compare/v1.3.22...v1.3.23) (2024-03-05)
 
 ### Bug Fixes
