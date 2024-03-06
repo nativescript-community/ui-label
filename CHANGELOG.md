@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.24](https://github.com/nativescript-community/ui-label/compare/v1.3.23...v1.3.24) (2024-03-05)
+
+### Bug Fixes
+
+-   **android:** regression fix ([07ec72b](https://github.com/nativescript-community/ui-label/commit/07ec72b6ef92d49ced93c70cd38dcd5c9a30f6bc))
+
+## [1.3.23](https://github.com/nativescript-community/ui-label/compare/v1.3.22...v1.3.23) (2024-03-05)
+
+### Bug Fixes
+
+-   **android:** prevent enableAutoSize to be called before min and max font size are set ([b1cdfd7](https://github.com/nativescript-community/ui-label/commit/b1cdfd738a1ba9c647f1d1ffff9c6ea12cc5b908))
+
+## [1.3.22](https://github.com/nativescript-community/ui-label/compare/v1.3.21...v1.3.22) (2024-02-22)
+
+### Bug Fixes
+
+-   **android:** wrong line height rendering on android < 28 ([4276ad6](https://github.com/nativescript-community/ui-label/commit/4276ad6494271f924ae5eafedfaa6f3e65607d95))
+
 ## [1.3.21](https://github.com/Akylas/nativescript-label/compare/v1.3.20...v1.3.21) (2024-02-15)
 
 ### Bug Fixes

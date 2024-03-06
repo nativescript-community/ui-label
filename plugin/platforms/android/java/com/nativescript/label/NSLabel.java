@@ -196,7 +196,7 @@ public class NSLabel extends TextView {
     @Override
     public void setTypeface(Typeface value) {
         super.setTypeface(value);
-        if (Build.VERSION.SDK_INT < 28 && lineHeight >= 0) {
+        if (Build.VERSION.SDK_INT < 28 && lineHeight > 0) {
             float fontHeight = getPaint().getFontMetrics(null);
             setLineSpacing(lineHeight - fontHeight, 1.0f);
         }
