@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.27](https://github.com/nativescript-community/ui-label/compare/v1.3.26...v1.3.27) (2024-05-02)
+
+### Bug Fixes
+
+-   typings fix ([4f30f72](https://github.com/nativescript-community/ui-label/commit/4f30f7283f226bf268d32d6f1c0d8854edbf0420))
+
 ## [1.3.26](https://github.com/Akylas/nativescript-label/compare/v1.3.25...v1.3.26) (2024-03-18)
 
 ### Bug Fixes
