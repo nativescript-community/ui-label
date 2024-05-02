@@ -368,15 +368,16 @@ export class Label extends LabelBase {
         return inset;
     }
 
-    _requestLayoutOnTextChanged(): void {
+    _requestLayoutOnTextChanged() {
         if (this.mFixedSize === FixedSize.BOTH) {
-            return;
+            return false;
         }
         if (this.mFixedSize === FixedSize.WIDTH && !this.textWrap && this.getMeasuredHeight() > 0) {
             // Single line label with fixed width will skip request layout on text change.
-            return;
+            return false;
         }
         super._requestLayoutOnTextChanged();
+        return true;
     }
 
     private _measureNativeView(
@@ -414,6 +415,11 @@ export class Label extends LabelBase {
 
             const height = Utils.layout.getMeasureSpecSize(heightMeasureSpec);
             const heightMode = Utils.layout.getMeasureSpecMode(heightMeasureSpec);
+
+            this.mFixedSize =
+                (widthMode === Utils.layout.EXACTLY ? FixedSize.WIDTH : FixedSize.NONE) |
+                (heightMode === Utils.layout.EXACTLY ? FixedSize.HEIGHT : FixedSize.NONE);
+
             let resetFont;
             // reset insent or it will taken into account for measurement
             if (this.autoFontSize) {
@@ -727,11 +733,10 @@ export class Label extends LabelBase {
         }
         // no need to update veticalAlignment or autoSize as we ask for a layout
         // will be done in onMeasure and onLayout
-        // this.updateVerticalAlignment();
-        // if (this.autoFontSize) {
-        //     this.updateAutoFontSize({ textView: this.nativeTextViewProtected, force: true });
-        // }
-        this._requestLayoutOnTextChanged();
+
+        if (!this._requestLayoutOnTextChanged() && this.autoFontSize) {
+            this.updateAutoFontSize({ textView: this.nativeTextViewProtected, force: true });
+        }
     }
 
     setTextDecorationAndTransform() {
@@ -917,8 +922,8 @@ export class Label extends LabelBase {
                 return currentFont;
             }
             const textViewSize = NSLabelUtils.insetWithRectUIEdgeInsets(textView.bounds, textView.padding).size;
-            const fixedWidth = Math.floor(width !== undefined ? width : textViewSize.width);
-            const fixedHeight = Math.floor(height !== undefined ? height : textViewSize.height);
+            const fixedWidth = Math.ceil(width !== undefined ? width : textViewSize.width);
+            const fixedHeight = Math.ceil(height !== undefined ? height : textViewSize.height);
             if (fixedWidth === 0 || fixedHeight === 0) {
                 return currentFont;
             }
@@ -992,8 +997,9 @@ export class Label extends LabelBase {
             if (!onlyMeasure) {
                 this.fontSizeRatio = expectFont.pointSize / fontSize;
             }
-
-            this.updateVerticalAlignment();
+            if (!onlyMeasure) {
+                this.updateVerticalAlignment();
+            }
         }
         return currentFont;
     }

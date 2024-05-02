@@ -12,6 +12,11 @@
     <HTMLLabel fontSize="16" fontWeight="bold" text="test"/>
     <Label  fontSize="16" fontWeight="bold" text="test"/>
     <Label text="test" fontWeight="bold" fontSize="16"/>
+    <Button backgroundColor="red">
+            <FormattedString>
+              <Span text="hello world"></Span>
+            </FormattedString>
+          </Button>
     </StackLayout>
             <ListView ref="listView" itemRowHeight="80" for="example in examples" separatorColor="transparent" @itemTap="goToExample" row="1">
                 <v-template>
