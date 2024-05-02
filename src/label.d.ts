@@ -27,6 +27,13 @@ export declare class Label extends TNLabel {
 
     verticalTextAlignment: VerticalTextAlignment;
     lineBreak: LineBreak;
+    linkColor: string | Color;
+    linkUnderline: boolean;
+    selectable: boolean;
+    autoFontSize: boolean;
+    autoFontSizeStep: number;
+    minFontSize: number;
+    maxFontSize: number;
 }
 export type VerticalTextAlignment = 'initial' | 'top' | 'middle' | 'bottom' | 'center';
 export type LineBreak = 'end' | 'start' | 'middle' | 'none';
@@ -41,4 +48,4 @@ export interface TextShadow {
     color: Color;
 }
 
-export { enableIOSDTCoreText, createNativeAttributedString } from '@nativescript-community/text';
+export { createNativeAttributedString } from '@nativescript-community/text';
