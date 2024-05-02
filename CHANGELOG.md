@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.26](https://github.com/Akylas/nativescript-label/compare/v1.3.25...v1.3.26) (2024-03-18)
+
+### Bug Fixes
+
+-   **ios:** formattedtext not working with button ([707ac80](https://github.com/Akylas/nativescript-label/commit/707ac80f719927c0964778d3753e9ed116c0c917))
+
+## [1.3.25](https://github.com/Akylas/nativescript-label/compare/v1.3.24...v1.3.25) (2024-03-06)
+
+### Bug Fixes
+
+-   **ios:** multiple fixes for autoFonSize ([f41473e](https://github.com/Akylas/nativescript-label/commit/f41473e7429606017beb427fd9fe70e06d1a082f))
+
 ## [1.3.24](https://github.com/nativescript-community/ui-label/compare/v1.3.23...v1.3.24) (2024-03-05)
 
 ### Bug Fixes
