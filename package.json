@@ -49,7 +49,7 @@
     "devDependencies": {
         "@commitlint/cli": "^17.4.4",
         "@commitlint/config-conventional": "^17.4.4",
-        "@nativescript-community/text": "^1.6.0",
+        "@nativescript-community/text": "^1.6.3",
         "@nativescript/core": "8.4.7",
         "@nativescript/types-android": "8.4.0",
         "@nativescript/types-ios": "8.4.0",
