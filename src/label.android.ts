@@ -23,7 +23,7 @@ import {
 } from '@nativescript/core';
 import { Color } from '@nativescript/core/color';
 import { CSSShadow } from '@nativescript/core/ui/styling/css-shadow';
-import { Font, FontStyleType, FontWeightType } from '@nativescript/core/ui/styling/font';
+import { Font, FontStyleType, FontVariationSettingsType, FontWeightType } from '@nativescript/core/ui/styling/font';
 import {
     Length,
     colorProperty,
@@ -107,6 +107,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     _setTappableState(value: boolean) {}
 
     @cssProperty fontFamily: string;
+    @cssProperty fontVariationSettings: FontVariationSettingsType[];
     @cssProperty fontSize: number;
     @cssProperty fontStyle: FontStyleType;
     @cssProperty fontWeight: FontWeightType;
