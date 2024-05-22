@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.29](https://github.com/nativescript-community/ui-label/compare/v1.3.28...v1.3.29) (2024-05-22)
+
+### Bug Fixes
+
+-   **ios:** broken build after @nativescript-community/text update ([544c048](https://github.com/nativescript-community/ui-label/commit/544c048a8458fca4785a17a1bf64978aa3f7a3b2))
+
 ## [1.3.28](https://github.com/nativescript-community/ui-label/compare/v1.3.27...v1.3.28) (2024-05-22)
 
 ### Bug Fixes
