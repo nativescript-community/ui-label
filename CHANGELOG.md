@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.30](https://github.com/nativescript-community/ui-label/compare/v1.3.29...v1.3.30) (2024-09-18)
+
+### Bug Fixes
+
+-   **android:** now the properties order is html/text/formattedString(children) ([f6fadd2](https://github.com/nativescript-community/ui-label/commit/f6fadd2cffc95be49eed3641d872c47d7fb0ae9a))
+
 ## [1.3.29](https://github.com/nativescript-community/ui-label/compare/v1.3.28...v1.3.29) (2024-05-22)
 
 ### Bug Fixes
