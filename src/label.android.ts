@@ -470,20 +470,18 @@ export class Label extends LabelBase {
         if (this.html) {
             transformedText = this.createHTMLString();
             textProperty.nativeValueChange(this, this.html === null || this.html === undefined ? '' : this.html);
-        } else if (this.text) {
-            if (this.text instanceof java.lang.CharSequence || this.text instanceof android.text.Spanned) {
-                transformedText = this.text;
-            } else {
-                const text = this.text;
-                const stringValue = text === null || text === undefined ? '' : text.toString();
-                transformedText = getTransformedText(stringValue, this.textTransform);
-            }
         } else if (this.formattedText) {
             transformedText = this.createFormattedTextNative(this.formattedText);
             textProperty.nativeValueChange(
                 this,
                 this.formattedText === null || this.formattedText === undefined ? '' : this.formattedText.toString()
             );
+        } else if (this.text instanceof java.lang.CharSequence || this.text instanceof android.text.Spanned) {
+            transformedText = this.text;
+        } else {
+            const text = this.text;
+            const stringValue = text === null || text === undefined ? '' : text.toString();
+            transformedText = getTransformedText(stringValue, this.textTransform);
         }
         this.nativeTextViewProtected.setLabelText(transformedText);
     }
