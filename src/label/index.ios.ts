@@ -1,9 +1,4 @@
-import {
-    VerticalTextAlignment,
-    createNativeAttributedString,
-    getTransformedText,
-    verticalTextAlignmentProperty
-} from '@nativescript-community/text';
+import { VerticalTextAlignment, createNativeAttributedString, getTransformedText, verticalTextAlignmentProperty } from '@nativescript-community/text';
 import { Color, CoreTypes, Font, FormattedString, Span, Utils, View, profile } from '@nativescript/core';
 import {
     borderBottomWidthProperty,
@@ -16,13 +11,7 @@ import {
     paddingRightProperty,
     paddingTopProperty
 } from '@nativescript/core/ui/styling/style-properties';
-import {
-    formattedTextProperty,
-    letterSpacingProperty,
-    lineHeightProperty,
-    textProperty,
-    whiteSpaceProperty
-} from '@nativescript/core/ui/text-base';
+import { formattedTextProperty, letterSpacingProperty, lineHeightProperty, textProperty, whiteSpaceProperty } from '@nativescript/core/ui/text-base';
 import { maxLinesProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import { isNullOrUndefined } from '@nativescript/core/utils/types';
 import {
@@ -141,12 +130,7 @@ class LabelNSTextViewDelegateImpl extends NSObject implements UITextViewDelegate
         return impl;
     }
 
-    textViewShouldInteractWithURLInRangeInteraction?(
-        textView: NSTextView,
-        URL: NSURL,
-        characterRange: NSRange,
-        interaction: UITextItemInteraction
-    ) {
+    textViewShouldInteractWithURLInRangeInteraction?(textView: NSTextView, URL: NSURL, characterRange: NSRange, interaction: UITextItemInteraction) {
         const owner = this._owner.get();
         if (owner) {
             return owner.textViewShouldInteractWithURLInRangeInteraction(textView, URL, characterRange, interaction);
@@ -291,11 +275,7 @@ export class Label extends LabelBase {
         const right = Utils.layout.toDeviceIndependentPixels(this.effectivePaddingRight + this.effectiveBorderRightWidth);
         const bottom = Utils.layout.toDeviceIndependentPixels(this.effectivePaddingBottom + this.effectiveBorderBottomWidth);
         const left = Utils.layout.toDeviceIndependentPixels(this.effectivePaddingLeft + this.effectiveBorderLeftWidth);
-        if (
-            !applyVerticalTextAlignment ||
-            !this.verticalTextAlignment ||
-            (tv.text?.length === 0 && tv.attributedText?.length === 0)
-        ) {
+        if (!applyVerticalTextAlignment || !this.verticalTextAlignment || (tv.text?.length === 0 && tv.attributedText?.length === 0)) {
             inset = {
                 top,
                 left,
@@ -378,24 +358,15 @@ export class Label extends LabelBase {
         return true;
     }
 
-    private _measureNativeView(
-        width: number,
-        widthMode: number,
-        height: number,
-        heightMode: number
-    ): { width: number; height: number } {
+    private _measureNativeView(width: number, widthMode: number, height: number, heightMode: number): { width: number; height: number } {
         const view = this.nativeTextViewProtected as NSLabel;
 
         const nativeSize = view.textRectForBoundsLimitedToNumberOfLines(
             CGRectMake(
                 0,
                 0,
-                widthMode === 0 /* layout.UNSPECIFIED */
-                    ? Number.POSITIVE_INFINITY
-                    : Utils.layout.toDeviceIndependentPixels(width),
-                heightMode === 0 /* layout.UNSPECIFIED */
-                    ? Number.POSITIVE_INFINITY
-                    : Utils.layout.toDeviceIndependentPixels(height)
+                widthMode === 0 /* layout.UNSPECIFIED */ ? Number.POSITIVE_INFINITY : Utils.layout.toDeviceIndependentPixels(width),
+                heightMode === 0 /* layout.UNSPECIFIED */ ? Number.POSITIVE_INFINITY : Utils.layout.toDeviceIndependentPixels(height)
             ),
             view.numberOfLines
         ).size;
@@ -414,9 +385,7 @@ export class Label extends LabelBase {
             const height = Utils.layout.getMeasureSpecSize(heightMeasureSpec);
             const heightMode = Utils.layout.getMeasureSpecMode(heightMeasureSpec);
 
-            this.mFixedSize =
-                (widthMode === Utils.layout.EXACTLY ? FixedSize.WIDTH : FixedSize.NONE) |
-                (heightMode === Utils.layout.EXACTLY ? FixedSize.HEIGHT : FixedSize.NONE);
+            this.mFixedSize = (widthMode === Utils.layout.EXACTLY ? FixedSize.WIDTH : FixedSize.NONE) | (heightMode === Utils.layout.EXACTLY ? FixedSize.HEIGHT : FixedSize.NONE);
 
             let resetFont;
             // reset insent or it will taken into account for measurement
@@ -497,12 +466,7 @@ export class Label extends LabelBase {
         // this.updateInteractionState();
     }
 
-    textViewShouldInteractWithURLInRangeInteraction?(
-        textView: NSTextView,
-        url: NSURL,
-        characterRange: NSRange,
-        interaction: UITextItemInteraction
-    ) {
+    textViewShouldInteractWithURLInRangeInteraction?(textView: NSTextView, url: NSURL, characterRange: NSRange, interaction: UITextItemInteraction) {
         if (!this.formattedText?.spans) {
             if (url) {
                 this.notify({ eventName: Span.linkTapEvent, link: url?.toString() });
@@ -562,11 +526,7 @@ export class Label extends LabelBase {
                 textAlignment: nativeView.textAlignment
             };
             if (!this.isUsingNSTextView) {
-                const linkColor = this.linkColor
-                    ? this.linkColor instanceof Color
-                        ? this.linkColor
-                        : new Color(this.linkColor)
-                    : undefined;
+                const linkColor = this.linkColor ? (this.linkColor instanceof Color ? this.linkColor : new Color(this.linkColor)) : undefined;
                 Object.assign(params, {
                     useCustomLinkTag: true,
                     lineBreak: (nativeView as NSLabel).lineBreakMode,
@@ -574,13 +534,7 @@ export class Label extends LabelBase {
                     linkColor
                 });
             }
-            const result = createNativeAttributedString(
-                params,
-                undefined,
-                this,
-                this.autoFontSize,
-                this.fontSizeRatio
-            ) as NSMutableAttributedString;
+            const result = createNativeAttributedString(params, undefined, this, this.autoFontSize, this.fontSizeRatio) as NSMutableAttributedString;
             let hasLink = false;
             if (result) {
                 hasLink = result.hasAttribute('CustomLinkAttribute');
@@ -634,15 +588,9 @@ export class Label extends LabelBase {
                     attributes.setValueForKey(UIColor.clearColor, NSUnderlineColorAttributeName);
                 }
             } else if (this.defaultLinkTextAttributes) {
-                attributes.setValueForKey(
-                    this.defaultLinkTextAttributes.objectForKey(NSForegroundColorAttributeName),
-                    NSForegroundColorAttributeName
-                );
+                attributes.setValueForKey(this.defaultLinkTextAttributes.objectForKey(NSForegroundColorAttributeName), NSForegroundColorAttributeName);
                 if (this.linkUnderline !== false) {
-                    attributes.setValueForKey(
-                        this.defaultLinkTextAttributes.objectForKey(NSUnderlineColorAttributeName),
-                        NSUnderlineColorAttributeName
-                    );
+                    attributes.setValueForKey(this.defaultLinkTextAttributes.objectForKey(NSUnderlineColorAttributeName), NSUnderlineColorAttributeName);
                 } else {
                     attributes.setValueForKey(UIColor.clearColor, NSUnderlineColorAttributeName);
                 }
@@ -895,28 +843,13 @@ export class Label extends LabelBase {
         }
     }
 
-    updateAutoFontSize({
-        textView,
-        width,
-        height,
-        force = false,
-        onlyMeasure = false
-    }: {
-        textView: NSTextView | NSLabel;
-        width?;
-        height?;
-        force?: boolean;
-        onlyMeasure?: boolean;
-    }) {
+    updateAutoFontSize({ textView, width, height, force = false, onlyMeasure = false }: { textView: NSTextView | NSLabel; width?; height?; force?: boolean; onlyMeasure?: boolean }) {
         if (!this.mCanUpdateAutoFontSize) {
             this.mNeedAutoFontSizeComputation = true;
         }
         let currentFont;
         if (textView && this.autoFontSize) {
-            if (
-                (!textView.attributedText && !textView.text) ||
-                (width === undefined && height === undefined && CGSizeEqualToSize(textView.bounds.size, CGSizeZero))
-            ) {
+            if ((!textView.attributedText && !textView.text) || (width === undefined && height === undefined && CGSizeEqualToSize(textView.bounds.size, CGSizeZero))) {
                 return currentFont;
             }
             const textViewSize = NSLabelUtils.insetWithRectUIEdgeInsets(textView.bounds, textView.padding).size;
@@ -935,8 +868,7 @@ export class Label extends LabelBase {
             }
             currentFont = textView.font;
             this.mLastAutoSizeKey = autoSizeKey;
-            const nbLines =
-                textView instanceof NSTextView ? textView.textContainer?.maximumNumberOfLines : textView.numberOfLines;
+            const nbLines = textView instanceof NSTextView ? textView.textContainer?.maximumNumberOfLines : textView.numberOfLines;
             // we need to reset verticalTextAlignment or computation will be wrong
             this.updateVerticalAlignment(false);
 

@@ -1,23 +1,5 @@
-import {
-    VerticalTextAlignment,
-    cssProperty,
-    init,
-    overrideSpanAndFormattedString,
-    overrideSpanAndFormattedStringEnabled
-} from '@nativescript-community/text';
-import {
-    CSSType,
-    Color,
-    CoreTypes,
-    CssProperty,
-    FormattedString,
-    Property,
-    Style,
-    Label as TNLabel,
-    Utils,
-    booleanConverter,
-    fontInternalProperty
-} from '@nativescript/core';
+import { VerticalTextAlignment, cssProperty, init, overrideSpanAndFormattedString } from '@nativescript-community/text';
+import { CSSType, Color, CoreTypes, CssProperty, FormattedString, Property, Style, Label as TNLabel, Utils, booleanConverter, fontInternalProperty } from '@nativescript/core';
 import type { Label as LabelViewDefinition, LineBreak } from '.';
 
 // declare module '@nativescript/core/ui/text-base/formatted-string' {
@@ -29,8 +11,7 @@ import type { Label as LabelViewDefinition, LineBreak } from '.';
 
 // init text to ensure font overrides are called
 init();
-const useLightFormatString =
-    typeof __UI_LABEL_USE_LIGHT_FORMATTEDSTRING__ != 'undefined' ? __UI_LABEL_USE_LIGHT_FORMATTEDSTRING__ : false;
+const useLightFormatString = typeof __UI_LABEL_USE_LIGHT_FORMATTEDSTRING__ != 'undefined' ? __UI_LABEL_USE_LIGHT_FORMATTEDSTRING__ : false;
 overrideSpanAndFormattedString(useLightFormatString);
 
 export const needSetText = function (target: any, propertyKey: string | Symbol, descriptor: PropertyDescriptor) {
@@ -137,11 +118,3 @@ export const maxFontSizeProperty = new CssProperty<Style, number>({
     valueConverter: (v) => parseFloat(v)
 });
 maxFontSizeProperty.register(Style);
-
-function parseDIPs(value: string): CoreTypes.dip {
-    if (value.indexOf('px') !== -1) {
-        return Utils.layout.toDeviceIndependentPixels(parseFloat(value.replace('px', '').trim()));
-    } else {
-        return parseFloat(value.replace('dip', '').trim());
-    }
-}

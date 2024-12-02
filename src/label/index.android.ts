@@ -7,19 +7,7 @@
     useLightFormattedString,
     verticalTextAlignmentProperty
 } from '@nativescript-community/text';
-import {
-    CSSType,
-    CoreTypes,
-    FormattedString,
-    Observable,
-    Property,
-    PropertyChangeData,
-    Span,
-    Utils,
-    View,
-    booleanConverter,
-    profile
-} from '@nativescript/core';
+import { CSSType, CoreTypes, FormattedString, Observable, Property, PropertyChangeData, Span, Utils, View, booleanConverter, profile } from '@nativescript/core';
 import { Color } from '@nativescript/core/color';
 import { ShadowCSSValues } from '@nativescript/core/ui/styling/css-shadow';
 import { Font, FontStyleType, FontVariationSettingsType, FontWeightType } from '@nativescript/core/ui/styling/font';
@@ -44,14 +32,7 @@ import {
 } from '@nativescript/core/ui/text-base';
 import { maxLinesProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import { Label as LabelViewDefinition, LineBreak } from '.';
-import {
-    autoFontSizeProperty,
-    lineBreakProperty,
-    maxFontSizeProperty,
-    minFontSizeProperty,
-    needSetText,
-    selectableProperty
-} from './index-common';
+import { autoFontSizeProperty, lineBreakProperty, maxFontSizeProperty, minFontSizeProperty, needSetText, selectableProperty } from './index-common';
 
 export { createNativeAttributedString } from '@nativescript-community/text';
 export * from './index-common';
@@ -289,13 +270,7 @@ export class Label extends LabelBase {
         }
     }
     [fontSizeProperty.setNative](value: number | { nativeSize: number }) {
-        this.nativeTextViewProtected.setLabelTextSize(
-            2,
-            typeof value === 'number' ? value : value.nativeSize,
-            this.minFontSize || 10,
-            this.maxFontSize || 200,
-            this.autoFontSizeStep || 1
-        );
+        this.nativeTextViewProtected.setLabelTextSize(2, typeof value === 'number' ? value : value.nativeSize, this.minFontSize || 10, this.maxFontSize || 200, this.autoFontSizeStep || 1);
     }
 
     [lineHeightProperty.setNative](value: number) {
@@ -319,40 +294,28 @@ export class Label extends LabelBase {
         return { value: this._defaultPaddingTop, unit: 'px' };
     }
     [paddingTopProperty.setNative](value: CoreTypes.LengthType) {
-        org.nativescript.widgets.ViewHelper.setPaddingTop(
-            this.nativeTextViewProtected,
-            Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderTopWidth, 0)
-        );
+        org.nativescript.widgets.ViewHelper.setPaddingTop(this.nativeTextViewProtected, Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderTopWidth, 0));
     }
 
     [paddingRightProperty.getDefault](): CoreTypes.LengthType {
         return { value: this._defaultPaddingRight, unit: 'px' };
     }
     [paddingRightProperty.setNative](value: CoreTypes.LengthType) {
-        org.nativescript.widgets.ViewHelper.setPaddingRight(
-            this.nativeTextViewProtected,
-            Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderRightWidth, 0)
-        );
+        org.nativescript.widgets.ViewHelper.setPaddingRight(this.nativeTextViewProtected, Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderRightWidth, 0));
     }
 
     [paddingBottomProperty.getDefault](): CoreTypes.LengthType {
         return { value: this._defaultPaddingBottom, unit: 'px' };
     }
     [paddingBottomProperty.setNative](value: CoreTypes.LengthType) {
-        org.nativescript.widgets.ViewHelper.setPaddingBottom(
-            this.nativeTextViewProtected,
-            Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderBottomWidth, 0)
-        );
+        org.nativescript.widgets.ViewHelper.setPaddingBottom(this.nativeTextViewProtected, Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderBottomWidth, 0));
     }
 
     [paddingLeftProperty.getDefault](): CoreTypes.LengthType {
         return { value: this._defaultPaddingLeft, unit: 'px' };
     }
     [paddingLeftProperty.setNative](value: CoreTypes.LengthType) {
-        org.nativescript.widgets.ViewHelper.setPaddingLeft(
-            this.nativeTextViewProtected,
-            Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderLeftWidth, 0)
-        );
+        org.nativescript.widgets.ViewHelper.setPaddingLeft(this.nativeTextViewProtected, Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderLeftWidth, 0));
     }
 
     // for now code is duplicated as Android version is a full rewrite
@@ -469,10 +432,7 @@ export class Label extends LabelBase {
             textProperty.nativeValueChange(this, this.html === null || this.html === undefined ? '' : this.html);
         } else if (this.formattedText) {
             transformedText = this.createFormattedTextNative(this.formattedText);
-            textProperty.nativeValueChange(
-                this,
-                this.formattedText === null || this.formattedText === undefined ? '' : this.formattedText.toString()
-            );
+            textProperty.nativeValueChange(this, this.formattedText === null || this.formattedText === undefined ? '' : this.formattedText.toString());
         } else if (this.text instanceof java.lang.CharSequence || this.text instanceof android.text.Spanned) {
             transformedText = this.text;
         } else {

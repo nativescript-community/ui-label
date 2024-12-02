@@ -4,7 +4,7 @@
     "description": "Alternative to the built-in NativeScript Label but with better performance and additional features such as HTML rendering and more.",
     "main": "./index",
     "sideEffects": false,
-    "typings": "./laindexbel.d.ts",
+    "typings": "./index.d.ts",
     "nativescript": {
         "platforms": {
             "android": "3.0.0",
