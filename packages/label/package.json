@@ -2,14 +2,23 @@
     "name": "@nativescript-community/ui-label",
     "version": "1.3.32",
     "description": "Alternative to the built-in NativeScript Label but with better performance and additional features such as HTML rendering and more.",
-    "main": "./label",
+    "main": "./index",
     "sideEffects": false,
-    "typings": "./label.d.ts",
+    "typings": "./laindexbel.d.ts",
     "nativescript": {
         "platforms": {
             "android": "3.0.0",
             "ios": "3.0.0"
         }
+    },
+    "scripts": {
+        "tsc": "cpy ../../src/label/index.d.ts ./ && tsc -d",
+        "build": "npm run tsc",
+        "build.watch": "npm run tsc -- -w",
+        "build.win": "npm run tsc-win",
+        "build.all": "npm run build",
+        "build.angular": "ng-packagr -p ../../src/label/angular/ng-package.json -c ../../src/label/angular/tsconfig.json && rm angular/.npmignore",
+        "clean": "rimraf ./*.d.ts ./*.js ./*.js.map"
     },
     "keywords": [
         "NativeScript",
@@ -32,7 +41,7 @@
     "license": "Apache-2.0",
     "readmeFilename": "README.md",
     "dependencies": {
-        "@nativescript-community/text": "^1.6.3"
+        "@nativescript-community/text": "^1.6.6"
     },
     "gitHead": "a08eb50756c9a5d16fc8aa6ff7fba0051c71d1e0"
 }

@@ -1,26 +1,15 @@
 {
-    "name": "@nativescript-community/ui-label",
-    "version": "1.0.0",
-    "description": "Your awesome NativeScript plugin.",
-    "main": "./label",
-    "typings": "./label.d.ts",
-    "nativescript": {
-        "platforms": {
-            "android": "3.0.0",
-            "ios": "3.0.0"
-        }
-    },
     "scripts": {
-        "setup": "ts-patch install",
+        "setup": "npm run submodules && ts-patch install",
         "prepare": "npm run setup",
         "tsc": "cp src/label.d.ts plugin && tsc -skipLibCheck -d",
-        "clean": "rimraf ./plugin/**/*.d.ts ./plugin/**/*.js ./plugin/**/*.js.map plugin/node_modules plugin/package-lock.json",
+        "clean": "rimraf 'packages/**/*.d.ts' 'packages/**/*.js' 'packages/**/*.js.map' 'packages/**/*.metada' 'packages/**/angular/ng-package.json'",
         "build.plugin": " cp README.md plugin/ && rm -f .tsbuildinfo && npm run tsc",
         "build.android": "bash src-native/android/build.sh",
         "build.ios": "bash src-native/ios/build.sh",
         "build.native": "npm run build.android && npm run build.ios",
-        "build": "npm run build.plugin",
-        "publish": "npm run setup; npm run build ; lerna publish --create-release=github --force-publish",
+        "build": "lerna run build",
+        "publish": "npm run setup && npm run clean && npm run build.all && npm run readme && npm run doc && npm run commit_readme_doc_changes && lerna publish",
         "demo.ios": "npm i && npm run tsc && cd demo && tns run ios",
         "demo.android": "npm i && npm run tsc && cd demo && tns run android",
         "clean.demo": "rimraf demo/hooks demo/node_modules demo/platforms",
@@ -28,7 +17,20 @@
         "plugin.watch.android": "npm i && npm-watch build.android",
         "plugin.watch.ios": "npm i && npm-watch build.ios",
         "plugin.watch": "npm run plugin.watch.tsc & npm run plugin.watch.android & npm run plugin.watch.ios",
-        "commitmsg": "commitlint -e $GIT_PARAMS"
+        "commitmsg": "commitlint -e $GIT_PARAMS",
+        "sync": "node ./tools/sync.js",
+        "update": "node ./tools/update.js",
+        "build.all": "npm run build",
+        "fullclean": "npm run clean && rimraf 'packages/**/node_modules' 'demo-*/hooks' 'demo-*/node_modules' 'package-lock.json' 'pnpm-lock.yaml' 'node_modules'",
+        "demo.vue.android": "cd ./demo-vue && ns run android --no-hmr --env.watchNodeModules",
+        "demo.vue.clean": "cd ./demo-vue && ns clean",
+        "demo.vue.ios": "cd ./demo-vue && ns run ios --no-hmr --env.watchNodeModules",
+        "doc": "node tools/builddoc.js",
+        "commit_readme_doc_changes": "git add docs/** *.md ; git commit -m \"readme/doc\" ; echo \"commit readme doc done\"",
+        "postinstall": "npm run setup",
+        "readme": "lerna run readme && node ./tools/readme.js",
+        "start": "./node_modules/.bin/ntl -A -s 15 -o",
+        "submodules": "git submodule update --init"
     },
     "keywords": [
         "NativeScript",
@@ -46,34 +48,36 @@
     "license": "Apache-2.0",
     "homepage": "https://github.com/nativescript-community/ui-label",
     "readmeFilename": "README.md",
-    "devDependencies": {
-        "@commitlint/cli": "^17.4.4",
-        "@commitlint/config-conventional": "^17.4.4",
-        "@nativescript-community/text": "^1.6.3",
-        "@nativescript/core": "8.4.7",
-        "@nativescript/types-android": "8.4.0",
-        "@nativescript/types-ios": "8.4.0",
-        "@nativescript/webpack": "5.0.13",
-        "@types/node": "^20.1.2",
-        "@typescript-eslint/eslint-plugin": "5.52.0",
-        "@typescript-eslint/parser": "5.52.0",
-        "eslint": "8.34.0",
-        "eslint-config-prettier": "^8.6.0",
-        "eslint-plugin-prettier": "^4.2.1",
-        "husky": "^8.0.3",
-        "lerna": "^6.5.1",
-        "prettier": "^2.8.4",
-        "rimraf": "^4.1.2",
-        "ts-patch": "^2.1.0",
-        "typescript": "~4.8.4"
-    },
     "dependencies": {
-        "ts-node": "^10.9.1"
+        "@nativescript-community/plugin-seed-tools": "file:tools"
+    },
+    "devDependencies": {
+        "@nativescript-community/text": "^1.6.6"
     },
     "bootstrapper": "nativescript-plugin-seed",
     "commitlint": {
         "extends": [
             "@commitlint/config-conventional"
         ]
+    },
+    "ntl": {
+        "descriptions": {
+            "build": "Build the plugin",
+            "build.all": "Build the plugin for all platforms",
+            "clean": "Clean the local environment.",
+            "demo.vue.android": "Runs the Vue demo on Android.",
+            "demo.vue.ios": "Runs the Vue demo on iOS.",
+            "watch": "Watch for changes in the plugin source and re-build."
+        }
+    },
+    "workspaces": [
+        "packages/*",
+        "demo*"
+    ],
+    "engines": {
+        "npm": "please use yarn or pnpm",
+        "yarn": ">=1.19.1",
+        "pnpm": ">=7.0.0",
+        "node": "^14.20.0 || ^16.13.0 || >=18.10.0"
     }
 }

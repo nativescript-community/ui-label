@@ -18,7 +18,7 @@ import {
     booleanConverter,
     fontInternalProperty
 } from '@nativescript/core';
-import type { Label as LabelViewDefinition, LineBreak, TextShadow } from './label';
+import type { Label as LabelViewDefinition, LineBreak } from '.';
 
 // declare module '@nativescript/core/ui/text-base/formatted-string' {
 //     interface FormattedString {
@@ -145,19 +145,3 @@ function parseDIPs(value: string): CoreTypes.dip {
         return parseFloat(value.replace('dip', '').trim());
     }
 }
-
-export const textShadowProperty = new CssProperty<Style, string | TextShadow>({
-    name: 'textShadow',
-    cssName: 'text-shadow',
-    affectsLayout: global.isIOS,
-    valueConverter: (value) => {
-        const params = value.split(' ');
-        return {
-            offsetX: parseDIPs(params[0]),
-            offsetY: parseDIPs(params[1]),
-            blurRadius: parseDIPs(params[2]),
-            color: new Color(params.slice(3).join(''))
-        };
-    }
-});
-textShadowProperty.register(Style);

@@ -41,11 +41,4 @@ export type LineBreak = 'end' | 'start' | 'middle' | 'none';
 export declare const htmlProperty: Property<Label, string>;
 export declare const verticalTextAlignmentProperty: Property<Label, VerticalTextAlignment>;
 
-export interface TextShadow {
-    offsetX: CoreTypes.dip;
-    offsetY: CoreTypes.dip;
-    blurRadius: CoreTypes.dip;
-    color: Color;
-}
-
 export { createNativeAttributedString } from '@nativescript-community/text';

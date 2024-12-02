@@ -25,7 +25,6 @@ import {
 } from '@nativescript/core/ui/text-base';
 import { maxLinesProperty } from '@nativescript/core/ui/text-base/text-base-common';
 import { isNullOrUndefined } from '@nativescript/core/utils/types';
-import { TextShadow } from './label';
 import {
     LabelBase,
     autoFontSizeProperty,
@@ -36,12 +35,11 @@ import {
     maxFontSizeProperty,
     minFontSizeProperty,
     needSetText,
-    selectableProperty,
-    textShadowProperty
-} from './label-common';
+    selectableProperty
+} from './index-common';
 
 export { createNativeAttributedString } from '@nativescript-community/text';
-export * from './label-common';
+export * from './index-common';
 
 @NativeClass
 class NSLabelLinkHandlerTapDelegateImpl extends NSObject implements UILabelLinkHandlerTapDelegate {
@@ -863,15 +861,15 @@ export class Label extends LabelBase {
         }
     }
 
-    [textShadowProperty.setNative](value: TextShadow) {
-        const layer = this.nativeTextViewProtected.layer;
-        layer.shadowOpacity = 1;
-        layer.shadowRadius = value.blurRadius;
-        layer.shadowColor = value.color.ios.CGColor;
-        layer.shadowOffset = CGSizeMake(value.offsetX, value.offsetY);
-        layer.shouldRasterize = true;
-        layer.masksToBounds = false;
-    }
+    // [textShadowProperty.setNative](value: ShadowCSSValues) {
+    //     const layer = this.nativeTextViewProtected.layer;
+    //     layer.shadowOpacity = 1;
+    //     layer.shadowRadius = value.blurRadius;
+    //     layer.shadowColor = value.color.ios.CGColor;
+    //     layer.shadowOffset = CGSizeMake(value.offsetX, value.offsetY);
+    //     layer.shouldRasterize = true;
+    //     layer.masksToBounds = false;
+    // }
 
     @needAutoFontSizeComputation
     [whiteSpaceProperty.setNative](value: CoreTypes.WhiteSpaceType) {

@@ -10,7 +10,6 @@
 import {
     CSSType,
     CoreTypes,
-    Device,
     FormattedString,
     Observable,
     Property,
@@ -22,7 +21,7 @@ import {
     profile
 } from '@nativescript/core';
 import { Color } from '@nativescript/core/color';
-import { CSSShadow } from '@nativescript/core/ui/styling/css-shadow';
+import { ShadowCSSValues } from '@nativescript/core/ui/styling/css-shadow';
 import { Font, FontStyleType, FontVariationSettingsType, FontWeightType } from '@nativescript/core/ui/styling/font';
 import {
     Length,
@@ -39,25 +38,23 @@ import {
     lineHeightProperty,
     textAlignmentProperty,
     textDecorationProperty,
+    textShadowProperty,
     textTransformProperty,
     whiteSpaceProperty
 } from '@nativescript/core/ui/text-base';
 import { maxLinesProperty } from '@nativescript/core/ui/text-base/text-base-common';
-import lazy from '@nativescript/core/utils/lazy';
-import { Label as LabelViewDefinition, LineBreak } from './label';
+import { Label as LabelViewDefinition, LineBreak } from '.';
 import {
     autoFontSizeProperty,
     lineBreakProperty,
     maxFontSizeProperty,
     minFontSizeProperty,
     needSetText,
-    selectableProperty,
-    textShadowProperty
-} from './label-common';
-import { SDK_VERSION } from '@nativescript/core/utils/constants';
+    selectableProperty
+} from './index-common';
 
 export { createNativeAttributedString } from '@nativescript-community/text';
-export * from './label-common';
+export * from './index-common';
 
 let NSLabel: typeof com.nativescript.label.NSLabel;
 
@@ -88,7 +85,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     @cssProperty maxFontSize: number;
     @cssProperty verticalTextAlignment: VerticalTextAlignment;
     @cssProperty linkColor: Color | string;
-    @cssProperty textShadow: CSSShadow;
+    @cssProperty textShadow: ShadowCSSValues;
     @cssProperty linkUnderline: boolean;
     public html: string;
     @cssProperty selectable: boolean;
@@ -249,7 +246,7 @@ export class Label extends LabelBase {
         return defaultValue;
     }
 
-    [textShadowProperty.setNative](value: CSSShadow) {
+    [textShadowProperty.setNative](value: ShadowCSSValues) {
         this.nativeViewProtected.setShadowLayer(
             Length.toDevicePixels(value.blurRadius, java.lang.Float.MIN_VALUE),
             Length.toDevicePixels(value.offsetX, 0),
