@@ -427,13 +427,15 @@ export class Label extends LabelBase {
             return;
         }
         let transformedText: any = null;
+        const constructorName = (this.html || this.text)?.constructor?.name;
+        const nativeData = constructorName === 'java.lang.CharSequence' || constructorName === 'android.text.Spanned' || constructorName === 'android.text.SpannableStringBuilder';
         if (this.html) {
-            transformedText = this.createHTMLString();
+            transformedText = nativeData ? this.html : this.createHTMLString();
             textProperty.nativeValueChange(this, this.html === null || this.html === undefined ? '' : this.html);
         } else if (this.formattedText) {
             transformedText = this.createFormattedTextNative(this.formattedText);
             textProperty.nativeValueChange(this, this.formattedText === null || this.formattedText === undefined ? '' : this.formattedText.toString());
-        } else if (this.text instanceof java.lang.CharSequence || this.text instanceof android.text.Spanned) {
+        } else if (nativeData) {
             transformedText = this.text;
         } else {
             const text = this.text;

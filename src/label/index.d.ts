@@ -21,9 +21,14 @@ export declare class Label extends TNLabel {
     ios: any /* UITextView */;
 
     /**
-     * Gets or sets html string for the HtmlView.
+     * Gets or sets html string for the Label.
      */
-    html: string;
+    html: any; // can be string but also native NSAttributedString or android spannable
+
+    /**
+     * Gets or sets string for the Label.
+     */
+    text: any; // can be string but also native NSAttributedString or android spannable
 
     verticalTextAlignment: VerticalTextAlignment;
     lineBreak: LineBreak;

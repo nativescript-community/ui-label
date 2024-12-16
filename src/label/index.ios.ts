@@ -160,7 +160,7 @@ export class Label extends LabelBase {
     private mObserver: LabelObserverClass;
     nativeViewProtected: NSLabel | NSTextView;
     nativeTextViewProtected: NSLabel | NSTextView;
-    attributedString: NSMutableAttributedString;
+    attributedString: NSAttributedString;
     private mDelegate: LabelNSTextViewDelegateImpl;
     private mFixedSize: FixedSize;
     static DTCORETEXT_INIT = false;
@@ -502,6 +502,8 @@ export class Label extends LabelBase {
                 (nativeView as NSTextView).selectable = this.selectable === true;
             }
             this.attributedString = null;
+        } else if (this.html instanceof NSAttributedString) {
+            this.attributedString = this.html;
         } else {
             const font = nativeView.font;
             const style = this.style;

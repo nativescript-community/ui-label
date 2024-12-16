@@ -31,8 +31,9 @@ export abstract class LabelBase extends TNLabel implements LabelViewDefinition {
     @cssProperty linkColor: Color;
     @cssProperty linkUnderline: boolean;
     @cssProperty selectable: boolean;
-    html: string;
-    //@ts-ignore
+
+    html: string | NSAttributedString;
+
     formattedText: FormattedString;
 
     @cssProperty autoFontSize: boolean;
