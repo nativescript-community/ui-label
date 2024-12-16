@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.33](https://github.com/nativescript-community/ui-label/compare/v1.3.32...v1.3.33) (2024-12-16)
+
+### Bug Fixes
+
+* text/html can now be native NSAttributedString or Spannable ([12f35db](https://github.com/nativescript-community/ui-label/commit/12f35db6ce76cd8ffc2b31b82cf3dd647dea87d0))
+
 ## [1.3.32](https://github.com/nativescript-community/ui-label/compare/v1.3.31...v1.3.32) (2024-09-19)
 
 ### Bug Fixes
