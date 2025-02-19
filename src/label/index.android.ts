@@ -392,8 +392,14 @@ export class Label extends LabelBase {
             nativeView.setTappableState(tappable);
             if (this.mTappable) {
                 if (!this.urlSpanClickListener) {
+                    const that = new WeakRef(this);
                     this.urlSpanClickListener = new com.nativescript.text.URLSpanClickListener({
-                        onClick: this.onURLClick.bind(this)
+                        onClick: (event) => {
+                            const owner = that?.get();
+                            if (owner) {
+                                owner.onURLClick.call(owner, event);
+                            }
+                        }
                     });
                 }
                 nativeView.urlSpanClickListener = this.urlSpanClickListener;
