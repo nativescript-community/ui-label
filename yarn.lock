@@ -1476,18 +1476,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nativescript-community/systemui@npm:*":
-  version: 1.1.23
-  resolution: "@nativescript-community/systemui@npm:1.1.23"
-  checksum: e2da894bf2912a06f2874bbf799b7f39a46bc5828704c9de937781225c8137d48fe1f4b7bf17084471af9544e34132e0288eec737800371385e6c45d76e54044
-  languageName: node
-  linkType: hard
-
 "@nativescript-community/template-snippet@npm:0.0.1, @nativescript-community/template-snippet@workspace:demo-snippets":
   version: 0.0.0-use.local
   resolution: "@nativescript-community/template-snippet@workspace:demo-snippets"
   dependencies:
-    "@nativescript-community/systemui": "npm:*"
+    "@nativescript-community/ui-label": "npm:*"
     vue-class-component: "npm:^7.2.6"
     vue-property-decorator: "npm:^8.5.1"
   languageName: unknown
@@ -1500,7 +1493,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nativescript-community/ui-label@workspace:packages/label":
+"@nativescript-community/ui-label@npm:*, @nativescript-community/ui-label@workspace:packages/label":
   version: 0.0.0-use.local
   resolution: "@nativescript-community/ui-label@workspace:packages/label"
   dependencies:

@@ -3,7 +3,7 @@
     "private": true,
     "version": "0.0.1",
     "dependencies": {
-        "@nativescript-community/systemui": "*",
+        "@nativescript-community/ui-label": "*",
         "vue-class-component": "^7.2.6",
         "vue-property-decorator": "^8.5.1"
     },
