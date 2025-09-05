@@ -3,11 +3,14 @@
         <ActionBar :title="title">
             <NavigationButton text="Back" android.systemIcon="ic_menu_back" @tap="onNavigationButtonTap"></NavigationButton>
         </ActionBar>
-        <CollectionView :items="items" rowHeight="80">
+        <ListView :items="items">
             <v-template>
-                    <HTMLLabel fontSize="40" :autoFontSize="true" fontFamily="Cabin Sketch,res/cabinsketch" width="100%" paddingTop="5" :textWrap="true" :selectable="false" :html="item.text" :color="item.color" lineBreak="end" @tap="onItemTap(item)"/>
+                <StackLayout>
+                    <HTMLLabel fontSize="40" :autoFontSize="true" fontFamily="Cabin Sketch,res/cabinsketch" width="100%" paddingTop="5" textDecoration="underline" :textWrap="true" :selectable="false" :html="item.text" :color="item.color" lineBreak="end" @tap="onItemTap(item)"/>
+                    <Label fontSize="40" textDecoration="underline" text="this is a test whasdasfgasdasd"/>
+                </StackLayout>
             </v-template>
-        </CollectionView>
+        </ListView>
     </Page>
 </template>
 
