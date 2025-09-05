@@ -7,8 +7,7 @@
     useLightFormattedString,
     verticalTextAlignmentProperty
 } from '@nativescript-community/text';
-import { CSSType, CoreTypes, FormattedString, Observable, Property, PropertyChangeData, Span, Utils, View, booleanConverter, profile } from '@nativescript/core';
-import { Color } from '@nativescript/core/color';
+import { CSSType, Color, CoreTypes, FormattedString, Observable, Property, PropertyChangeData, Screen, Span, Utils, View, booleanConverter, profile } from '@nativescript/core';
 import { ShadowCSSValues } from '@nativescript/core/ui/styling/css-shadow';
 import { Font, FontStyleType, FontVariationSettingsType, FontWeightType } from '@nativescript/core/ui/styling/font';
 import {
@@ -369,7 +368,7 @@ export class Label extends LabelBase {
         this.nativeTextViewProtected.setTextIsSelectable(value);
     }
     createFormattedTextNative(value: any) {
-        const result = createNativeAttributedString(value, undefined, this, this.autoFontSize);
+        const result = createNativeAttributedString(value, undefined, this, this.autoFontSize, this['fontSizeRatio'], Screen.mainScreen.scale);
         this._setTappableState(value.spans.some((s) => s.tappable));
         return result;
     }
