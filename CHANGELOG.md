@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.34](https://github.com/nativescript-community/ui-label/compare/v1.3.33...v1.3.34) (2025-09-05)
+
+### Bug Fixes
+
+* **android:** fix after latest @nativescript-community/text changes ([93a446f](https://github.com/nativescript-community/ui-label/commit/93a446f8ccc337462a9657925bc8128a8a25e1d7))
+* use weakref when possible ([5553241](https://github.com/nativescript-community/ui-label/commit/55532415e218da8040dd4aeabf014b7c77f8e9ba))
+
 ## [1.3.33](https://github.com/nativescript-community/ui-label/compare/v1.3.32...v1.3.33) (2024-12-16)
 
 ### Bug Fixes
