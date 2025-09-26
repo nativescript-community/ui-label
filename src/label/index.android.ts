@@ -368,7 +368,7 @@ export class Label extends LabelBase {
         this.nativeTextViewProtected.setTextIsSelectable(value);
     }
     createFormattedTextNative(value: any) {
-        const result = createNativeAttributedString(value, undefined, this, this.autoFontSize, this['fontSizeRatio'], Screen.mainScreen.scale);
+        const result = createNativeAttributedString(value, undefined, this, this.autoFontSize, this['fontSizeRatio'], 1);
         this._setTappableState(value.spans.some((s) => s.tappable));
         return result;
     }
