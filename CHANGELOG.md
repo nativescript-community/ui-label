@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.38](https://github.com/nativescript-community/ui-label/compare/v1.3.34...v1.3.38) (2025-09-26)
+
+### Bug Fixes
+
+* **android:** wrong size for formattedstring spans ([07f6bc9](https://github.com/nativescript-community/ui-label/commit/07f6bc945141bf7419819db1144eb46af59bafba))
+
 ## [1.3.34](https://github.com/nativescript-community/ui-label/compare/v1.3.33...v1.3.34) (2025-09-05)
 
 ### Bug Fixes
