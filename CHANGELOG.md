@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.40](https://github.com/nativescript-community/ui-label/compare/v1.3.39...v1.3.40) (2025-09-29)
+
+### Bug Fixes
+
+* **ios:** another edge case for text as NSAttributedString ([691d460](https://github.com/nativescript-community/ui-label/commit/691d4607b4aca7a4ad83064976d974ed301f8cdc))
+
 ## [1.3.39](https://github.com/nativescript-community/ui-label/compare/v1.3.38...v1.3.39) (2025-09-29)
 
 ### Bug Fixes
