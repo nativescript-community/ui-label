@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.39](https://github.com/nativescript-community/ui-label/compare/v1.3.38...v1.3.39) (2025-09-29)
+
+### Bug Fixes
+
+* **ios:** autoFontSize working with NSAttributedString in text property ([2aadecf](https://github.com/nativescript-community/ui-label/commit/2aadecffedc2efd4bad14e8ad282250c69bd9c63))
+
 ## [1.3.38](https://github.com/nativescript-community/ui-label/compare/v1.3.34...v1.3.38) (2025-09-26)
 
 ### Bug Fixes
