@@ -877,9 +877,9 @@ export class Label extends LabelBase {
             let expectSize;
 
             const stepSize = this.autoFontSizeStep || 2;
-
+            const changeFont = !(this.formattedText || this.html || this.text instanceof NSAttributedString);
             const updateFontSize = (font) => {
-                if (this.formattedText || this.html) {
+                if (!changeFont) {
                     NSLabelUtils.updateFontRatioRatio(textView, font.pointSize / fontSize);
                 } else {
                     textView.font = font;
@@ -905,7 +905,7 @@ export class Label extends LabelBase {
                         expectFont = newFont;
                     } else {
                         expectFont = newFont;
-                        if (!this.formattedText && !this.html) {
+                        if (changeFont) {
                             textView.font = newFont;
                         }
                         break;
