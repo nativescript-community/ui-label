@@ -49,7 +49,7 @@
     "homepage": "https://github.com/nativescript-community/ui-label",
     "readmeFilename": "README.md",
     "dependencies": {
-        "@nativescript-community/plugin-seed-tools": "file:tools"
+        "@nativescript-community/plugin-seed-tools": "portal:tools"
     },
     "devDependencies": {
         "@nativescript-community/text": "^1.6.15"
