@@ -252,6 +252,10 @@ export class Label extends LabelBase {
         return result.height;
     }
 
+    useNSAttributedString() {
+        return this.formattedText || this.html || (this.text instanceof NSAttributedString)
+    }
+
     updateVerticalAlignment(applyVerticalTextAlignment = true) {
         const nativeView = this.nativeTextViewProtected;
         if (!this.mCanUpdateVerticalAlignment) {
@@ -407,7 +411,7 @@ export class Label extends LabelBase {
             // if (this.isUsingNSTextView) {
             // desiredSize.height += nativeView.textContainerInset.top + nativeView.textContainerInset.bottom;
             // }
-            if (resetFont && !this.formattedText && !this.html) {
+            if (resetFont && this.useNSAttributedString()) {
                 nativeView.font = resetFont;
             }
 
@@ -653,7 +657,7 @@ export class Label extends LabelBase {
         const nativeView = this.nativeTextViewProtected;
         const newFont: UIFont = value instanceof Font ? value.getUIFont(nativeView.font) : value;
         nativeView.font = newFont;
-        if (this.formattedText || this.html) {
+        if (this.useNSAttributedString()) {
             this._setNativeText();
         }
     }
@@ -877,9 +881,9 @@ export class Label extends LabelBase {
             let expectSize;
 
             const stepSize = this.autoFontSizeStep || 2;
-
+            const changeFont = !this.useNSAttributedString();
             const updateFontSize = (font) => {
-                if (this.formattedText || this.html) {
+                if (!changeFont) {
                     NSLabelUtils.updateFontRatioRatio(textView, font.pointSize / fontSize);
                 } else {
                     textView.font = font;
@@ -905,7 +909,7 @@ export class Label extends LabelBase {
                         expectFont = newFont;
                     } else {
                         expectFont = newFont;
-                        if (!this.formattedText && !this.html) {
+                        if (changeFont) {
                             textView.font = newFont;
                         }
                         break;
