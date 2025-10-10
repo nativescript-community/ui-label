@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.41](https://github.com/nativescript-community/ui-label/compare/v1.3.40...v1.3.41) (2025-10-10)
+
+**Note:** Version bump only for package @nativescript-community/ui-label
+
 ## [1.3.40](https://github.com/nativescript-community/ui-label/compare/v1.3.39...v1.3.40) (2025-09-29)
 
 **Note:** Version bump only for package @nativescript-community/ui-label
