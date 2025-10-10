@@ -12,14 +12,13 @@
         }
     },
     "scripts": {
-        "tsc": "cpy ../../src/label/index.d.ts ./ && tsc -d",
+        "tsc": "cpy '**/*.d.ts' '../../packages/label' --parents --cwd=../../src/label && tsc  --build",
         "readme": "readme generate -c ../../tools/readme/blueprint.json",
-        "build": "npm run tsc",
+        "build": "npm run tsc && npm run readme",
         "build.watch": "npm run tsc -- -w",
         "build.win": "npm run tsc-win",
         "build.all": "npm run build",
-        "build.angular": "ng-packagr -p ../../src/label/angular/ng-package.json -c ../../src/label/angular/tsconfig.json && rm angular/.npmignore",
-        "clean": "rimraf ./*.d.ts ./*.js ./*.js.map"
+        "clean": "bin/rimraf ./*.d.ts ./*.js ./*.js.map ./*.tsbuildinfo ./*.mjs ./*.mjs.map ./angular ./svelte ./vue* ./react"
     },
     "keywords": [
         "NativeScript",
