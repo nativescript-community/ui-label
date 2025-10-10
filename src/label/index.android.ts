@@ -54,6 +54,7 @@ const formattedTextProperty = new Property<Label, FormattedString>({
     valueChanged: onFormattedTextPropertyChanged
 });
 export const htmlProperty = new Property<Label, string>({ name: 'html', defaultValue: null, affectsLayout: true });
+export const androidA11yAdjustsFontSizeProperty = new Property<Label, boolean>({ name: 'androidA11yAdjustsFontSize', defaultValue: false });
 
 @CSSType('HTMLLabel')
 abstract class LabelBase extends View implements LabelViewDefinition {
@@ -68,6 +69,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
     @cssProperty textShadow: ShadowCSSValues;
     @cssProperty linkUnderline: boolean;
     public html: string;
+    public androidA11yAdjustsFontSize: boolean;
     @cssProperty selectable: boolean;
 
     public mIsSingleLine: boolean;
@@ -269,7 +271,13 @@ export class Label extends LabelBase {
         }
     }
     [fontSizeProperty.setNative](value: number | { nativeSize: number }) {
-        this.nativeTextViewProtected.setLabelTextSize(2, typeof value === 'number' ? value : value.nativeSize, this.minFontSize || 10, this.maxFontSize || 200, this.autoFontSizeStep || 1);
+        this.nativeTextViewProtected.setLabelTextSize(
+            this.androidA11yAdjustsFontSize ? 2 /* COMPLEX_UNIT_SP */ : 1 /* COMPLEX_UNIT_DIP */,
+            typeof value === 'number' ? value : value.nativeSize,
+            this.minFontSize || 10,
+            this.maxFontSize || 200,
+            this.autoFontSizeStep || 1
+        );
     }
 
     [lineHeightProperty.setNative](value: number) {
@@ -453,6 +461,7 @@ export class Label extends LabelBase {
 
 textProperty.register(Label);
 htmlProperty.register(Label);
+androidA11yAdjustsFontSizeProperty.register(Label);
 formattedTextProperty.register(Label);
 
 function onFormattedTextPropertyChanged(textBase: Label, oldValue: FormattedString, newValue: FormattedString) {
