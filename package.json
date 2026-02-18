@@ -52,7 +52,7 @@
         "@nativescript-community/plugin-seed-tools": "portal:tools"
     },
     "devDependencies": {
-        "@nativescript-community/text": "^1.6.15"
+        "@nativescript-community/text": "^1.6.22"
     },
     "bootstrapper": "nativescript-plugin-seed",
     "commitlint": {

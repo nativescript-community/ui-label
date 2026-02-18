@@ -1678,10 +1678,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nativescript-community/text@npm:^1.6.15":
-  version: 1.6.17
-  resolution: "@nativescript-community/text@npm:1.6.17"
-  checksum: 10/f3f5ecbf756ec9af04be996ab4423a5ebe781f1b069b924083784add2903c0366d8403c46153b1663fa01bbf4bf2828e0c293cbc4dfe6bc5d7c319ad11d439d4
+"@nativescript-community/text@npm:^1.6.22":
+  version: 1.6.22
+  resolution: "@nativescript-community/text@npm:1.6.22"
+  checksum: 10/4a9263894311de1d5951b986c8af2b58eacc4b988c91a4b8b704a0769ebbeb04d3ee5b5b4b5b27957118bc2cc0f76513925fb533944dcb5070cf87e3c1a059db
   languageName: node
   linkType: hard
 
@@ -1689,7 +1689,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nativescript-community/ui-label@workspace:packages/label"
   dependencies:
-    "@nativescript-community/text": "npm:^1.6.15"
+    "@nativescript-community/text": "npm:^1.6.22"
   languageName: unknown
   linkType: soft
 
@@ -11088,7 +11088,7 @@ __metadata:
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
     "@nativescript-community/plugin-seed-tools": "portal:tools"
-    "@nativescript-community/text": "npm:^1.6.15"
+    "@nativescript-community/text": "npm:^1.6.22"
   languageName: unknown
   linkType: soft
 

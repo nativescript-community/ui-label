@@ -7,11 +7,10 @@
     useLightFormattedString,
     verticalTextAlignmentProperty
 } from '@nativescript-community/text';
-import { CSSType, Color, CoreTypes, FormattedString, Observable, Property, PropertyChangeData, Screen, Span, Utils, View, booleanConverter, profile } from '@nativescript/core';
+import { CSSType, Color, CoreTypes, FormattedString, Length, Observable, Property, PropertyChangeData, Screen, Span, Utils, View, booleanConverter, profile } from '@nativescript/core';
 import { ShadowCSSValues } from '@nativescript/core/ui/styling/css-shadow';
 import { Font, FontStyleType, FontVariationSettingsType, FontWeightType } from '@nativescript/core/ui/styling/font';
 import {
-    Length,
     colorProperty,
     fontInternalProperty,
     fontSizeProperty,
@@ -376,7 +375,7 @@ export class Label extends LabelBase {
         this.nativeTextViewProtected.setTextIsSelectable(value);
     }
     createFormattedTextNative(value: any) {
-        const result = createNativeAttributedString(value, undefined, this, this.autoFontSize, this['fontSizeRatio'], 1);
+        const result = createNativeAttributedString(value, undefined, this, this.autoFontSize, this['fontSizeRatio'], 1, true);
         this._setTappableState(value.spans.some((s) => s.tappable));
         return result;
     }
@@ -387,7 +386,9 @@ export class Label extends LabelBase {
             undefined,
             this,
             this.autoFontSize,
-            1
+            this['fontSizeRatio'],
+            1,
+            true
         ) as android.text.SpannableStringBuilder;
         this._setTappableState(NSLabel.attributedStringHasURLSpan(result));
         return result;
