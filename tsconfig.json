@@ -5,11 +5,5 @@
             "@nativescript-community/ui-label": ["src/label/index"],
             "@nativescript-community/ui-label/*": ["src/label/*"]
         }
-    },
-    "references": [
-        {
-            //Need for IDE
-            "path": "./tsconfig.vue3.json"
-        }
-    ]
+    }
 }

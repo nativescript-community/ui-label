@@ -5,11 +5,5 @@
         "outDir": "./"
     },
     "include": ["../../src/label/**/*", "../../references.d.ts", "../../tools/references.d.ts", "../../src/references.d.ts"],
-    "exclude": ["../../src/label/angular/**"],
-    "references": [
-        {
-            //Need for tsc
-            "path": "../../tsconfig.vue3.json"
-        }
-    ]
+    "exclude": ["../../src/label/angular/**"]
 }
