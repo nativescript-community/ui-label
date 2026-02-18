@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.42](https://github.com/nativescript-community/ui-label/compare/v1.3.41...v1.3.42) (2026-02-18)
+
+### Bug Fixes
+
+* android lineHeight fix ([67212a0](https://github.com/nativescript-community/ui-label/commit/67212a0a6642d66db11bc35d0a719715ffa21870))
+
 ## [1.3.41](https://github.com/nativescript-community/ui-label/compare/v1.3.40...v1.3.41) (2025-10-10)
 
 **Note:** Version bump only for package @nativescript-community/ui-label
