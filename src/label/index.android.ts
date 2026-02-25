@@ -7,7 +7,7 @@
     useLightFormattedString,
     verticalTextAlignmentProperty
 } from '@nativescript-community/text';
-import { CSSType, Color, CoreTypes, FormattedString, Length, Observable, Property, PropertyChangeData, Screen, Span, Utils, View, booleanConverter, profile } from '@nativescript/core';
+import { CSSType, Color, CoreTypes, FormattedString, Length, Observable, Property, PropertyChangeData, Span, Utils, View, booleanConverter, profile } from '@nativescript/core';
 import { ShadowCSSValues } from '@nativescript/core/ui/styling/css-shadow';
 import { Font, FontStyleType, FontVariationSettingsType, FontWeightType } from '@nativescript/core/ui/styling/font';
 import {
@@ -229,9 +229,9 @@ export class Label extends LabelBase {
 
     [textShadowProperty.setNative](value: ShadowCSSValues) {
         this.nativeViewProtected.setShadowLayer(
-            Utils.layout.toDevicePixels(value.blurRadius, java.lang.Float.MIN_VALUE),
-            Utils.layout.toDevicePixels(value.offsetX, 0),
-            Utils.layout.toDevicePixels(value.offsetY, 0),
+            Length.toDevicePixels(value.blurRadius, java.lang.Float.MIN_VALUE),
+            Length.toDevicePixels(value.offsetX, 0),
+            Length.toDevicePixels(value.offsetY, 0),
             value.color.android
         );
     }
