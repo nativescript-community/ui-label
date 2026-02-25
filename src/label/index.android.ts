@@ -229,9 +229,9 @@ export class Label extends LabelBase {
 
     [textShadowProperty.setNative](value: ShadowCSSValues) {
         this.nativeViewProtected.setShadowLayer(
-            Length.toDevicePixels(value.blurRadius, java.lang.Float.MIN_VALUE),
-            Length.toDevicePixels(value.offsetX, 0),
-            Length.toDevicePixels(value.offsetY, 0),
+            Utils.layout.toDevicePixels(value.blurRadius, java.lang.Float.MIN_VALUE),
+            Utils.layout.toDevicePixels(value.offsetX, 0),
+            Utils.layout.toDevicePixels(value.offsetY, 0),
             value.color.android
         );
     }
