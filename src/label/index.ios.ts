@@ -92,7 +92,7 @@ function whiteSpaceToLineBreakMode(value: CoreTypes.WhiteSpaceType) {
     }
 }
 
-export const needUpdateVerticalAlignment = function (target: any, propertyKey: string | Symbol, descriptor: PropertyDescriptor) {
+export const needUpdateVerticalAlignment = function (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
     descriptor.value = function (...args: any[]) {
         const result = originalMethod.apply(this, args);
@@ -101,7 +101,7 @@ export const needUpdateVerticalAlignment = function (target: any, propertyKey: s
     };
 };
 
-export const needAutoFontSizeComputation = function (target: any, propertyKey: string | Symbol, descriptor: PropertyDescriptor) {
+export const needAutoFontSizeComputation = function (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
     descriptor.value = function (...args: any[]) {
         if (!this.mCanUpdateAutoFontSize) {
@@ -253,7 +253,7 @@ export class Label extends LabelBase {
     }
 
     useNSAttributedString() {
-        return this.formattedText || this.html || (this.text instanceof NSAttributedString)
+        return this.formattedText || this.html || this.text instanceof NSAttributedString;
     }
 
     updateVerticalAlignment(applyVerticalTextAlignment = true) {
