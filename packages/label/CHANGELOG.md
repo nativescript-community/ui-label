@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.43](https://github.com/nativescript-community/ui-label/compare/v1.3.42...v1.3.43) (2026-05-13)
+
+### Bug Fixes
+
+* sideEffects fix ([dc4674b](https://github.com/nativescript-community/ui-label/commit/dc4674bb328598e45001973280c3772653bd8d62))
+
 ## [1.3.42](https://github.com/nativescript-community/ui-label/compare/v1.3.41...v1.3.42) (2026-02-18)
 
 ### Bug Fixes
