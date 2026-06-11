@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0](https://github.com/nativescript-community/ui-label/compare/v1.3.43...v2.0.0) (2026-06-11)
+
+### Bug Fixes
+
+* crash fix with N 9.x ([c01c600](https://github.com/nativescript-community/ui-label/commit/c01c600c70217b95d4ea333ba75364d617f936c9))
+
 ## [1.3.43](https://github.com/nativescript-community/ui-label/compare/v1.3.42...v1.3.43) (2026-05-13)
 
 ### Bug Fixes
