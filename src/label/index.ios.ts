@@ -6,10 +6,7 @@ import {
     borderRightWidthProperty,
     borderTopWidthProperty,
     fontInternalProperty,
-    paddingBottomProperty,
-    paddingLeftProperty,
-    paddingRightProperty,
-    paddingTopProperty
+    paddingInternalProperty
 } from '@nativescript/core/ui/styling/style-properties';
 import { formattedTextProperty, letterSpacingProperty, lineHeightProperty, textProperty, whiteSpaceProperty } from '@nativescript/core/ui/text-base';
 import { maxLinesProperty } from '@nativescript/core/ui/text-base/text-base-common';
@@ -157,6 +154,9 @@ class LabelObserverClass extends NSObject {
 }
 
 export class Label extends LabelBase {
+    //TODO: remove as it needs to be added after TS 5.7 change https://github.com/microsoft/TypeScript/pull/59860
+    [key: symbol]: (...args: any[]) => any | void;
+
     private mObserver: LabelObserverClass;
     nativeViewProtected: NSLabel | NSTextView;
     nativeTextViewProtected: NSLabel | NSTextView;
@@ -736,35 +736,12 @@ export class Label extends LabelBase {
 
     @needAutoFontSizeComputation
     @needUpdateVerticalAlignment
-    [paddingTopProperty.setNative](value: CoreTypes.LengthType) {
+    [paddingInternalProperty.setNative](value: CoreTypes.LengthType) {
         if (!this.isUsingNSTextView) {
-            super[paddingTopProperty.setNative](value);
+            super[paddingInternalProperty.setNative](value);
         }
     }
 
-    @needAutoFontSizeComputation
-    @needUpdateVerticalAlignment
-    [paddingRightProperty.setNative](value: CoreTypes.LengthType) {
-        if (!this.isUsingNSTextView) {
-            super[paddingRightProperty.setNative](value);
-        }
-    }
-
-    @needAutoFontSizeComputation
-    @needUpdateVerticalAlignment
-    [paddingBottomProperty.setNative](value: CoreTypes.LengthType) {
-        if (!this.isUsingNSTextView) {
-            super[paddingBottomProperty.setNative](value);
-        }
-    }
-
-    @needAutoFontSizeComputation
-    @needUpdateVerticalAlignment
-    [paddingLeftProperty.setNative](value: CoreTypes.LengthType) {
-        if (!this.isUsingNSTextView) {
-            super[paddingLeftProperty.setNative](value);
-        }
-    }
     @needAutoFontSizeComputation
     @needUpdateVerticalAlignment
     [borderTopWidthProperty.setNative](value: CoreTypes.LengthType) {
@@ -794,6 +771,7 @@ export class Label extends LabelBase {
         }
     }
 
+    
     @needAutoFontSizeComputation
     [maxLinesProperty.setNative](value: number | string) {
         const numberLines = !value || value === 'none' ? 0 : typeof value === 'string' ? parseInt(value, 10) : value;
@@ -849,7 +827,7 @@ export class Label extends LabelBase {
         }
     }
 
-    updateAutoFontSize({ textView, width, height, force = false, onlyMeasure = false }: { textView: NSTextView | NSLabel; width?; height?; force?: boolean; onlyMeasure?: boolean }) {
+    updateAutoFontSize({ force = false, height, onlyMeasure = false, textView, width }: { textView: NSTextView | NSLabel; width?; height?; force?: boolean; onlyMeasure?: boolean }) {
         if (!this.mCanUpdateAutoFontSize) {
             this.mNeedAutoFontSizeComputation = true;
         }

@@ -10,15 +10,7 @@
 import { CSSType, Color, CoreTypes, FormattedString, Length, Observable, Property, PropertyChangeData, Span, Utils, View, booleanConverter, profile } from '@nativescript/core';
 import { ShadowCSSValues } from '@nativescript/core/ui/styling/css-shadow';
 import { Font, FontStyleType, FontVariationSettingsType, FontWeightType } from '@nativescript/core/ui/styling/font';
-import {
-    colorProperty,
-    fontInternalProperty,
-    fontSizeProperty,
-    paddingBottomProperty,
-    paddingLeftProperty,
-    paddingRightProperty,
-    paddingTopProperty
-} from '@nativescript/core/ui/styling/style-properties';
+import { colorProperty, fontInternalProperty, fontSizeProperty, paddingInternalProperty } from '@nativescript/core/ui/styling/style-properties';
 import {
     letterSpacingProperty,
     lineHeightProperty,
@@ -73,9 +65,7 @@ abstract class LabelBase extends View implements LabelViewDefinition {
 
     public mIsSingleLine: boolean;
 
-    //@ts-ignore
     public text: string | java.lang.CharSequence | android.text.Spannable;
-    //@ts-ignore
     formattedText: FormattedString;
 
     get nativeTextViewProtected() {
@@ -296,32 +286,12 @@ export class Label extends LabelBase {
         org.nativescript.widgets.ViewHelper.setLetterspacing(this.nativeTextViewProtected, value);
     }
 
-    [paddingTopProperty.getDefault](): CoreTypes.LengthType {
-        return { value: this._defaultPaddingTop, unit: 'px' };
-    }
-    [paddingTopProperty.setNative](value: CoreTypes.LengthType) {
-        org.nativescript.widgets.ViewHelper.setPaddingTop(this.nativeTextViewProtected, Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderTopWidth, 0));
-    }
-
-    [paddingRightProperty.getDefault](): CoreTypes.LengthType {
-        return { value: this._defaultPaddingRight, unit: 'px' };
-    }
-    [paddingRightProperty.setNative](value: CoreTypes.LengthType) {
-        org.nativescript.widgets.ViewHelper.setPaddingRight(this.nativeTextViewProtected, Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderRightWidth, 0));
-    }
-
-    [paddingBottomProperty.getDefault](): CoreTypes.LengthType {
-        return { value: this._defaultPaddingBottom, unit: 'px' };
-    }
-    [paddingBottomProperty.setNative](value: CoreTypes.LengthType) {
-        org.nativescript.widgets.ViewHelper.setPaddingBottom(this.nativeTextViewProtected, Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderBottomWidth, 0));
-    }
-
-    [paddingLeftProperty.getDefault](): CoreTypes.LengthType {
-        return { value: this._defaultPaddingLeft, unit: 'px' };
-    }
-    [paddingLeftProperty.setNative](value: CoreTypes.LengthType) {
-        org.nativescript.widgets.ViewHelper.setPaddingLeft(this.nativeTextViewProtected, Length.toDevicePixels(value, 0) + Length.toDevicePixels(this.style.borderLeftWidth, 0));
+    [paddingInternalProperty.setNative](_value: string) {
+        const left = this.effectivePaddingLeft + Length.toDevicePixels(this.style.borderLeftWidth, 0);
+        const top = this.effectivePaddingTop + Length.toDevicePixels(this.style.borderTopWidth, 0);
+        const right = this.effectivePaddingRight + Length.toDevicePixels(this.style.borderRightWidth, 0);
+        const bottom = this.effectivePaddingBottom + Length.toDevicePixels(this.style.borderBottomWidth, 0);
+        this.nativeTextViewProtected.setPadding(left, top, right, bottom);
     }
 
     // for now code is duplicated as Android version is a full rewrite

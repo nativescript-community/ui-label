@@ -51,7 +51,7 @@ class NSLabel: UILabel {
   }
   
   override func drawText(in rect:CGRect) {
-    super.drawText(in: rect.inset(by: self.textContainerInset))
+   super.drawText(in: rect.inset(by: self.textContainerInset).inset(by: self.padding).inset(by: self.borderThickness))
   }
   // - (void)drawTextInRect:(CGRect)rect {
   
