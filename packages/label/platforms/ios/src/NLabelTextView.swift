@@ -1,8 +1,12 @@
 import UIKit
 
+// The Obj-C runtime has a flat namespace, so the classes exported from here use
+// an `N` prefix rather than `NS`. This one used to be exported as `NSTextView`,
+// which AppKit owns: on Mac Catalyst the collision dropped the class from the
+// generated NativeScript metadata ("ReferenceError: NSTextView is not defined").
 @objcMembers
-@objc(NSTextView)
-class NSTextView: UITextView {
+@objc(NLabelTextView)
+class NLabelTextView: UITextView {
   var padding: UIEdgeInsets = UIEdgeInsets.zero
   var borderThickness:UIEdgeInsets = UIEdgeInsets.zero
   override init(frame: CGRect, textContainer: NSTextContainer?) {

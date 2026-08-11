@@ -1,8 +1,8 @@
 import UIKit
 
 @objcMembers
-@objc(NSLabel)
-class NSLabel: UILabel {
+@objc(NLabel)
+class NLabel: UILabel {
   var zoomScale:Float = 1.0;
   var textContainerInset: UIEdgeInsets = UIEdgeInsets.zero
   var padding: UIEdgeInsets = UIEdgeInsets.zero

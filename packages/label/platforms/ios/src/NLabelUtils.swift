@@ -2,8 +2,8 @@ import Foundation
 import UIKit
 
 @objcMembers
-@objc(NSLabelUtils)
-class NSLabelUtils: NSObject {
+@objc(NLabelUtils)
+class NLabelUtils: NSObject {
   class func setTextDecorationAndTransformOn(view:UIView!, text:String!, textDecoration:String!, letterSpacing:CGFloat, lineHeight:CGFloat, color:UIColor!) {
     let attrDict:NSMutableDictionary! = NSMutableDictionary()
     var paragraphStyle:NSMutableParagraphStyle! = nil
@@ -89,9 +89,9 @@ class NSLabelUtils: NSObject {
   class func inset(rect:CGRect, uIEdgeInsets:UIEdgeInsets) -> CGRect {
     return rect.inset(by: uIEdgeInsets)
   }
-  enum NSLabelOrNSTextView: Equatable {
-      case NSLabel(NSLabel)
-      case NSTextView(NSTextView)
+  enum NLabelOrNLabelTextView: Equatable {
+      case NLabel(NLabel)
+      case NLabelTextView(NLabelTextView)
   }
   enum Component {
     case `switch`(UISwitch)
@@ -110,10 +110,10 @@ class NSLabelUtils: NSObject {
   class func updateFontRatio(_ view: UIView, ratio: CGFloat){
     var currentAttributedString: NSAttributedString? = nil
     switch view {
-    case is NSLabel:
-      currentAttributedString = (view as! NSLabel).attributedText
-    case is NSTextView:
-      currentAttributedString = (view as! NSTextView).attributedText
+    case is NLabel:
+      currentAttributedString = (view as! NLabel).attributedText
+    case is NLabelTextView:
+      currentAttributedString = (view as! NLabelTextView).attributedText
     default: break
     }
     if (currentAttributedString == nil) {
@@ -141,10 +141,10 @@ class NSLabelUtils: NSObject {
     
     if (found) {
       switch view {
-      case is NSLabel:
-        (view as! NSLabel).attributedText = toChange;
-      case is NSTextView:
-        (view as! NSTextView).attributedText = toChange;
+      case is NLabel:
+        (view as! NLabel).attributedText = toChange;
+      case is NLabelTextView:
+        (view as! NLabelTextView).attributedText = toChange;
       default: break
       }
     }
