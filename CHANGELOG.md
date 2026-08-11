@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.1](https://github.com/nativescript-community/ui-label/compare/v2.0.0...v2.0.1) (2026-08-11)
+
+### Bug Fixes
+
+* **ios:** prefix native classes with N instead of NS ([3aae775](https://github.com/nativescript-community/ui-label/commit/3aae7753c1fe95877ac6fbb2238a81764b001850))
+
 ## [2.0.0](https://github.com/nativescript-community/ui-label/compare/v1.3.43...v2.0.0) (2026-06-11)
 
 ### Bug Fixes
