@@ -22,7 +22,7 @@ class LabelLinkGestureRecognizer : UITapGestureRecognizer {
 }
   
   @objc func handleTap(tapGesture: UIGestureRecognizer) {
-   guard let label = tapGesture.view  as? NSLabel, let attributedText: NSAttributedString = label.attributedText, tapGesture.state == .ended else {
+   guard let label = tapGesture.view  as? NLabel, let attributedText: NSAttributedString = label.attributedText, tapGesture.state == .ended else {
      return
    }
    let bounds = label.bounds

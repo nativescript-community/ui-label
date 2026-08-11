@@ -28,11 +28,11 @@ export { createNativeAttributedString } from '@nativescript-community/text';
 export * from './index-common';
 
 @NativeClass
-class NSLabelLinkHandlerTapDelegateImpl extends NSObject implements UILabelLinkHandlerTapDelegate {
+class NLabelLinkHandlerTapDelegateImpl extends NSObject implements UILabelLinkHandlerTapDelegate {
     public static ObjCProtocols = [UILabelLinkHandlerTapDelegate];
     private mOwner: WeakRef<Label>;
-    public static initWithOwner(owner: WeakRef<Label>): NSLabelLinkHandlerTapDelegateImpl {
-        const handler = NSLabelLinkHandlerTapDelegateImpl.new() as NSLabelLinkHandlerTapDelegateImpl;
+    public static initWithOwner(owner: WeakRef<Label>): NLabelLinkHandlerTapDelegateImpl {
+        const handler = NLabelLinkHandlerTapDelegateImpl.new() as NLabelLinkHandlerTapDelegateImpl;
         handler.mOwner = owner;
         return handler;
     }
@@ -127,14 +127,14 @@ class LabelNSTextViewDelegateImpl extends NSObject implements UITextViewDelegate
         return impl;
     }
 
-    textViewShouldInteractWithURLInRangeInteraction?(textView: NSTextView, URL: NSURL, characterRange: NSRange, interaction: UITextItemInteraction) {
+    textViewShouldInteractWithURLInRangeInteraction?(textView: NLabelTextView, URL: NSURL, characterRange: NSRange, interaction: UITextItemInteraction) {
         const owner = this._owner.get();
         if (owner) {
             return owner.textViewShouldInteractWithURLInRangeInteraction(textView, URL, characterRange, interaction);
         }
         return false;
     }
-    textViewDidChange?(textView: NSTextView) {
+    textViewDidChange?(textView: NLabelTextView) {
         const owner = this._owner.get();
         if (owner) {
             owner.textViewDidChange(textView);
@@ -145,7 +145,7 @@ class LabelNSTextViewDelegateImpl extends NSObject implements UITextViewDelegate
 @NativeClass
 class LabelObserverClass extends NSObject {
     _owner: WeakRef<Label>;
-    observeValueForKeyPathOfObjectChangeContext(path: string, tv: NSTextView | NSLabel) {
+    observeValueForKeyPathOfObjectChangeContext(path: string, tv: NLabelTextView | NLabel) {
         const owner = this._owner?.get();
         if (owner) {
             owner.updateVerticalAlignment();
@@ -158,8 +158,8 @@ export class Label extends LabelBase {
     [key: symbol]: (...args: any[]) => any | void;
 
     private mObserver: LabelObserverClass;
-    nativeViewProtected: NSLabel | NSTextView;
-    nativeTextViewProtected: NSLabel | NSTextView;
+    nativeViewProtected: NLabel | NLabelTextView;
+    nativeTextViewProtected: NLabel | NLabelTextView;
     attributedString: NSAttributedString;
     private mDelegate: LabelNSTextViewDelegateImpl;
     private mFixedSize: FixedSize;
@@ -177,9 +177,9 @@ export class Label extends LabelBase {
     public createNativeView() {
         if (this.selectable) {
             this.isUsingNSTextView = true;
-            return NSTextView.new();
+            return NLabelTextView.new();
         }
-        return NSLabel.new();
+        return NLabel.new();
     }
 
     @profile
@@ -190,7 +190,7 @@ export class Label extends LabelBase {
             this.mObserver = LabelObserverClass.alloc().init() as LabelObserverClass;
             this.mObserver._owner = new WeakRef(this);
             this.mDelegate = LabelNSTextViewDelegateImpl.initWithOwner(new WeakRef(this));
-            (nativeView as NSTextView).delegate = this.mDelegate;
+            (nativeView as NLabelTextView).delegate = this.mDelegate;
             nativeView.addObserverForKeyPathOptionsContext(this.mObserver, 'contentSize', NSKeyValueObservingOptions.New, null);
         }
     }
@@ -198,7 +198,7 @@ export class Label extends LabelBase {
         this.mDelegate = null;
         const nativeView = this.nativeTextViewProtected;
         if (this.isUsingNSTextView) {
-            (nativeView as NSTextView).delegate = null;
+            (nativeView as NLabelTextView).delegate = null;
         }
         if (this.mTapGestureRecognizer) {
             this.nativeViewProtected.removeGestureRecognizer(this.mTapGestureRecognizer);
@@ -236,7 +236,7 @@ export class Label extends LabelBase {
             this.updateVerticalAlignment();
         }
     }
-    computeTextHeight(tv: NSTextView | NSLabel, size: CGSize) {
+    computeTextHeight(tv: NLabelTextView | NLabel, size: CGSize) {
         const oldtextContainerInset = tv.textContainerInset;
         tv.textContainerInset = UIEdgeInsetsZero;
         // if (tv.attributedText) {
@@ -268,12 +268,12 @@ export class Label extends LabelBase {
         const result = this.updateTextContainerInset(nativeView, applyVerticalTextAlignment);
         nativeView.textContainerInset = result;
         if (this.isUsingNSTextView) {
-            (nativeView as NSTextView).contentInset = UIEdgeInsetsZero;
+            (nativeView as NLabelTextView).contentInset = UIEdgeInsetsZero;
         }
         // this.requestLayout();
     }
 
-    updateTextContainerInset(tv: NSTextView | NSLabel, applyVerticalTextAlignment = true) {
+    updateTextContainerInset(tv: NLabelTextView | NLabel, applyVerticalTextAlignment = true) {
         let inset;
         const top = Utils.layout.toDeviceIndependentPixels(this.effectivePaddingTop + this.effectiveBorderTopWidth);
         const right = Utils.layout.toDeviceIndependentPixels(this.effectivePaddingRight + this.effectiveBorderRightWidth);
@@ -363,7 +363,7 @@ export class Label extends LabelBase {
     }
 
     private _measureNativeView(width: number, widthMode: number, height: number, heightMode: number): { width: number; height: number } {
-        const view = this.nativeTextViewProtected as NSLabel;
+        const view = this.nativeTextViewProtected as NLabel;
 
         const nativeSize = view.textRectForBoundsLimitedToNumberOfLines(
             CGRectMake(
@@ -449,7 +449,7 @@ export class Label extends LabelBase {
     // }
     _tappable;
     mTapGestureRecognizer: LabelLinkGestureRecognizer;
-    mTapDelegate: NSLabelLinkHandlerTapDelegateImpl;
+    mTapDelegate: NLabelLinkHandlerTapDelegateImpl;
     _setTappableState(tappable) {
         if (this._tappable !== tappable) {
             this._tappable = tappable;
@@ -458,7 +458,7 @@ export class Label extends LabelBase {
                 // so we override
             } else {
                 if (this._tappable && !this.mTapGestureRecognizer) {
-                    this.mTapDelegate = NSLabelLinkHandlerTapDelegateImpl.initWithOwner(new WeakRef(this));
+                    this.mTapDelegate = NLabelLinkHandlerTapDelegateImpl.initWithOwner(new WeakRef(this));
                     // associate handler with menuItem or it will get collected by JSC.
                     this.mTapGestureRecognizer = LabelLinkGestureRecognizer.alloc().initWithDelegate(this.mTapDelegate);
                     this.nativeViewProtected.addGestureRecognizer(this.mTapGestureRecognizer);
@@ -470,7 +470,7 @@ export class Label extends LabelBase {
         // this.updateInteractionState();
     }
 
-    textViewShouldInteractWithURLInRangeInteraction?(textView: NSTextView, url: NSURL, characterRange: NSRange, interaction: UITextItemInteraction) {
+    textViewShouldInteractWithURLInRangeInteraction?(textView: NLabelTextView, url: NSURL, characterRange: NSRange, interaction: UITextItemInteraction) {
         if (!this.formattedText?.spans) {
             if (url) {
                 this.notify({ eventName: Span.linkTapEvent, link: url?.toString() });
@@ -503,7 +503,7 @@ export class Label extends LabelBase {
         const nativeView = this.nativeTextViewProtected;
         if (!this.html) {
             if (this.isUsingNSTextView) {
-                (nativeView as NSTextView).selectable = this.selectable === true;
+                (nativeView as NLabelTextView).selectable = this.selectable === true;
             }
             this.attributedString = null;
         } else if (this.html instanceof NSAttributedString) {
@@ -518,7 +518,7 @@ export class Label extends LabelBase {
             const familyName = style.fontFamily || (style.fontInternal && style.fontInternal.fontFamily) || undefined;
 
             // we need to pass color because initWithDataOptionsDocumentAttributesError
-            // will set a default color preventing the NSTextView from applying its color
+            // will set a default color preventing the NLabelTextView from applying its color
 
             const color = this.color ? (this.color instanceof Color ? this.color : new Color(this.color)) : undefined;
             const params = {
@@ -535,7 +535,7 @@ export class Label extends LabelBase {
                 const linkColor = this.linkColor ? (this.linkColor instanceof Color ? this.linkColor : new Color(this.linkColor)) : undefined;
                 Object.assign(params, {
                     useCustomLinkTag: true,
-                    lineBreak: (nativeView as NSLabel).lineBreakMode,
+                    lineBreak: (nativeView as NLabel).lineBreakMode,
                     linkDecoration: this.linkUnderline ? 'underline' : undefined,
                     linkColor
                 });
@@ -548,7 +548,7 @@ export class Label extends LabelBase {
             this._setTappableState(hasLink);
             // this.updateInteractionState(hasLink);
             if (this.isUsingNSTextView) {
-                (nativeView as NSTextView).selectable = this.selectable === true || hasLink;
+                (nativeView as NLabelTextView).selectable = this.selectable === true || hasLink;
             }
             this.attributedString = result;
         }
@@ -581,7 +581,7 @@ export class Label extends LabelBase {
         if (this.isUsingNSTextView) {
             const color = !this.linkColor || this.linkColor instanceof Color ? this.linkColor : new Color(this.linkColor);
             const nativeView = this.nativeTextViewProtected;
-            let attributes = this.isUsingNSTextView ? (nativeView as NSTextView).linkTextAttributes : null;
+            let attributes = this.isUsingNSTextView ? (nativeView as NLabelTextView).linkTextAttributes : null;
             if (!(attributes instanceof NSMutableDictionary)) {
                 this.defaultLinkTextAttributes = attributes;
                 attributes = NSMutableDictionary.new();
@@ -605,7 +605,7 @@ export class Label extends LabelBase {
                     attributes.setValueForKey(UIColor.clearColor, NSUnderlineColorAttributeName);
                 }
             }
-            (nativeView as NSTextView).linkTextAttributes = attributes;
+            (nativeView as NLabelTextView).linkTextAttributes = attributes;
             // } else {
             // this._setNativeText();
         }
@@ -617,7 +617,7 @@ export class Label extends LabelBase {
     [selectableProperty.setNative](value: boolean) {
         const nativeView = this.nativeTextViewProtected;
         if (this.isUsingNSTextView) {
-            (nativeView as NSTextView).selectable = value;
+            (nativeView as NLabelTextView).selectable = value;
         }
         // this.updateInteractionState();
     }
@@ -721,7 +721,7 @@ export class Label extends LabelBase {
         nativeView.attributedText = attrText;
     }
     updateTextViewContentInset(data: Partial<UIEdgeInsets>) {
-        // const nativeView = this.nativeTextViewProtected as NSTextView;
+        // const nativeView = this.nativeTextViewProtected as NLabelTextView;
         // const contentInset = nativeView.contentInset;
         // nativeView.contentInset = Object.assign(
         //     {
@@ -777,9 +777,9 @@ export class Label extends LabelBase {
         const numberLines = !value || value === 'none' ? 0 : typeof value === 'string' ? parseInt(value, 10) : value;
         const nativeView = this.nativeTextViewProtected;
         if (this.isUsingNSTextView) {
-            (nativeView as NSTextView).textContainer.maximumNumberOfLines = numberLines;
+            (nativeView as NLabelTextView).textContainer.maximumNumberOfLines = numberLines;
         } else {
-            (nativeView as NSLabel).numberOfLines = numberLines;
+            (nativeView as NLabel).numberOfLines = numberLines;
         }
     }
 
@@ -787,9 +787,9 @@ export class Label extends LabelBase {
     [lineBreakProperty.setNative](value: string) {
         const nativeView = this.nativeTextViewProtected;
         if (this.isUsingNSTextView) {
-            (nativeView as NSTextView).textContainer.lineBreakMode = lineBreakToLineBreakMode(value);
+            (nativeView as NLabelTextView).textContainer.lineBreakMode = lineBreakToLineBreakMode(value);
         } else {
-            (nativeView as NSLabel).lineBreakMode = lineBreakToLineBreakMode(value);
+            (nativeView as NLabel).lineBreakMode = lineBreakToLineBreakMode(value);
         }
     }
 
@@ -807,27 +807,27 @@ export class Label extends LabelBase {
     [whiteSpaceProperty.setNative](value: CoreTypes.WhiteSpaceType) {
         const nativeView = this.nativeTextViewProtected;
         if (this.isUsingNSTextView) {
-            (nativeView as NSTextView).textContainer.lineBreakMode = whiteSpaceToLineBreakMode(value);
+            (nativeView as NLabelTextView).textContainer.lineBreakMode = whiteSpaceToLineBreakMode(value);
             if (!this.maxLines) {
                 if (value === 'normal') {
-                    (nativeView as NSTextView).textContainer.maximumNumberOfLines = 0;
+                    (nativeView as NLabelTextView).textContainer.maximumNumberOfLines = 0;
                 } else {
-                    (nativeView as NSTextView).textContainer.maximumNumberOfLines = 1;
+                    (nativeView as NLabelTextView).textContainer.maximumNumberOfLines = 1;
                 }
             }
         } else {
-            (nativeView as NSLabel).lineBreakMode = whiteSpaceToLineBreakMode(value);
+            (nativeView as NLabel).lineBreakMode = whiteSpaceToLineBreakMode(value);
             if (!this.maxLines) {
                 if (value === 'normal') {
-                    (nativeView as NSLabel).numberOfLines = 0;
+                    (nativeView as NLabel).numberOfLines = 0;
                 } else {
-                    (nativeView as NSLabel).numberOfLines = 1;
+                    (nativeView as NLabel).numberOfLines = 1;
                 }
             }
         }
     }
 
-    updateAutoFontSize({ force = false, height, onlyMeasure = false, textView, width }: { textView: NSTextView | NSLabel; width?; height?; force?: boolean; onlyMeasure?: boolean }) {
+    updateAutoFontSize({ force = false, height, onlyMeasure = false, textView, width }: { textView: NLabelTextView | NLabel; width?; height?; force?: boolean; onlyMeasure?: boolean }) {
         if (!this.mCanUpdateAutoFontSize) {
             this.mNeedAutoFontSizeComputation = true;
         }
@@ -836,7 +836,7 @@ export class Label extends LabelBase {
             if ((!textView.attributedText && !textView.text) || (width === undefined && height === undefined && CGSizeEqualToSize(textView.bounds.size, CGSizeZero))) {
                 return currentFont;
             }
-            const textViewSize = NSLabelUtils.insetWithRectUIEdgeInsets(textView.bounds, textView.padding).size;
+            const textViewSize = NLabelUtils.insetWithRectUIEdgeInsets(textView.bounds, textView.padding).size;
             const fixedWidth = Math.ceil(width !== undefined ? width : textViewSize.width);
             const fixedHeight = Math.ceil(height !== undefined ? height : textViewSize.height);
             if (fixedWidth === 0 || fixedHeight === 0) {
@@ -852,7 +852,7 @@ export class Label extends LabelBase {
             }
             currentFont = textView.font;
             this.mLastAutoSizeKey = autoSizeKey;
-            const nbLines = textView instanceof NSTextView ? textView.textContainer?.maximumNumberOfLines : textView.numberOfLines;
+            const nbLines = textView instanceof NLabelTextView ? textView.textContainer?.maximumNumberOfLines : textView.numberOfLines;
             // we need to reset verticalTextAlignment or computation will be wrong
             this.updateVerticalAlignment(false);
 
@@ -862,7 +862,7 @@ export class Label extends LabelBase {
             const changeFont = !this.useNSAttributedString();
             const updateFontSize = (font) => {
                 if (!changeFont) {
-                    NSLabelUtils.updateFontRatioRatio(textView, font.pointSize / fontSize);
+                    NLabelUtils.updateFontRatioRatio(textView, font.pointSize / fontSize);
                 } else {
                     textView.font = font;
                 }
@@ -917,7 +917,7 @@ export class Label extends LabelBase {
         }
         return currentFont;
     }
-    textViewDidChange(textView: NSTextView) {
+    textViewDidChange(textView: NLabelTextView) {
         //only called when user triggers the text change, not programmatically
         this.updateAutoFontSize({ textView, force: true });
     }

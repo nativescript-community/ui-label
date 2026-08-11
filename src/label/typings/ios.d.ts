@@ -14,25 +14,25 @@ declare class LabelLinkGestureRecognizer extends UITapGestureRecognizer {
     initWithDelegate(withDelegate: UILabelLinkHandlerTapDelegate): this;
 }
 
-declare class NSLabel extends UILabel {
-    static alloc(): NSLabel; // inherited from NSObject
+declare class NLabel extends UILabel {
+    static alloc(): NLabel; // inherited from NSObject
 
-    static appearance(): NSLabel; // inherited from UIAppearance
+    static appearance(): NLabel; // inherited from UIAppearance
 
-    static appearanceForTraitCollection(trait: UITraitCollection): NSLabel; // inherited from UIAppearance
+    static appearanceForTraitCollection(trait: UITraitCollection): NLabel; // inherited from UIAppearance
 
-    static appearanceForTraitCollectionWhenContainedIn(trait: UITraitCollection, ContainerClass: typeof NSObject): NSLabel; // inherited from UIAppearance
+    static appearanceForTraitCollectionWhenContainedIn(trait: UITraitCollection, ContainerClass: typeof NSObject): NLabel; // inherited from UIAppearance
 
     static appearanceForTraitCollectionWhenContainedInInstancesOfClasses(
         trait: UITraitCollection,
         containerTypes: NSArray<typeof NSObject> | (typeof NSObject)[]
-    ): NSLabel; // inherited from UIAppearance
+    ): NLabel; // inherited from UIAppearance
 
-    static appearanceWhenContainedIn(ContainerClass: typeof NSObject): NSLabel; // inherited from UIAppearance
+    static appearanceWhenContainedIn(ContainerClass: typeof NSObject): NLabel; // inherited from UIAppearance
 
-    static appearanceWhenContainedInInstancesOfClasses(containerTypes: NSArray<typeof NSObject> | (typeof NSObject)[]): NSLabel; // inherited from UIAppearance
+    static appearanceWhenContainedInInstancesOfClasses(containerTypes: NSArray<typeof NSObject> | (typeof NSObject)[]): NLabel; // inherited from UIAppearance
 
-    static new(): NSLabel; // inherited from NSObject
+    static new(): NLabel; // inherited from NSObject
 
     borderThickness: UIEdgeInsets;
 
@@ -45,12 +45,12 @@ declare class NSLabel extends UILabel {
     commonInit(): void;
 }
 
-declare class NSLabelUtils extends NSObject {
-    static alloc(): NSLabelUtils; // inherited from NSObject
+declare class NLabelUtils extends NSObject {
+    static alloc(): NLabelUtils; // inherited from NSObject
 
     static insetWithRectUIEdgeInsets(rect: CGRect, uIEdgeInsets: UIEdgeInsets): CGRect;
 
-    static new(): NSLabelUtils; // inherited from NSObject
+    static new(): NLabelUtils; // inherited from NSObject
 
     static setTextDecorationAndTransformOnViewTextTextDecorationLetterSpacingLineHeightColor(
         view: UIView,
@@ -63,29 +63,29 @@ declare class NSLabelUtils extends NSObject {
     static updateFontRatioRatio(view: UIView, ratio: number): void;
 }
 
-declare class NSTextView extends UITextView {
-    static alloc(): NSTextView; // inherited from NSObject
+declare class NLabelTextView extends UITextView {
+    static alloc(): NLabelTextView; // inherited from NSObject
 
-    static appearance(): NSTextView; // inherited from UIAppearance
+    static appearance(): NLabelTextView; // inherited from UIAppearance
 
-    static appearanceForTraitCollection(trait: UITraitCollection): NSTextView; // inherited from UIAppearance
+    static appearanceForTraitCollection(trait: UITraitCollection): NLabelTextView; // inherited from UIAppearance
 
-    static appearanceForTraitCollectionWhenContainedIn(trait: UITraitCollection, ContainerClass: typeof NSObject): NSTextView; // inherited from UIAppearance
+    static appearanceForTraitCollectionWhenContainedIn(trait: UITraitCollection, ContainerClass: typeof NSObject): NLabelTextView; // inherited from UIAppearance
 
     static appearanceForTraitCollectionWhenContainedInInstancesOfClasses(
         trait: UITraitCollection,
         containerTypes: NSArray<typeof NSObject> | (typeof NSObject)[]
-    ): NSTextView; // inherited from UIAppearance
+    ): NLabelTextView; // inherited from UIAppearance
 
-    static appearanceWhenContainedIn(ContainerClass: typeof NSObject): NSTextView; // inherited from UIAppearance
+    static appearanceWhenContainedIn(ContainerClass: typeof NSObject): NLabelTextView; // inherited from UIAppearance
 
     static appearanceWhenContainedInInstancesOfClasses(
         containerTypes: NSArray<typeof NSObject> | (typeof NSObject)[]
-    ): NSTextView; // inherited from UIAppearance
+    ): NLabelTextView; // inherited from UIAppearance
 
-    static new(): NSTextView; // inherited from NSObject
+    static new(): NLabelTextView; // inherited from NSObject
 
-    static textViewUsingTextLayoutManager(usingTextLayoutManager: boolean): NSTextView; // inherited from UITextView
+    static textViewUsingTextLayoutManager(usingTextLayoutManager: boolean): NLabelTextView; // inherited from UITextView
 
     borderThickness: UIEdgeInsets;
 
