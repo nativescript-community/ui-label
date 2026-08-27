@@ -50,7 +50,7 @@ class LabelLinkGestureRecognizer : UITapGestureRecognizer {
      label.padding.right -
      label.borderThickness.left -
      label.borderThickness.right,
-     labelSize.width -
+     labelSize.height -
      label.padding.top -
      label.padding.bottom -
      label.borderThickness.top -
