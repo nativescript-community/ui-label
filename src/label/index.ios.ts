@@ -570,7 +570,12 @@ export class Label extends LabelBase {
         // }
     }
     _setColor(color) {
-        if (this.formattedText || this.html) {
+        // The html conversion writes a foreground color onto every range (that is why
+        // _updateHTMLString passes the color in), so the view textColor can never show through
+        // and the string has to be regenerated. Formatted text is different: its ranges are
+        // uncolored unless a span sets a color, so the view color paints them, the way
+        // TextView.setTextColor does on Android.
+        if (this.html) {
             this._setNativeText();
         } else {
             this.nativeTextViewProtected.textColor = color;
@@ -690,11 +695,8 @@ export class Label extends LabelBase {
             this.updateAutoFontSize({ textView: this.nativeTextViewProtected, force: true });
         }
     }
-
-    setTextDecorationAndTransform() {
+    getUIColor() {
         const style = this.style;
-        const letterSpacing = style.letterSpacing ?? 0;
-        const lineHeight = style.lineHeight ?? -1;
         let uiColor;
         if (style.color) {
             const color = !style.color || style.color instanceof Color ? style.color : new Color(style.color);
@@ -702,6 +704,13 @@ export class Label extends LabelBase {
                 uiColor = color.ios;
             }
         }
+        return uiColor;
+    }
+    setTextDecorationAndTransform() {
+        const style = this.style;
+        const letterSpacing = style.letterSpacing ?? 0;
+        const lineHeight = style.lineHeight ?? -1;
+        const uiColor = this.getUIColor();
         const text = getTransformedText(isNullOrUndefined(this.text) ? '' : `${this.text}`, this.textTransform);
         NSTextUtils.setTextDecorationAndTransformOnViewTextTextDecorationLetterSpacingLineHeightColor(
             this.nativeTextViewProtected,
@@ -719,6 +728,12 @@ export class Label extends LabelBase {
         const nativeView = this.nativeTextViewProtected;
         const attrText = this.createFormattedTextNative(this.formattedText);
         nativeView.attributedText = attrText;
+        console.log('setFormattedTextDecorationAndTransform2', attrText)
+        // we need to reapply color after because setting attributedText will clear it
+        // const uiColor = this.getUIColor();
+        // if (uiColor) {
+        //     nativeView.textColor = uiColor;
+        // }
     }
     updateTextViewContentInset(data: Partial<UIEdgeInsets>) {
         // const nativeView = this.nativeTextViewProtected as NLabelTextView;
@@ -771,7 +786,6 @@ export class Label extends LabelBase {
         }
     }
 
-    
     @needAutoFontSizeComputation
     [maxLinesProperty.setNative](value: number | string) {
         const numberLines = !value || value === 'none' ? 0 : typeof value === 'string' ? parseInt(value, 10) : value;
