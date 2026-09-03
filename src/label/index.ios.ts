@@ -256,13 +256,16 @@ export class Label extends LabelBase {
         return this.formattedText || this.html || this.text instanceof NSAttributedString;
     }
 
-    updateVerticalAlignment(applyVerticalTextAlignment = true) {
+    updateVerticalAlignment(applyVerticalTextAlignment = true, force = false) {
         const nativeView = this.nativeTextViewProtected;
         if (!this.mCanUpdateVerticalAlignment) {
             this.mNeedUpdateVerticalAlignment = true;
             return;
         }
-        if (!this.isUsingNSTextView && !this.isLayoutValid) {
+        // On iOS core clears the force-layout flag only after onLayout returns, so isLayoutValid
+        // is false for the whole pass a label requested itself. onLayout must force the update
+        // or the inset is never written on that pass.
+        if (!force && !this.isUsingNSTextView && !this.isLayoutValid) {
             return;
         }
         const result = this.updateTextContainerInset(nativeView, applyVerticalTextAlignment);
@@ -279,34 +282,27 @@ export class Label extends LabelBase {
         const right = Utils.layout.toDeviceIndependentPixels(this.effectivePaddingRight + this.effectiveBorderRightWidth);
         const bottom = Utils.layout.toDeviceIndependentPixels(this.effectivePaddingBottom + this.effectiveBorderBottomWidth);
         const left = Utils.layout.toDeviceIndependentPixels(this.effectivePaddingLeft + this.effectiveBorderLeftWidth);
+        // NLabel.drawText already insets by padding and borderThickness (both set by core), so on
+        // the UILabel path textContainerInset only carries the vertical-alignment correction.
+        // The UITextView path has no other inset source and keeps the full value.
+        const base = this.isUsingNSTextView ? { top, left, bottom, right } : { top: 0, left: 0, bottom: 0, right: 0 };
         if (!applyVerticalTextAlignment || !this.verticalTextAlignment || (tv.text?.length === 0 && tv.attributedText?.length === 0)) {
-            inset = {
-                top,
-                left,
-                bottom,
-                right
-            };
-            return inset;
+            return base;
         }
         switch (this.verticalTextAlignment) {
             case 'initial': // not supported
             case 'top':
                 if (this.isUsingNSTextView) {
-                    inset = {
-                        top,
-                        left,
-                        bottom,
-                        right
-                    };
+                    inset = base;
                 } else {
                     const height = this.computeTextHeight(tv, CGSizeMake(tv.bounds.size.width, Number.MAX_SAFE_INTEGER));
                     let topCorrect = tv.bounds.size.height - top - bottom - height * tv.zoomScale;
                     topCorrect = topCorrect < 0.0 ? 0.0 : topCorrect;
                     inset = {
-                        top,
-                        left,
-                        bottom: bottom + topCorrect,
-                        right
+                        top: base.top,
+                        left: base.left,
+                        bottom: base.bottom + topCorrect,
+                        right: base.right
                     };
                 }
                 break;
@@ -318,18 +314,13 @@ export class Label extends LabelBase {
                     let topCorrect = (tv.bounds.size.height - top - bottom - height * tv.zoomScale) / 2.0;
                     topCorrect = topCorrect < 0.0 ? 0.0 : topCorrect;
                     inset = {
-                        top: top + topCorrect,
-                        left,
-                        bottom,
-                        right
+                        top: base.top + topCorrect,
+                        left: base.left,
+                        bottom: base.bottom,
+                        right: base.right
                     };
                 } else {
-                    inset = {
-                        top,
-                        left,
-                        bottom,
-                        right
-                    };
+                    inset = base;
                 }
                 break;
             }
@@ -339,10 +330,10 @@ export class Label extends LabelBase {
                 let bottomCorrect = tv.bounds.size.height - top - bottom - height * tv.zoomScale;
                 bottomCorrect = bottomCorrect < 0.0 ? 0.0 : bottomCorrect;
                 inset = {
-                    top: top + bottomCorrect,
-                    left,
-                    bottom,
-                    right
+                    top: base.top + bottomCorrect,
+                    left: base.left,
+                    bottom: base.bottom,
+                    right: base.right
                 };
                 break;
             }
@@ -431,9 +422,8 @@ export class Label extends LabelBase {
         // we do on every layout pass or we might be out of sync
         if (this.autoFontSize) {
             this.updateAutoFontSize({ textView: this.nativeTextViewProtected });
-        } else {
-            this.updateVerticalAlignment();
         }
+        this.updateVerticalAlignment(true, true);
     }
     // _onSizeChanged() {
     //     super._onSizeChanged();
