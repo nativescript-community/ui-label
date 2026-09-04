@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.3](https://github.com/nativescript-community/ui-label/compare/v2.0.2...v2.0.3) (2026-09-04)
+
+### Bug Fixes
+
+* **ios:** keep padding out of textContainerInset and write it on the label's own layout pass ([89bef48](https://github.com/nativescript-community/ui-label/commit/89bef48bc066656cb2cd4865bbebe98cef30f83a)), closes [#29](https://github.com/nativescript-community/ui-label/issues/29)
+* **ios:** label color not applied when using formattedstring ([be9565f](https://github.com/nativescript-community/ui-label/commit/be9565f47753fb816bc7933fbaa5b51d18bdc2ca))
+
 ## [2.0.2](https://github.com/nativescript-community/ui-label/compare/v2.0.1...v2.0.2) (2026-08-30)
 
 **Note:** Version bump only for package ui-label
