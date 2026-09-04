@@ -718,7 +718,6 @@ export class Label extends LabelBase {
         const nativeView = this.nativeTextViewProtected;
         const attrText = this.createFormattedTextNative(this.formattedText);
         nativeView.attributedText = attrText;
-        console.log('setFormattedTextDecorationAndTransform2', attrText)
         // we need to reapply color after because setting attributedText will clear it
         // const uiColor = this.getUIColor();
         // if (uiColor) {
