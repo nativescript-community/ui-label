@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.4](https://github.com/nativescript-community/ui-label/compare/v2.0.3...v2.0.4) (2026-09-04)
+
+### Bug Fixes
+
+* ios Remove console log from text decoration method ([0de812e](https://github.com/nativescript-community/ui-label/commit/0de812effa72ea2485d9be5a66613ee26712ad2d))
+
 ## [2.0.3](https://github.com/nativescript-community/ui-label/compare/v2.0.2...v2.0.3) (2026-09-04)
 
 ### Bug Fixes
