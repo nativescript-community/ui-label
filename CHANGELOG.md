@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.5](https://github.com/nativescript-community/ui-label/compare/v2.0.4...v2.0.5) (2026-11-01)
+
+### Bug Fixes
+
+* **android:** add a default font size so resetting it does not crash ([056754c](https://github.com/nativescript-community/ui-label/commit/056754cabd857fc640865291960e0e4e192bfeea))
+
 ## [2.0.4](https://github.com/nativescript-community/ui-label/compare/v2.0.3...v2.0.4) (2026-09-04)
 
 ### Bug Fixes
