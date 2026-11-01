@@ -259,10 +259,16 @@ export class Label extends LabelBase {
             // this.nativeTextViewProtected.setTextColor(null);
         }
     }
+    // without a default, resetting the font size (a css rule stopped applying) calls setNative with undefined
+    [fontSizeProperty.getDefault](): { nativeSize: number } {
+        return { nativeSize: this.nativeTextViewProtected.getTextSize() };
+    }
     [fontSizeProperty.setNative](value: number | { nativeSize: number }) {
+        // the default is the native size, in pixels
+        const isNumber = typeof value === 'number';
         this.nativeTextViewProtected.setLabelTextSize(
-            this.androidA11yAdjustsFontSize ? 2 /* COMPLEX_UNIT_SP */ : 1 /* COMPLEX_UNIT_DIP */,
-            typeof value === 'number' ? value : value.nativeSize,
+            isNumber ? (this.androidA11yAdjustsFontSize ? 2 /* COMPLEX_UNIT_SP */ : 1 /* COMPLEX_UNIT_DIP */) : 0 /* COMPLEX_UNIT_PX */,
+            isNumber ? value : value.nativeSize,
             this.minFontSize || 10,
             this.maxFontSize || 200,
             this.autoFontSizeStep || 1
